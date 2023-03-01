@@ -2,5 +2,6 @@
   "selectLanguage": "选择语言",
   "donate": "捐赠",
   "download": "立即下载",
-  "docs": "文档"
+  "docs": "文档",
+  "home.desc": "Gopeed是一款由Golang+Flutter开发的高速下载器，支持（HTTP、BitTorrent、Magnet）协议下载，并且支持全平台使用。"
 }

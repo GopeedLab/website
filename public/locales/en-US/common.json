@@ -2,5 +2,6 @@
   "selectLanguage": "Select Language",
   "donate": "Donate",
   "download": "Download",
-  "docs": "Docs"
+  "docs": "Docs",
+  "home.desc": "Gopeed is a high speed downloader developed by Golang + Flutter, supports (HTTP, BitTorrent, Magnet) protocol, and supports all platforms."
 }

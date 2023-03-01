@@ -27,14 +27,8 @@ const Home = () => {
             height={628}
           />
           <div>
-            <h1 className="text-5xl font-bold">Gopeed 下载器</h1>
-            <p className="py-6">
-              Gopeed 是一个开源的下载器，支持多种下载协议，包括
-              HTTP、HTTPS、BT、磁力链接等，
-              <br />
-              轻量、易用、快速、免费，支持
-              Windows、Linux、MacOS、Android、iOS、Web、Dockers 等多种平台。
-            </p>
+            <h1 className="text-5xl font-bold">Gopeed</h1>
+            <p className="py-6">{t('home.desc')}</p>
             <a
               className="btn btn-primary"
               target="_blank"

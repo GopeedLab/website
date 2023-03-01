@@ -36,7 +36,7 @@ const Header = (props) => {
           </div>
 
           <div className="navbar-end">
-            <ul class="menu menu-horizontal px-1">
+            <ul className="menu menu-horizontal px-1">
               {/*   <li>
                 <a>{t('docs')}</a>
               </li> */}
