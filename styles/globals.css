@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .btn{
+    text-transform: none;
+  }
+}
+
 .content-container {
-  height: calc(100vh - theme('height.16'));
+  min-height: calc(100vh - theme('height.16') - theme('height.14'));
 }

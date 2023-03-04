@@ -6,7 +6,7 @@ import availableLocales from '../public/locales/locales'
 import '/node_modules/flag-icons/css/flag-icons.min.css'
 
 const Header = (props) => {
-  const { t, i18n } = useTranslation('common')
+  const { t } = useTranslation('common')
   const router = useRouter()
   const currentLocale = router.locale
 
@@ -52,7 +52,7 @@ const Header = (props) => {
             </ul>
 
             <div title={t('selectLanguage')} className="dropdown dropdown-end">
-              <div tabindex="0" className="btn btn-ghost gap-1 normal-case">
+              <div tabIndex="0" className="btn btn-ghost gap-1 normal-case">
                 <Image
                   className="inline-block h-4 w-4 fill-current md:h-5 md:w-5"
                   src="/images/nav/translate.svg"
@@ -70,7 +70,7 @@ const Header = (props) => {
               </div>
 
               <div className="dropdown-content bg-base-200 text-base-content rounded-t-box rounded-b-box top-px mt-16 w-56 overflow-y-auto shadow-2xl">
-                <ul className="menu menu-compact gap-1 p-3" tabindex="0">
+                <ul className="menu menu-compact gap-1 p-3" tabIndex="0">
                   {Object.keys(availableLocales).map((locale) => (
                     <li key={locale}>
                       <button
