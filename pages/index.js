@@ -133,7 +133,7 @@ const Home = ({ release }) => {
               <span className="badge badge-xs badge-outline badge-secondary ml-1 relative -top-2">New</span>
             </h3>
             <div className="flex flex-wrap gap-2 pt-6">
-              {Object.keys(release.assert).map((os) => (
+               {Object.keys(release.assert).map((os) => (
                 <div className="flex flex-col" key={os}>
                   <div className="dropdown">
                     <label tabIndex="0" className="btn btn-outline w-28 sm:w-36">
@@ -172,7 +172,7 @@ const Home = ({ release }) => {
                       alt=""
                     />
                   </label>
-                  <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-max">
+                  <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box">
                     <li>
                       <pre data-prefix="$">
                         <span>docker run -d -p 9999:9999 -v /path/to/download:/download liwei2633/gopeed</span>
@@ -184,7 +184,7 @@ const Home = ({ release }) => {
             </div>
           </div>
           <div className="w-full sm:w-1/2 p-4">
-            <Image src={uiImage} className="rounded-2xl shadow-2xl" alt="UI" />
+            <Image src={uiImage} className="rounded-md lg:rounded-xl shadow-2xl" alt="UI" />
           </div>
         </div>
       </div>
