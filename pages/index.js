@@ -165,7 +165,7 @@ const Home = ({ release }) => {
                 </div>
               ))}
               <div className="flex flex-col">
-                <div className="dropdown" onClick={toggleDocker} onBlur={toggleDocker}>
+                <div className="dropdown" onClick={toggleDocker} onBlur={()=>setShowDocker(false)}>
                   <label tabIndex="0" className="btn btn-outline w-28 sm:w-36">
                     <Image src={platformIcons.docker} alt="docker" />
                     <span className="pl-1">Docker</span>
@@ -180,7 +180,7 @@ const Home = ({ release }) => {
                 </div>
               </div>
             </div>
-            <div className={`mockup-code mt-4 pb-12 ${showDocker?'':'invisible'}`}>
+            <div className={`mockup-code mt-4 pb-12 ${showDocker?'':'hidden lg:invisible lg:block'}`}>
               <pre data-prefix="$" className="absolute w-min">
                 <code>docker run -d -p 9999:9999 -v /path/to/download:/download liwei2633/gopeed</code>
               </pre>
