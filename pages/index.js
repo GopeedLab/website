@@ -52,6 +52,11 @@ const Home = ({ release }) => {
     url: '',
     isMatch: false,
   })
+  const [showDocker, setShowDocker] = useState(false)
+
+  function toggleDocker() {
+    setShowDocker(!showDocker)
+  }
 
   useEffect(() => {
     const parser = new UAParser()
@@ -120,7 +125,7 @@ const Home = ({ release }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <div className="content-container bg-base-200 flex justify-center">
+      <div className="content-container bg-base-200 flex flex-wrap justify-center">
         <div className="flex flex-col lg:flex-row lg:items-center">
           <div className="w-full sm:w-1/2 p-4 lg:pb-32">
             <h2 className="text-xl lg:text-4xl font-bold">{t('home.title')}</h2>
@@ -133,7 +138,7 @@ const Home = ({ release }) => {
               <span className="badge badge-xs badge-outline badge-secondary ml-1 relative -top-2">New</span>
             </h3>
             <div className="flex flex-wrap gap-2 pt-6">
-               {Object.keys(release.assert).map((os) => (
+              {Object.keys(release.assert).map((os) => (
                 <div className="flex flex-col" key={os}>
                   <div className="dropdown">
                     <label tabIndex="0" className="btn btn-outline w-28 sm:w-36">
@@ -160,7 +165,7 @@ const Home = ({ release }) => {
                 </div>
               ))}
               <div className="flex flex-col">
-                <div className="dropdown">
+                <div className="dropdown" onClick={toggleDocker}>
                   <label tabIndex="0" className="btn btn-outline w-28 sm:w-36">
                     <Image src={platformIcons.docker} alt="docker" />
                     <span className="pl-1">Docker</span>
@@ -172,27 +177,25 @@ const Home = ({ release }) => {
                       alt=""
                     />
                   </label>
-                  <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-base-100 rounded-box">
-                    <li>
-                      <pre data-prefix="$">
-                        <span>docker run -d -p 9999:9999 -v /path/to/download:/download liwei2633/gopeed</span>
-                      </pre>
-                    </li>
-                  </ul>
                 </div>
               </div>
             </div>
+            <div className={`mockup-code mt-4 pb-12 ${showDocker?'':'hidden'}`}>
+              <pre data-prefix="$" className="absolute w-min">
+                <code>docker run -d -p 9999:9999 -v /path/to/download:/download liwei2633/gopeed</code>
+              </pre>
+            </div>
           </div>
           <div className="w-full sm:w-1/2 p-4">
-            <Image src={uiImage} className="rounded-md lg:rounded-xl shadow-2xl" alt="UI" />
+            <Image src={uiImage} className="rounded-md lg:rounded-xl shadow-lg" alt="UI" />
           </div>
         </div>
+        <footer className="footer footer-center bg-base-200 text-base-content">
+          <div>
+            <p>Copyright © {new Date().getFullYear()} - Gopeed</p>
+          </div>
+        </footer>
       </div>
-      <footer className="footer footer-center p-4 bg-base-200 text-base-content">
-        <div>
-          <p>Copyright © {new Date().getFullYear()} - Gopeed</p>
-        </div>
-      </footer>
     </>
   )
 }

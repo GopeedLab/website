@@ -9,5 +9,5 @@
 }
 
 .content-container {
-  min-height: calc(100vh - theme('height.16') - theme('height.14'));
+  min-height: calc(100vh - theme('height.16'));
 }
