@@ -18,7 +18,7 @@ const Header = (props) => {
     document.cookie = `NEXT_LOCALE=${locale};path=/;max-age=31536000`
   }
 
-  const docsLocale = currentLocale == 'zh-CN' ? '/zh' : ''
+  const docsLocale = currentLocale == 'zh-CN' ? '/zh/' : ''
 
   return (
     <>
