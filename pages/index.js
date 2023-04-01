@@ -13,6 +13,7 @@ import iconWeb from '../public/images/platform/web.svg'
 import iconDocker from '../public/images/platform/docker.svg'
 import { useEffect, useState } from 'react'
 import UAParser from 'ua-parser-js'
+import getLatestRelease from './util/cache'
 
 const website = 'https://gopeed.com'
 const websiteImage = `${website}/images/logo.png`
@@ -207,20 +208,8 @@ const Home = ({ release }) => {
   )
 }
 
-let cache = null
-
 export async function getStaticProps({ locale }) {
-  let data
-  if (cache) {
-    data = cache
-  } else {
-    data = await (await fetch('https://api.github.com/repos/GopeedLab/gopeed/releases/latest')).json()
-    cache = data
-    // cache 1 day
-    setTimeout(() => {
-      cache = null
-    }, 1000 * 60 * 60 * 24)
-  }
+  const data = await getLatestRelease()
 
   const findDownloadUrl = (platform, os, arch) => {
     const isWeb = platform === 'web'
