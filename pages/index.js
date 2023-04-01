@@ -13,7 +13,7 @@ import iconWeb from '../public/images/platform/web.svg'
 import iconDocker from '../public/images/platform/docker.svg'
 import { useEffect, useState } from 'react'
 import UAParser from 'ua-parser-js'
-import getLatestRelease from './util/cache'
+import getLatestRelease from '../util/cache'
 
 const website = 'https://gopeed.com'
 const websiteImage = `${website}/images/logo.png`
