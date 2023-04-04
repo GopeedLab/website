@@ -211,12 +211,23 @@ const Home = ({ release }) => {
 export async function getStaticProps({ locale }) {
   const data = await getLatestRelease()
 
-  const findDownloadUrl = (platform, os, arch) => {
+  const findDownloadUrl = (platform, os, arch, keyword, must) => {
     const isWeb = platform === 'web'
-    const asset = data.assets.find(
-      (asset) =>
+    const asset = data.assets.find((asset) => {
+      let hit =
         asset.name.includes(platform) && (isWeb || !asset.name.includes('web')) && (!os || asset.name.includes(os)) && (!arch || asset.name.includes(arch))
-    )
+      if (!hit) {
+        return false
+      }
+      if (!keyword) {
+        return true
+      }
+      if (must) {
+        return asset.name.includes(keyword)
+      } else {
+        return !asset.name.includes(keyword)
+      }
+    })
     return asset ? asset.browser_download_url : ''
   }
 
@@ -228,12 +239,11 @@ export async function getStaticProps({ locale }) {
           version: data.tag_name,
           assert: {
             windows: {
-              amd64: findDownloadUrl('windows', null, 'amd64'),
-              amd64_portable: findDownloadUrl('windows', 'portable', 'amd64'),
+              amd64: findDownloadUrl('windows', null, 'amd64', 'portable', false),
+              amd64_portable: findDownloadUrl('windows', null, 'amd64', 'portable', true),
             },
             macos: {
-              amd64: findDownloadUrl('macos', null, 'amd64'),
-              arm64: findDownloadUrl('macos', null, 'arm64'),
+              amd64: findDownloadUrl('macos', null, null),
             },
             linux: {
               amd64: findDownloadUrl('linux', null, 'amd64'),

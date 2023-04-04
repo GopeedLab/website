@@ -5,12 +5,13 @@ export default async function getLatestRelease() {
   if (releaseCache) {
     data = releaseCache
   } else {
+    console.log("fetching latest release")
     data = await (await fetch('https://api.github.com/repos/GopeedLab/gopeed/releases/latest')).json()
     releaseCache = data
     // cache 1 hour
     setTimeout(() => {
-      cache = null
-    }, 1000 * 60 * 60 * 1)
+      releaseCache = null
+    }, 1000 * 60 * 60)
   }
   return data
 }
