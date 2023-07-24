@@ -190,7 +190,7 @@ const Home = ({ release }) => {
             </div>
             <div tabIndex="0" className={`mockup-code mt-4 pb-12 ${showDocker ? '' : 'hidden lg:invisible lg:block'}`} onBlur={() => setShowDocker(false)}>
               <pre data-prefix="$" className="absolute w-min">
-                <code>docker run -d -p 9999:9999 -v /path/to/download:/download liwei2633/gopeed</code>
+                <code>docker run -d -p 9999:9999 -v /path/to/download:/root/Downloads liwei2633/gopeed</code>
               </pre>
             </div>
           </div>
