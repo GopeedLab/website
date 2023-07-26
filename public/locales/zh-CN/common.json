@@ -2,7 +2,16 @@
   "selectLanguage": "选择语言",
   "donate": "捐赠",
   "download": "立即下载",
+  "downloadMore": "更多下载",
   "docs": "文档",
-  "home.title": "一款支持全平台的下载器",
-  "home.desc": "开源、轻量、原生，支持（HTTP、BitTorrent、Magnet 等）协议下载。"
+  "home": "主页",
+  "contact": "联系",
+  "home.title": "一款现代化的下载器",
+  "home.desc": "开源、轻量、原生，支持（HTTP、BitTorrent、Magnet 等）协议下载。",
+  "home.feat1.title": "全平台支持",
+  "home.feat1.desc": "不用再为不同平台的下载工具而烦恼",
+  "home.feat2.title": "高速下载",
+  "home.feat2.desc": "底层使用golang协程并发下载",
+  "home.feat3.title": "界面美观",
+  "home.feat3.desc": "遵循Material Design规范"
 }

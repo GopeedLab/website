@@ -1,0 +1,7 @@
+#header:has(#toggle_nav:checked) #hamburger #line {
+  @apply rotate-45 translate-y-1.5
+}
+
+#header:has(#toggle_nav:checked) #hamburger #line2 {
+  @apply -rotate-45 -translate-y-1
+}

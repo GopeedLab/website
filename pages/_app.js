@@ -1,5 +1,6 @@
 import { appWithTranslation } from 'next-i18next'
 import '../styles/globals.css'
+import '../components/AppHeader.css'
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 

@@ -1,8 +1,17 @@
 {
   "selectLanguage": "Select Language",
   "donate": "Donate",
-  "download": "DOWNLOAD",
+  "download": "Download App",
+  "downloadMore": "Download More",
   "docs": "Docs",
-  "home.title": "A cross-platform support downloader",
-  "home.desc": "Open source, lightweight, native, supports (HTTP, BitTorrent, Magnet , etc.) for downloading."
+  "home": "Home",
+  "contact": "Contact",
+  "home.title": "A modern download manager",
+  "home.desc": "Open source, lightweight, native, supports (HTTP, BitTorrent, Magnet , etc.) for downloading.",
+  "home.feat1.title": "Full Platform Support",
+  "home.feat1.desc": "No more worries about different platform download tools",
+  "home.feat2.title": "High Speed",
+  "home.feat2.desc": "Using Golang coroutines for concurrent downloads at the underlying level",
+  "home.feat3.title": "Beautiful UI",
+  "home.feat3.desc": "Follow Material Design specifications"
 }

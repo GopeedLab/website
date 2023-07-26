@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer components {
+/* @layer components {
   .btn{
     text-transform: none;
   }
@@ -10,4 +10,18 @@
 
 .content-container {
   min-height: calc(100vh - theme('height.16'));
+} */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  @apply bg-white;
+  @apply dark:bg-gray-900/60;
+}
+
+.dark {
+  color-scheme: dark;
 }
