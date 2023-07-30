@@ -13,12 +13,15 @@ const HeroSection = ({ release }) => {
   const [downloadUrl, setDownloadUrl] = useState('')
 
   useEffect(() => {
+    setGithubAccessible(true)
     if (!isCn) {
-      setGithubAccessible(true)
       return
     }
-    fetch('https://api.github.com').catch(() => {
-      setGithubAccessible(false)
+    // check github accessible
+    Promise.race([fetch('https://github.com'), new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1000))]).catch((e) => {
+      if (e.message === 'timeout') {
+        setGithubAccessible(false)
+      }
     })
   }, [isCn])
 
