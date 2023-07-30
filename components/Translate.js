@@ -55,7 +55,7 @@ const Translate = (props) => {
                 } else {
                   return (
                     <a
-                      href="void:javascript(0)"
+                      href="#"
                       onClick={changeLocale(locale)}
                       className={clsx(
                         'flex items-center justify-between px-3 py-1',

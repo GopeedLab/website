@@ -1,16 +1,27 @@
 import { useTranslation } from 'next-i18next'
 import Image from 'next/image'
-import Container from './Container'
 import Link from 'next/link'
-import UAParser from 'ua-parser-js'
-import androidSvg from '../public/images/platform/android.svg'
-import linuxSvg from '../public/images/platform/linux.svg'
-import macosSvg from '../public/images/platform/macos.svg'
-import windowsSvg from '../public/images/platform/windows.svg'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import UAParser from 'ua-parser-js'
+import Container from './Container'
 
 const HeroSection = ({ release }) => {
+  const router = useRouter()
+  const isCn = router.locale == 'zh-CN'
+  const [githubAccessible, setGithubAccessible] = useState(true)
   const [downloadUrl, setDownloadUrl] = useState('')
+
+  useEffect(() => {
+    if (!isCn) {
+      setGithubAccessible(true)
+      return
+    }
+    fetch('https://api.github.com').catch(() => {
+      setGithubAccessible(false)
+    })
+  }, [isCn])
+
   useEffect(() => {
     const parser = new UAParser()
     const os = parser.getOS().name
@@ -30,20 +41,28 @@ const HeroSection = ({ release }) => {
       ua.os = 'android'
     }
 
+    const getDownloadCdnUrl = (rawUrl) => {
+      if (!githubAccessible) {
+        return `https://ghproxy.com/${rawUrl.replace('//', '/')}`
+      } else {
+        return rawUrl
+      }
+    }
+
     const osAssert = release.assert[ua.os]
     // first match os and arch
     if (osAssert?.[ua.arch]) {
-      setDownloadUrl(osAssert[ua.arch])
+      setDownloadUrl(getDownloadCdnUrl(osAssert[ua.arch]))
       return
     }
     // second match os
     if (osAssert) {
-      setDownloadUrl(osAssert[Object.keys(osAssert)[0]])
+      setDownloadUrl(getDownloadCdnUrl(osAssert[Object.keys(osAssert)[0]]))
       return
     }
     // no match, fallback to github latest release
     setDownloadUrl('https://github.com/GopeedLab/gopeed/releases/latest')
-  }, [release.assert])
+  }, [githubAccessible, release.assert])
 
   const { t } = useTranslation('common')
   return (
@@ -70,7 +89,7 @@ const HeroSection = ({ release }) => {
                   </Link>
                   <Link
                     href="https://github.com/GopeedLab/gopeed/releases/latest"
-                    className="relative flex h-12 w-full items-center justify-center px-6 before:absolute before:inset-0 before:rounded-lg before:border before:border-transparent before:bg-primary/10 before:bg-gradient-to-b before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 dark:before:border-gray-800 dark:before:bg-gray-900 sm:w-max"
+                    className="relative flex h-12 w-full items-center justify-center px-6 before:absolute before:inset-0 before:rounded-lg before:bg-primary/10 before:bg-gradient-to-b before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
                   >
                     <span className="relative text-base font-semibold text-primary dark:text-white">{t('downloadMore')}</span>
                   </Link>
@@ -83,16 +102,16 @@ const HeroSection = ({ release }) => {
               </div>
             </div>
           </div>
-          <div className="hidden py-8 mt-16 border-y border-gray-100 dark:border-gray-800 sm:flex justify-between">
-            <div className="text-left">
+          <div className="py-8 mt-16 border-y border-gray-100 dark:border-gray-800 sm:flex justify-between">
+            <div className="text-left pb-4 lg:pb-0">
               <h6 className="text-lg font-semibold text-gray-700 dark:text-white">{t('home.feat1.title')}</h6>
               <p className="mt-2 text-gray-500">{t('home.feat1.desc')}</p>
             </div>
-            <div className="text-left">
+            <div className="text-left pb-4 lg:pb-0">
               <h6 className="text-lg font-semibold text-gray-700 dark:text-white">{t('home.feat2.title')}</h6>
               <p className="mt-2 text-gray-500">{t('home.feat2.desc')}</p>
             </div>
-            <div className="text-left">
+            <div className="text-left pb-4 lg:pb-0">
               <h6 className="text-lg font-semibold text-gray-700 dark:text-white">{t('home.feat3.title')}</h6>
               <p className="mt-2 text-gray-500">{t('home.feat3.desc')}</p>
             </div>
