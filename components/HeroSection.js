@@ -43,6 +43,9 @@ const HeroSection = ({ release }) => {
     if (os.includes('Android')) {
       ua.os = 'android'
     }
+    if (os.includes('iOS')) {
+      ua.os = 'ios'
+    }
 
     const getDownloadCdnUrl = (rawUrl) => {
       if (!githubAccessible) {

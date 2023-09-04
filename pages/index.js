@@ -87,6 +87,9 @@ export async function getStaticProps({ locale }) {
             android: {
               arm64: findDownloadUrl('android', null, null),
             },
+            ios: {
+              arm64: findDownloadUrl('ios', null, null),
+            },
             web: {
               window_amd64: findDownloadUrl('web', 'windows', 'amd64'),
               window_arm64: findDownloadUrl('web', 'windows', 'arm64'),
