@@ -9,7 +9,7 @@ import Translate from './Translate'
 const AppHeader = (props) => {
   const { t } = useTranslation('common')
   const router = useRouter()
-  const docsLocale = router.locale == 'zh-CN' ? '/zh/' : ''
+  const docsLocale = router.locale == 'zh-CN' ? '/zh' : ''
   return (
     <header>
       <nav className="z-10 w-full absolute">
@@ -52,7 +52,7 @@ const AppHeader = (props) => {
                     </li>
                     <li>
                       <Link
-                        href="https://docs.gopeed.com/donate.html"
+                        href={`https://docs.gopeed.com${docsLocale}/donate.html`}
                         className="block md:px-4 transition hover:text-primary"
                       >
                         <span>{t('donate')}</span>

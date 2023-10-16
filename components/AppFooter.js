@@ -9,7 +9,7 @@ import HeartSvg from '../public/images/nav/heart.svg'
 const AppFooter = (props) => {
   const { t } = useTranslation('common')
   const router = useRouter()
-  const docsLocale = router.locale == 'zh-CN' ? '/zh/' : ''
+  const docsLocale = router.locale == 'zh-CN' ? '/zh' : ''
   return (
     <footer className="py-20 md:py-40">
       <Container>
@@ -50,7 +50,7 @@ const AppFooter = (props) => {
                   </a>
                 </li>
                 <Link
-                  href="https://docs.gopeed.com/donate.html"
+                  href={`https://docs.gopeed.com${docsLocale}/donate.html`}
                   className="flex items-center space-x-3 transition hover:text-primary"
                 >
                   <HeartSvg className="w-5" />
