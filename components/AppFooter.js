@@ -50,7 +50,7 @@ const AppFooter = (props) => {
                   </a>
                 </li>
                 <Link
-                  href="https://github.com/GopeedLab/gopeed/blob/main/.donate/index.md#donate"
+                  href="https://docs.gopeed.com/donate.html"
                   className="flex items-center space-x-3 transition hover:text-primary"
                 >
                   <HeartSvg className="w-5" />

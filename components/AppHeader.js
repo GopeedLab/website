@@ -52,7 +52,7 @@ const AppHeader = (props) => {
                     </li>
                     <li>
                       <Link
-                        href="https://github.com/GopeedLab/gopeed/blob/main/.donate/index.md#donate"
+                        href="https://docs.gopeed.com/donate.html"
                         className="block md:px-4 transition hover:text-primary"
                       >
                         <span>{t('donate')}</span>
