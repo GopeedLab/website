@@ -49,7 +49,7 @@ const HeroSection = ({ release }) => {
 
     const getDownloadCdnUrl = (rawUrl) => {
       if (!githubAccessible) {
-        return `https://ghproxy.com/${rawUrl.replace('//', '/')}`
+        return `https://mirror.ghproxy.com/${rawUrl.replace('//', '/')}`
       } else {
         return rawUrl
       }
