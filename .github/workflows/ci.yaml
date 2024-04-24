@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install PNPM
-        run: npm install --global pnpm
+        run: npm install --global pnpm && pnpm setup
       - name: Install Vercel CLI
         run: pnpm install --global vercel@canary
       - name: Pull Vercel Environment Information
