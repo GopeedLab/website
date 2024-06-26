@@ -25,12 +25,13 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-i18next": "^12.1.5",
-    "ua-parser-js": "^1.0.33",
-    "blake3": "^2.0.0"
+    "ua-parser-js": "^1.0.33"
   },
   "devDependencies": {
+    "axios": "^1.7.2",
     "@svgr/webpack": "^8.0.1",
     "autoprefixer": "^10.4.13",
+    "blake3": "^2.0.0",
     "dotenv": "^16.4.5",
     "postcss": "^8.4.21",
     "prettier": "^2.8.4",
