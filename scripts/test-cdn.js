@@ -113,6 +113,12 @@ async function verifyCDNHashes() {
 
 
 (async () => {
-    await verifyCDNHashes();
-    console.log("All hashes matched.");
+    try {
+        await verifyCDNHashes();
+        console.log("All hashes matched.");
+        process.exit(0);
+    } catch (error) {
+        console.error("Error verifying CDN hashes:", error);
+        process.exit(1);
+    }
 })();
