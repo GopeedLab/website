@@ -9,15 +9,11 @@ import getConfig from 'next/config';
 
 const HeroSection = ({ release }) => {
   const router = useRouter()
-  const isCn = router.locale == 'zh-CN'
   const [githubIsFast, setGithubIsFast] = useState(true)
   const [downloadUrl, setDownloadUrl] = useState('https://github.com/GopeedLab/gopeed/releases/latest')
   const [cdnUrls, setCdnUrls] = useState([])
 
   useEffect(() => {
-    if (!isCn) {
-      return
-    }
     const controller = new AbortController();
     const { signal } = controller;
     const timeoutId = setTimeout(() => controller.abort(), 100);
@@ -33,7 +29,7 @@ const HeroSection = ({ release }) => {
           setGithubIsFast(false);
         }
       });
-  }, [isCn])
+  }, [true])
 
   useEffect(() => {
     const parser = new UAParser()
@@ -99,21 +95,21 @@ const HeroSection = ({ release }) => {
       </div>
       <Container>
         <div className="relative pt-36 ml-auto">
-          <div className="gap-12 md:flex md:items-center">
-            <div className="text-center sm:px-12 md:w-2/3 md:px-0 md:text-left lg:w-1/2">
+          <div className="gap-12">
+            <div className="text-center">
               <h1 className="text-3xl font-black dark:text-white lg:text-5xl">{t('home.title')}</h1>
               <div>
                 <p className="mt-8 text-lg text-gray-700 dark:text-gray-100">{t('home.desc')}</p>
-                <div className="mt-12 flex flex-col sm:flex-row sm:justify-center gap-4 sm:gap-6 md:justify-start" >
+                <div className="mt-12 flex flex-col sm:flex-row justify-center gap-4 sm:gap-6 md:justify-center" >
                   <Link
                     href={downloadUrl}
-                    className="relative flex h-12 w-full items-center justify-center px-6 before:absolute before:inset-0 before:rounded-lg before:bg-primary before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
+                    className="relative flex h-12  items-center justify-center px-6 before:absolute before:inset-0 before:rounded-lg before:bg-primary before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
                   >
                     <span className="relative text-base font-semibold text-white normal-case">{t('download')}</span>
                   </Link>
                   <Link
                     href="https://github.com/GopeedLab/gopeed/releases/latest"
-                    className="relative flex h-12 w-full items-center justify-center px-6 before:absolute before:inset-0 before:rounded-lg before:bg-primary/10 before:bg-gradient-to-b before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
+                    className="relative flex h-12  items-center justify-center px-6 before:absolute before:inset-0 before:rounded-lg before:bg-primary/10 before:bg-gradient-to-b before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
                   >
                     <span className="relative text-base font-semibold text-primary dark:text-white whitespace-nowrap">{t('multiPlatforms')}</span>
                   </Link>
@@ -122,20 +118,17 @@ const HeroSection = ({ release }) => {
                       <Link
                         key={index}
                         href={url}
-                        className="relative flex h-12 w-full items-center justify-center px-6 before:absolute before:inset-0 before:rounded-lg before:bg-primary/10 before:bg-gradient-to-b before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
+                        className="relative flex h-12  items-center justify-center px-6 before:absolute before:inset-0 before:rounded-lg before:bg-primary/10 before:bg-gradient-to-b before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
                       >
-                        <span className="relative text-base font-semibold text-primary dark:text-white">{`${t('mirror')+ (index + 1)}`}</span>
+                        <span className="relative text-base font-semibold text-primary dark:text-white">{`${t('mirror') + (index + 1)}`}</span>
                       </Link>
                     ))
                   }
-
                 </div>
               </div>
             </div>
-            <div className="relative mt-20 md:mt-0 md:w-2/5 lg:w-3/5">
-              <div className="md:-mr-72 lg:mr-0">
+            <div className="relative mt-20">
                 <Image className="h-full object-cover" priority src="/images/ui.png" alt="screenshot" width="1628" height="1233" />
-              </div>
             </div>
           </div>
           <div className="py-8 mt-16 border-y border-gray-100 dark:border-gray-800 sm:flex justify-between">
