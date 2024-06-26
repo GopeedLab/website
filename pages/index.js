@@ -6,6 +6,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
 import getLatestRelease from '../util/cache'
 
+
 const website = 'https://gopeed.com'
 const websiteImage = `${website}/images/logo.png`
 

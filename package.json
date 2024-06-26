@@ -7,7 +7,8 @@
     "build": "next build",
     "postbuild": "next-sitemap --config next-sitemap.config.js",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:cdn": "node ./scripts/test-cdn.js"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.16",
@@ -24,11 +25,13 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-i18next": "^12.1.5",
-    "ua-parser-js": "^1.0.33"
+    "ua-parser-js": "^1.0.33",
+    "blake3": "^2.0.0"
   },
   "devDependencies": {
     "@svgr/webpack": "^8.0.1",
     "autoprefixer": "^10.4.13",
+    "dotenv": "^16.4.5",
     "postcss": "^8.4.21",
     "prettier": "^2.8.4",
     "tailwindcss": "^3.2.6"

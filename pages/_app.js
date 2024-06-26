@@ -5,15 +5,7 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 
 if (typeof window !== 'undefined') {
-  const firebaseConfig = {
-    apiKey: "AIzaSyBG1Jyk-3J5lgSXAmmjyQjCnxTLQS5e-VU",
-    authDomain: "gopeed-4de76.firebaseapp.com",
-    projectId: "gopeed-4de76",
-    storageBucket: "gopeed-4de76.appspot.com",
-    messagingSenderId: "742279468136",
-    appId: "1:742279468136:web:ba58cebb34e2c9eec897dd",
-    measurementId: "G-V552GWR1DN"
-  };
+  const firebaseConfig = JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG);
   
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);

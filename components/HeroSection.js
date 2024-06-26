@@ -5,24 +5,34 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import UAParser from 'ua-parser-js'
 import Container from './Container'
+import getConfig from 'next/config';
 
 const HeroSection = ({ release }) => {
   const router = useRouter()
   const isCn = router.locale == 'zh-CN'
-  const [githubAccessible, setGithubAccessible] = useState(true)
-  const [downloadUrl, setDownloadUrl] = useState('')
+  const [githubIsFast, setGithubIsFast] = useState(true)
+  const [downloadUrl, setDownloadUrl] = useState('https://github.com/GopeedLab/gopeed/releases/latest')
+  const [cdnUrls, setCdnUrls] = useState([])
 
   useEffect(() => {
-    setGithubAccessible(true)
     if (!isCn) {
       return
     }
-    // check github accessible
-    Promise.race([fetch('https://github.com'), new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1000))]).catch((e) => {
-      if (e.message === 'timeout') {
-        setGithubAccessible(false)
-      }
-    })
+    const controller = new AbortController();
+    const { signal } = controller;
+    const timeoutId = setTimeout(() => controller.abort(), 100);
+
+    fetch('https://api.github.com', { signal, method: "HEAD" })
+      .then(response => {
+        console.log('fetch response', response);
+        //TODO only some github domains got no CORS policy like api.github.com
+        clearTimeout(timeoutId);
+      })
+      .catch(e => {
+        if (e.name === 'AbortError') {
+          setGithubIsFast(false);
+        }
+      });
   }, [isCn])
 
   useEffect(() => {
@@ -47,28 +57,36 @@ const HeroSection = ({ release }) => {
       ua.os = 'ios'
     }
 
-    const getDownloadCdnUrl = (rawUrl) => {
-      if (!githubAccessible) {
-        return `https://mirror.ghproxy.com/${rawUrl.replace('//', '/')}`
+    const getDownloadCdnUrls = async (rawUrl) => {
+
+      if (!githubIsFast) {
+        const { publicRuntimeConfig } = getConfig();
+        const cdnUrls = publicRuntimeConfig.cdnUrls.split(',').map((url) => url + rawUrl.replace('https://github.com', ''));
+        // const fastestUrl = await findFastestUrl(cdnUrls)
+        return [rawUrl, ...cdnUrls]
       } else {
-        return rawUrl
+        return [rawUrl]
       }
     }
 
     const osAssert = release.assert[ua.os]
     // first match os and arch
     if (osAssert?.[ua.arch]) {
-      setDownloadUrl(getDownloadCdnUrl(osAssert[ua.arch]))
+      getDownloadCdnUrls(osAssert[ua.arch]).then((urls) => {
+        setDownloadUrl(urls[0])
+        setCdnUrls(urls.slice(1))
+      }
+      )
+      return
+    } else if (osAssert) {
+      // second match os
+      getDownloadCdnUrls(osAssert[Object.keys(osAssert)[0]]).then((urls) => {
+        setDownloadUrl(urls[0])
+        setCdnUrls(urls.slice(1))
+      })
       return
     }
-    // second match os
-    if (osAssert) {
-      setDownloadUrl(getDownloadCdnUrl(osAssert[Object.keys(osAssert)[0]]))
-      return
-    }
-    // no match, fallback to github latest release
-    setDownloadUrl('https://github.com/GopeedLab/gopeed/releases/latest')
-  }, [githubAccessible, release.assert])
+  }, [githubIsFast, release.assert])
 
   const { t } = useTranslation('common')
   return (
@@ -86,7 +104,7 @@ const HeroSection = ({ release }) => {
               <h1 className="text-3xl font-black dark:text-white lg:text-5xl">{t('home.title')}</h1>
               <div>
                 <p className="mt-8 text-lg text-gray-700 dark:text-gray-100">{t('home.desc')}</p>
-                <div className="mt-12 flex justify-center gap-4 sm:gap-6 md:justify-start">
+                <div className="mt-12 flex flex-col sm:flex-row sm:justify-center gap-4 sm:gap-6 md:justify-start" >
                   <Link
                     href={downloadUrl}
                     className="relative flex h-12 w-full items-center justify-center px-6 before:absolute before:inset-0 before:rounded-lg before:bg-primary before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
@@ -97,8 +115,20 @@ const HeroSection = ({ release }) => {
                     href="https://github.com/GopeedLab/gopeed/releases/latest"
                     className="relative flex h-12 w-full items-center justify-center px-6 before:absolute before:inset-0 before:rounded-lg before:bg-primary/10 before:bg-gradient-to-b before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
                   >
-                    <span className="relative text-base font-semibold text-primary dark:text-white">{t('downloadMore')}</span>
+                    <span className="relative text-base font-semibold text-primary dark:text-white whitespace-nowrap">{t('multiPlatforms')}</span>
                   </Link>
+                  {
+                    cdnUrls.map((url, index) => (
+                      <Link
+                        key={index}
+                        href={url}
+                        className="relative flex h-12 w-full items-center justify-center px-6 before:absolute before:inset-0 before:rounded-lg before:bg-primary/10 before:bg-gradient-to-b before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
+                      >
+                        <span className="relative text-base font-semibold text-primary dark:text-white">{`${t('mirror')+ (index + 1)}`}</span>
+                      </Link>
+                    ))
+                  }
+
                 </div>
               </div>
             </div>

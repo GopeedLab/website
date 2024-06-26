@@ -7,7 +7,8 @@ export default async function getLatestRelease() {
   if (value) {
     return value
   } else {
-    const data = await (await fetch('https://api.github.com/repos/GopeedLab/gopeed/releases/latest')).json()
+    const res = await fetch('https://api.github.com/repos/GopeedLab/gopeed/releases/latest')
+    const data = await res.json();
     cache.put(keyRelease, data, 1000 * 60 * 30)
     return data
   }

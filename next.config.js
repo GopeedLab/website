@@ -11,6 +11,9 @@ const nextConfig = {
     })
     return config
   },
+  publicRuntimeConfig: {
+    cdnUrls: process.env.CDNURLS,
+  },
 }
 
 module.exports = nextConfig
