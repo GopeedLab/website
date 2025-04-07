@@ -1,36 +1,31 @@
 {
-  "name": "website",
+  "name": "gopeed-websitev2",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "postbuild": "next-sitemap --config next-sitemap.config.js",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "@headlessui/react": "^1.7.16",
-    "clsx": "^2.0.0",
-    "country-flag-icons": "^1.5.7",
-    "eslint": "8.34.0",
-    "eslint-config-next": "13.4.10",
-    "firebase": "^9.23.0",
-    "i18next": "^22.4.9",
-    "memory-cache": "^0.2.0",
-    "next": "13.4.10",
-    "next-i18next": "^13.1.5",
-    "next-sitemap": "^4.0.1",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-i18next": "^12.1.5",
-    "ua-parser-js": "^1.0.33"
+    "@heroicons/react": "2.0.18",
+    "clsx": "2.0.0",
+    "framer-motion": "10.16.4",
+    "next": "14.1.0",
+    "react": "^18",
+    "react-dom": "^18",
+    "tailwind-merge": "1.14.0"
   },
   "devDependencies": {
-    "@svgr/webpack": "^8.0.1",
-    "autoprefixer": "^10.4.13",
-    "postcss": "^8.4.21",
-    "prettier": "^2.8.4",
-    "tailwindcss": "^3.2.6"
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.1.0",
+    "postcss": "^8",
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5"
   }
 }

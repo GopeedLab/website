@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1920" height="1080" fill="#1F2937"/>
+  <rect x="40" y="40" width="1840" height="1000" rx="8" fill="#374151"/>
+  <rect x="60" y="60" width="1800" height="40" rx="4" fill="#4B5563"/>
+  <rect x="60" y="120" width="1800" height="920" rx="4" fill="#4B5563"/>
+  <text x="960" y="85" text-anchor="middle" fill="#9CA3AF" font-family="Arial" font-size="16">桌面端预览图</text>
+</svg> 

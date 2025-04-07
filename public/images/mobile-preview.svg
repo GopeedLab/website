@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="256" height="512" viewBox="0 0 256 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="256" height="512" fill="#1F2937"/>
+  <rect x="16" y="16" width="224" height="480" rx="24" fill="#374151"/>
+  <rect x="32" y="32" width="192" height="32" rx="4" fill="#4B5563"/>
+  <rect x="32" y="80" width="192" height="400" rx="4" fill="#4B5563"/>
+  <text x="128" y="52" text-anchor="middle" fill="#9CA3AF" font-family="Arial" font-size="12">移动端预览图</text>
+</svg> 
