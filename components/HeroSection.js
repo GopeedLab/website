@@ -47,6 +47,26 @@ const HeroSection = ({ release }) => {
       ua.os = 'ios'
     }
 
+    // If the OS is not recognized, try userAgent Data API
+    const tryGetArchWithUserAgentData = async () => {
+      if (!ua.arch && typeof navigator !== 'undefined' && navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
+        try {
+          const highEntropyValues = await navigator.userAgentData.getHighEntropyValues(['architecture'])
+          if (highEntropyValues && highEntropyValues.architecture) {
+            ua.arch = highEntropyValues.architecture.toLowerCase()
+            if (ua.arch === 'x86_64') {
+              ua.arch = 'amd64'
+            }
+            if (ua.arch === 'arm') {
+              ua.arch = 'arm64'
+            }
+          }
+        } catch (error) {
+          console.warn('Failed to get architecture from userAgentData:', error)
+        }
+      }
+    }
+
     const getDownloadCdnUrl = (rawUrl) => {
       if (!githubAccessible) {
         return `https://ghfast.top/${rawUrl.replace('//', '/')}`
@@ -55,19 +75,25 @@ const HeroSection = ({ release }) => {
       }
     }
 
-    const osAssert = release.assert[ua.os]
-    // first match os and arch
-    if (osAssert?.[ua.arch]) {
-      setDownloadUrl(getDownloadCdnUrl(osAssert[ua.arch]))
-      return
+    const setDownloadUrlWithArch = async () => {
+      await tryGetArchWithUserAgentData()
+
+      const osAssert = release.assert[ua.os]
+      // first match os and arch
+      if (osAssert?.[ua.arch]) {
+        setDownloadUrl(getDownloadCdnUrl(osAssert[ua.arch]))
+        return
+      }
+      // second match os
+      if (osAssert) {
+        setDownloadUrl(getDownloadCdnUrl(osAssert[Object.keys(osAssert)[0]]))
+        return
+      }
+      // no match, fallback to github latest release
+      setDownloadUrl('https://github.com/GopeedLab/gopeed/releases/latest')
     }
-    // second match os
-    if (osAssert) {
-      setDownloadUrl(getDownloadCdnUrl(osAssert[Object.keys(osAssert)[0]]))
-      return
-    }
-    // no match, fallback to github latest release
-    setDownloadUrl('https://github.com/GopeedLab/gopeed/releases/latest')
+
+    setDownloadUrlWithArch()
   }, [githubAccessible, release.assert])
 
   const { t } = useTranslation('common')
