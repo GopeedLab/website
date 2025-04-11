@@ -79,13 +79,15 @@ export async function getStaticProps({ locale }) {
               amd64_portable: findDownloadUrl('windows', null, 'amd64', 'portable', true),
             },
             macos: {
-              amd64: findDownloadUrl('macos', null, null),
+              amd64: findDownloadUrl('macos', null, 'amd64'),
+              arm64: findDownloadUrl('macos', null, 'arm64'),
             },
             linux: {
               amd64: findDownloadUrl('linux', null, 'amd64'),
             },
             android: {
-              arm64: findDownloadUrl('android', null, null),
+              arm64: findDownloadUrl('android', null, 'arm64'),
+              x86: findDownloadUrl('android', null, 'x86_64'),
             },
             ios: {
               arm64: findDownloadUrl('ios', null, null),
