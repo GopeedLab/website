@@ -13,5 +13,6 @@
   "home.feat2.title": "高速下载",
   "home.feat2.desc": "底层使用golang协程并发下载",
   "home.feat3.title": "界面美观",
-  "home.feat3.desc": "遵循Material Design规范"
+  "home.feat3.desc": "遵循Material Design规范",
+  "wechat_follow": "关注公众号获取更新资讯"
 }

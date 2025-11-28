@@ -13,9 +13,15 @@ const AppFooter = (props) => {
   return (
     <footer className="py-20 md:py-40">
       <Container>
-        <div className="m-auto md:w-10/12 lg:w-8/12 xl:w-6/12">
+        <div className="m-auto md:w-11/12 lg:w-10/12 xl:w-9/12">
           <div className="flex flex-wrap items-center justify-between md:flex-nowrap">
-            <div className="flex w-full justify-center space-x-12 text-gray-600 dark:text-gray-300 sm:w-7/12 md:justify-start">
+            <div className="mb-6 flex w-full flex-col items-center justify-center sm:mb-0 sm:w-3/12 sm:items-start">
+              <div className="w-32 overflow-hidden rounded-lg shadow-lg">
+                <Image src="/images/wechat.png" alt="WeChat" width={258} height={258} />
+              </div>
+              <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">{t('wechat_follow')}</p>
+            </div>
+            <div className="flex w-full justify-center space-x-12 text-gray-600 dark:text-gray-300 sm:w-6/12 md:justify-start">
               <ul className="list-inside list-disc space-y-8">
                 <li>
                   <Link href="/" className="transition hover:text-primary">
@@ -58,7 +64,7 @@ const AppFooter = (props) => {
                 </Link>
               </ul>
             </div>
-            <div className="m-auto mt-16 w-10/12 space-y-6 text-center sm:mt-auto sm:w-5/12 sm:text-left">
+            <div className="m-auto mt-16 w-10/12 space-y-6 text-center sm:mt-auto sm:w-3/12 sm:text-left">
               <span className="block text-gray-500 dark:text-gray-400">Copyright &copy; {new Date().getFullYear()} - Gopeed</span>
             </div>
           </div>

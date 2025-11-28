@@ -13,5 +13,6 @@
   "home.feat2.title": "High Speed",
   "home.feat2.desc": "Using Golang coroutines for concurrent downloads at the underlying level",
   "home.feat3.title": "Beautiful UI",
-  "home.feat3.desc": "Follow Material Design specifications"
+  "home.feat3.desc": "Follow Material Design specifications",
+  "wechat_follow": "Follow the official account to get updates"
 }
