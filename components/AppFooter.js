@@ -55,10 +55,7 @@ const AppFooter = (props) => {
                     <span>Discord</span>
                   </a>
                 </li>
-                <Link
-                  href={`https://docs.gopeed.com${docsLocale}/donate.html`}
-                  className="flex items-center space-x-3 transition hover:text-primary"
-                >
+                <Link href={`https://docs.gopeed.com${docsLocale}/donate.html`} className="flex items-center space-x-3 transition hover:text-primary">
                   <HeartSvg className="w-5" />
                   <span>{t('donate')}</span>
                 </Link>
