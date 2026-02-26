@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <defs>
+    <linearGradient id="cloudBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#2563eb;stop-opacity:0.2" />
+    </linearGradient>
+    <linearGradient id="panelGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e293b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="450" fill="url(#cloudBg)" />
+
+  <!-- Grid pattern -->
+  <pattern id="cloudGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#3b82f6" stroke-width="0.5" opacity="0.1" />
+  </pattern>
+  <rect width="800" height="450" fill="url(#cloudGrid)" />
+
+  <!-- Cloud storage icons -->
+  <g transform="translate(100, 60)">
+    <!-- Main panel -->
+    <rect x="0" y="0" width="600" height="330" rx="16" fill="url(#panelGrad)" stroke="#475569"
+      stroke-width="2" />
+
+    <!-- Title bar -->
+    <text x="30" y="45" font-family="Arial, sans-serif" font-size="22" font-weight="bold"
+      fill="white">
+      Cloud Storage
+    </text>
+
+    <!-- Cloud service icons -->
+    <g transform="translate(30, 80)">
+      <!-- Dropbox -->
+      <g>
+        <rect x="0" y="0" width="80" height="80" rx="12" fill="#0061ff" opacity="0.9" />
+        <path d="M 20 25 L 40 35 L 60 25 L 40 15 Z M 20 45 L 40 55 L 60 45 L 40 35 Z" fill="white" />
+        <text x="40" y="72" font-family="Arial, sans-serif" font-size="10" fill="white"
+          text-anchor="middle">Dropbox</text>
+      </g>
+
+      <!-- Google Drive -->
+      <g transform="translate(100, 0)">
+        <rect x="0" y="0" width="80" height="80" rx="12" fill="#4285f4" opacity="0.9" />
+        <path d="M 28 25 L 40 25 L 52 25 L 60 40 L 52 40 L 40 40 L 28 40 Z" fill="#34a853" />
+        <path d="M 52 40 L 60 40 L 52 55 L 44 55 Z" fill="#fbbc04" />
+        <path d="M 28 40 L 36 55 L 44 55 L 52 40 Z" fill="#ea4335" />
+        <text x="40" y="72" font-family="Arial, sans-serif" font-size="10" fill="white"
+          text-anchor="middle">Drive</text>
+      </g>
+
+      <!-- OneDrive -->
+      <g transform="translate(200, 0)">
+        <rect x="0" y="0" width="80" height="80" rx="12" fill="#0078d4" opacity="0.9" />
+        <path
+          d="M 25 35 Q 25 25 35 25 L 55 25 Q 60 25 60 30 L 60 45 Q 60 50 55 50 L 30 50 Q 25 50 25 45 Z"
+          fill="white" />
+        <circle cx="50" cy="42" r="6" fill="#0078d4" />
+        <text x="40" y="72" font-family="Arial, sans-serif" font-size="10" fill="white"
+          text-anchor="middle">OneDrive</text>
+      </g>
+
+      <!-- iCloud -->
+      <g transform="translate(300, 0)">
+        <rect x="0" y="0" width="80" height="80" rx="12" fill="#3693f3" opacity="0.9" />
+        <path
+          d="M 50 30 Q 50 25 45 25 Q 40 25 38 28 Q 35 26 32 28 Q 28 30 28 35 Q 23 36 23 41 Q 23 46 28 46 L 52 46 Q 57 46 57 41 Q 57 36 52 35 Q 52 30 50 30 Z"
+          fill="white" />
+        <text x="40" y="72" font-family="Arial, sans-serif" font-size="10" fill="white"
+          text-anchor="middle">iCloud</text>
+      </g>
+
+      <!-- Baidu Pan -->
+      <g transform="translate(400, 0)">
+        <rect x="0" y="0" width="80" height="80" rx="12" fill="#2932e1" opacity="0.9" />
+        <circle cx="40" cy="35" r="8" fill="white" />
+        <rect x="32" y="35" width="16" height="12" fill="white" />
+        <text x="40" y="72" font-family="Arial, sans-serif" font-size="10" fill="white"
+          text-anchor="middle">百度云</text>
+      </g>
+    </g>
+
+    <!-- File transfer visualization -->
+    <g transform="translate(30, 180)">
+      <!-- Files -->
+      <g>
+        <rect x="0" y="0" width="240" height="50" rx="8" fill="#334155" opacity="0.6" />
+        <g transform="translate(15, 17)">
+          <rect x="0" y="0" width="16" height="16" rx="2" fill="#f59e0b" />
+          <text x="8" y="12" font-family="monospace" font-size="10" fill="white"
+            text-anchor="middle">📄</text>
+        </g>
+        <text x="45" y="30" font-family="monospace" font-size="14" fill="white">documents.zip</text>
+        <text x="210" y="30" font-family="monospace" font-size="11" fill="#10b981" text-anchor="end">✓
+          2.4 GB</text>
+      </g>
+
+      <g transform="translate(0, 60)">
+        <rect x="0" y="0" width="240" height="50" rx="8" fill="#334155" opacity="0.6" />
+        <g transform="translate(15, 17)">
+          <rect x="0" y="0" width="16" height="16" rx="2" fill="#8b5cf6" />
+          <text x="8" y="12" font-family="monospace" font-size="10" fill="white"
+            text-anchor="middle">🎬</text>
+        </g>
+        <text x="45" y="30" font-family="monospace" font-size="14" fill="white">videos.rar</text>
+        <text x="210" y="30" font-family="monospace" font-size="11" fill="#3b82f6" text-anchor="end">⟳
+          5.7 GB</text>
+      </g>
+
+      <!-- Download arrow -->
+      <g transform="translate(280, 45)">
+        <path d="M 0 0 L 40 0" stroke="#10b981" stroke-width="3" stroke-dasharray="5,5"
+          opacity="0.7">
+          <animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s"
+            repeatCount="indefinite" />
+        </path>
+        <path d="M 35 -5 L 40 0 L 35 5" fill="#10b981" opacity="0.7" />
+      </g>
+
+      <!-- Download icon -->
+      <g transform="translate(350, 30)">
+        <circle cx="20" cy="20" r="30" fill="#10b981" opacity="0.9" />
+        <path d="M 20 10 L 20 26 M 14 20 L 20 26 L 26 20" stroke="white" stroke-width="3"
+          stroke-linecap="round" stroke-linejoin="round" fill="none" />
+        <path d="M 10 32 L 30 32" stroke="white" stroke-width="3" stroke-linecap="round" />
+      </g>
+
+      <!-- Speed indicator -->
+      <g transform="translate(420, 35)">
+        <rect x="0" y="0" width="120" height="35" rx="17.5" fill="#1e293b" stroke="#10b981"
+          stroke-width="2" />
+        <text x="60" y="15" font-family="Arial, sans-serif" font-size="11" fill="#94a3b8"
+          text-anchor="middle">Speed</text>
+        <text x="60" y="28" font-family="Arial, sans-serif" font-size="13" font-weight="bold"
+          fill="#10b981" text-anchor="middle">50 MB/s</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Decorative elements -->
+  <circle cx="730" cy="90" r="45" fill="#3b82f6" opacity="0.15" />
+  <circle cx="70" cy="380" r="30" fill="#3b82f6" opacity="0.15" />
+</svg>

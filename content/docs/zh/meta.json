@@ -1,0 +1,14 @@
+{
+  "root": true,
+  "title": "文档",
+  "pages": [
+    "index",
+    "install",
+    "---开发---",
+    "dev",
+    "dev-api",
+    "dev-extension",
+    "---支持---",
+    "donate"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "root": true,
+  "title": "Documentation",
+  "pages": [
+    "index",
+    "install",
+    "---Development---",
+    "dev",
+    "dev-api",
+    "dev-extension",
+    "---Support---",
+    "donate"
+  ]
+}
