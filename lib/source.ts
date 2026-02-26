@@ -1,14 +1,25 @@
 import { docs } from "fumadocs-mdx:collections/server";
 import { type InferPageType, loader } from "fumadocs-core/source";
 import { lucideIconsPlugin } from "fumadocs-core/source/lucide-icons";
+import { openapiPlugin, openapiSource } from "fumadocs-openapi/server";
 import { i18n } from "@/lib/i18n";
+import { openapi } from "@/lib/openapi";
 
-// See https://fumadocs.dev/docs/headless/source-api for more info
+// i18n docs source
 export const source = loader({
   baseUrl: "/docs",
   source: docs.toFumadocsSource(),
   plugins: [lucideIconsPlugin()],
   i18n,
+});
+
+// Standalone OpenAPI source — no i18n
+export const openapiPageSource = loader({
+  baseUrl: "/docs/openapi",
+  source: await openapiSource(openapi, {
+    groupBy: "tag",
+  }),
+  plugins: [openapiPlugin()],
 });
 
 export function getPageImage(page: InferPageType<typeof source>) {

@@ -85,6 +85,10 @@ const translations: Record<Locale, Record<string, string>> = {
     "downloads.file": "File",
     "downloads.preparing": "Preparing...",
 
+    // Docs sidebar tabs
+    "docs.tab.documentation": "Documentation",
+    "docs.tab.apiReference": "API Reference",
+
     // Footer
     "footer.docs": "Documentation",
     "footer.privacy": "Privacy Policy",
@@ -172,6 +176,10 @@ const translations: Record<Locale, Record<string, string>> = {
     "downloads.file": "文件",
     "downloads.preparing": "准备中...",
 
+    // Docs sidebar tabs
+    "docs.tab.documentation": "文档",
+    "docs.tab.apiReference": "API 参考",
+
     // Footer
     "footer.docs": "文档",
     "footer.privacy": "隐私政策",
@@ -258,6 +266,10 @@ const translations: Record<Locale, Record<string, string>> = {
     "downloads.universal": "通用版本",
     "downloads.file": "檔案",
     "downloads.preparing": "準備中...",
+
+    // Docs sidebar tabs
+    "docs.tab.documentation": "文件",
+    "docs.tab.apiReference": "API 參考",
 
     // Footer
     "footer.docs": "文件",

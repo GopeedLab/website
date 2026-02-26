@@ -42,6 +42,11 @@ function detectLocale(request: NextRequest): string {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Skip locale handling for the standalone OpenAPI reference route
+  if (pathname.startsWith("/docs/openapi")) {
+    return NextResponse.next();
+  }
+
   // Normalize English locale: redirect /en/* to /* (hideLocale: "default-locale")
   if (pathname.startsWith("/en/") || pathname === "/en") {
     const url = request.nextUrl.clone();
