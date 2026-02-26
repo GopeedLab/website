@@ -48,7 +48,11 @@ export function LocalePreferenceTracker() {
       })();
 
       // Sync cookie on same-origin navigations (e.g., language switch in docs)
-      if (!savedLocale || savedLocale === currentLocale || isSameOriginReferrer) {
+      if (
+        !savedLocale ||
+        savedLocale === currentLocale ||
+        isSameOriginReferrer
+      ) {
         setLocalePreference(currentLocale);
       }
       return;

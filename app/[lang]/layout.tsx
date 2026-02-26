@@ -4,8 +4,8 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { LocalePreferenceTracker } from "@/components/LocalePreferenceTracker";
 import { i18n, type Locale, locales } from "@/lib/i18n";
-import { getTranslation } from "@/lib/i18n/translations";
 import { localeNames } from "@/lib/i18n/config";
+import { getTranslation } from "@/lib/i18n/translations";
 import { LocaleProvider } from "@/lib/locale-context";
 
 export async function generateMetadata({
