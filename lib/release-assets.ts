@@ -299,13 +299,13 @@ function getBasePlatforms(): PlatformDef[] {
     {
       id: "android",
       name: "Android",
-      icon: "mobile",
+      icon: "android",
       operatingSystems: [{ id: "android", name: "Android", architectures: [] }],
     },
     {
       id: "ios",
       name: "iOS",
-      icon: "mobile",
+      icon: "ios",
       operatingSystems: [{ id: "ios", name: "iOS", architectures: [] }],
     },
     {
@@ -317,7 +317,7 @@ function getBasePlatforms(): PlatformDef[] {
     {
       id: "qnap",
       name: "QNAP",
-      icon: "server",
+      icon: "qnap",
       operatingSystems: [{ id: "qnap", name: "QNAP", architectures: [] }],
     },
     {

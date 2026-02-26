@@ -5,15 +5,18 @@ import {
   ClipboardDocumentCheckIcon,
   ClipboardIcon,
   CommandLineIcon,
-  ComputerDesktopIcon,
-  CubeIcon,
-  DevicePhoneMobileIcon,
   GlobeAltIcon,
-  ServerIcon,
-  WindowIcon,
 } from "@heroicons/react/24/outline";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
+import {
+  FaAndroid,
+  FaApple,
+  FaDocker,
+  FaLinux,
+  FaWindows,
+} from "react-icons/fa";
+import { SiIos, SiQnap } from "react-icons/si";
 import type { ReleaseAsset } from "@/lib/data";
 import { useLocale } from "@/lib/locale-context";
 import { detectPlatform } from "@/lib/platform-detector";
@@ -31,14 +34,15 @@ import {
 // icon 标识符 → React 组件映射
 const PLATFORM_ICONS: Record<
   string,
-  React.ForwardRefExoticComponent<React.SVGProps<SVGSVGElement>>
+  React.ForwardRefExoticComponent<React.SVGProps<SVGSVGElement>> | any
 > = {
-  windows: WindowIcon,
-  macos: ComputerDesktopIcon,
-  linux: CommandLineIcon,
-  mobile: DevicePhoneMobileIcon,
-  docker: CubeIcon,
-  server: ServerIcon,
+  windows: FaWindows,
+  macos: FaApple,
+  linux: FaLinux,
+  android: FaAndroid,
+  ios: SiIos,
+  docker: FaDocker,
+  qnap: SiQnap,
   web: GlobeAltIcon,
 };
 
@@ -185,19 +189,17 @@ export function Downloads({ version, releaseAssets }: DownloadsProps) {
 
     if (isCommand) {
       return (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center mt-10"
-        >
-          <div className="w-full max-w-2xl">
-            <div className="flex items-center justify-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
+        <div className="flex flex-col items-center w-full">
+          <div className="w-full">
+            <div className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
               <CommandLineIcon className="h-5 w-5 mr-2 text-primary-500" />
               {t("downloads.installVia")}
             </div>
-            <div className="relative">
-              <div className="bg-gradient-to-r from-gray-900 to-gray-800 dark:from-gray-950 dark:to-gray-900 rounded-xl p-5 shadow-2xl border border-gray-700/50 dark:border-gray-800">
-                <div className="flex items-center group">
+            <div className="relative group/cmd">
+              <div className="absolute -inset-0.5 bg-linear-to-br from-primary-500/30 to-transparent rounded-2xl opacity-0 group-hover/cmd:opacity-100 blur-sm transition-opacity duration-500" />
+              <div className="relative bg-gray-900 dark:bg-gray-950 rounded-2xl p-5 shadow-2xl border border-gray-800 group-hover/cmd:border-primary-500/30 transition-colors duration-500 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-grid bg-[length:20px_20px] opacity-5 pointer-events-none" />
+                <div className="flex items-center relative z-10">
                   <div className="text-primary-400 font-mono text-base mr-3 select-none">
                     $
                   </div>
@@ -212,21 +214,20 @@ export function Downloads({ version, releaseAssets }: DownloadsProps) {
                       setCopiedIndex(commandId);
                       setTimeout(() => setCopiedIndex(null), 2000);
                     }}
-                    className="ml-4 p-2.5 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-200 flex-shrink-0 border border-white/10 hover:border-white/20"
+                    className="ml-4 p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-all duration-200 flex-shrink-0 border border-white/10 hover:border-white/20"
                     title="Copy command"
                   >
                     {copiedIndex === commandId ? (
                       <ClipboardDocumentCheckIcon className="w-5 h-5 text-green-400" />
                     ) : (
-                      <ClipboardIcon className="w-5 h-5 text-gray-400 group-hover:text-gray-200 transition-colors" />
+                      <ClipboardIcon className="w-5 h-5 text-gray-400 group-hover/cmd:text-gray-200 transition-colors" />
                     )}
                   </motion.button>
                 </div>
               </div>
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl opacity-20 blur-sm -z-10" />
             </div>
           </div>
-        </motion.div>
+        </div>
       );
     }
 
@@ -244,17 +245,34 @@ export function Downloads({ version, releaseAssets }: DownloadsProps) {
     };
 
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col items-center mt-10"
-      >
+      <div className="flex flex-col sm:flex-row items-center justify-between w-full gap-6">
+        <div className="flex flex-wrap gap-3 text-sm order-2 sm:order-1">
+          <div className="flex items-center px-3 py-1.5 rounded-full bg-gray-100/80 dark:bg-gray-800/80 border border-gray-200/50 dark:border-gray-700/50 text-gray-600 dark:text-gray-400 backdrop-blur-sm">
+            <span className="font-medium text-gray-900 dark:text-gray-200 mr-1.5">
+              {t("downloads.version")}:
+            </span>
+            {version}
+          </div>
+          <div className="flex items-center px-3 py-1.5 rounded-full bg-gray-100/80 dark:bg-gray-800/80 border border-gray-200/50 dark:border-gray-700/50 text-gray-600 dark:text-gray-400 backdrop-blur-sm">
+            <span className="font-medium text-gray-900 dark:text-gray-200 mr-1.5">
+              {t("downloads.file")}:
+            </span>
+            {selectedFile.name}
+          </div>
+          <div className="flex items-center px-3 py-1.5 rounded-full bg-gray-100/80 dark:bg-gray-800/80 border border-gray-200/50 dark:border-gray-700/50 text-gray-600 dark:text-gray-400 backdrop-blur-sm">
+            <span className="font-medium text-gray-900 dark:text-gray-200 mr-1.5">
+              {t("downloads.size")}:
+            </span>
+            {sizeInMB} MB
+          </div>
+        </div>
+
         <motion.button
           onClick={handleDownload}
           disabled={isDownloading}
           whileHover={{ scale: isDownloading ? 1 : 1.05 }}
           whileTap={{ scale: isDownloading ? 1 : 0.95 }}
-          className="bg-linear-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white px-8 py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all shadow-lg shadow-primary-500/20 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-linear-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white px-8 py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all shadow-lg shadow-primary-500/20 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed order-1 sm:order-2 w-full sm:w-auto"
         >
           {isDownloading ? (
             <svg
@@ -287,34 +305,7 @@ export function Downloads({ version, releaseAssets }: DownloadsProps) {
             </>
           )}
         </motion.button>
-
-        <div className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm text-gray-500 dark:text-gray-400">
-          <span className="flex items-center">
-            <span className="font-medium text-gray-700 dark:text-gray-300 mr-1.5">
-              {t("downloads.version")}:
-            </span>
-            {version}
-          </span>
-          <span className="hidden sm:inline text-gray-300 dark:text-gray-600">
-            |
-          </span>
-          <span className="flex items-center">
-            <span className="font-medium text-gray-700 dark:text-gray-300 mr-1.5">
-              {t("downloads.file")}:
-            </span>
-            {selectedFile.name}
-          </span>
-          <span className="hidden sm:inline text-gray-300 dark:text-gray-600">
-            |
-          </span>
-          <span className="flex items-center">
-            <span className="font-medium text-gray-700 dark:text-gray-300 mr-1.5">
-              {t("downloads.size")}:
-            </span>
-            {sizeInMB} MB
-          </span>
-        </div>
-      </motion.div>
+      </div>
     );
   };
 
@@ -346,138 +337,199 @@ export function Downloads({ version, releaseAssets }: DownloadsProps) {
         </motion.div>
 
         {/* 选择器区域 */}
-        <div className="max-w-6xl mx-auto bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-100 dark:border-gray-800 p-6 sm:p-8 shadow-xl shadow-primary-500/5">
-          {/* Row 1: Platform Selection */}
-          <div className="mb-8">
-            <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3 uppercase tracking-wider">
-              {t("downloads.platform")}
-            </p>
-            <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:gap-3">
-              {platforms.map((platform, index) => (
-                <motion.button
-                  key={platform.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.2, delay: index * 0.05 }}
-                  onClick={() => handlePlatformSelect(platform)}
-                  className={`flex flex-col items-center justify-center w-full h-20 sm:w-24 sm:h-24 rounded-xl transition-all duration-200 border-2 ${
-                    selectedPlatform?.id === platform.id
-                      ? "bg-primary-50 dark:bg-primary-900/20 border-primary-500 text-primary-700 dark:text-primary-400 shadow-lg shadow-primary-500/10 scale-105"
-                      : "bg-white dark:bg-gray-800 border-transparent hover:border-gray-200 dark:hover:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-750 hover:-translate-y-1"
-                  }`}
-                >
-                  <platform.resolvedIcon
-                    className={`h-6 w-6 mb-1 ${
+        <div className="relative max-w-5xl mx-auto group">
+          {/* Hover Glow Effect */}
+          <div className="absolute -inset-0.5 bg-linear-to-br from-primary-500/30 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-700" />
+
+          <div className="relative bg-white/80 dark:bg-gray-900/80 backdrop-blur-2xl rounded-3xl border border-gray-200/50 dark:border-gray-800/50 group-hover:border-primary-500/30 transition-colors duration-500 shadow-2xl shadow-primary-500/5 overflow-hidden flex flex-col md:flex-row">
+            {/* Top Highlight Line */}
+            <div className="absolute top-0 left-0 right-0 h-[1px] bg-linear-to-r from-transparent via-primary-500/0 to-transparent group-hover:via-primary-500/50 transition-all duration-500 z-20" />
+
+            {/* Inner Decorative Gradient */}
+            <div className="absolute top-0 right-0 -mt-4 -mr-4 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl group-hover:bg-primary-500/20 transition-colors duration-500 z-10 pointer-events-none" />
+
+            {/* Subtle Grid Pattern */}
+            <div className="absolute inset-0 bg-gradient-grid bg-[length:20px_20px] opacity-0 group-hover:opacity-5 dark:group-hover:opacity-10 transition-opacity duration-500 z-10 pointer-events-none" />
+
+            {/* Left Sidebar: Platform Selection */}
+            <div className="relative z-20 w-full md:w-64 bg-gray-50/50 dark:bg-gray-950/50 border-b md:border-b-0 md:border-r border-gray-200/50 dark:border-gray-800/50 p-6 flex flex-col">
+              <p className="text-xs font-bold text-gray-400 dark:text-gray-500 mb-4 uppercase tracking-widest">
+                {t("downloads.platform")}
+              </p>
+              <div className="flex flex-row flex-wrap md:flex-col gap-2 pb-2 md:pb-0">
+                {platforms.map((platform) => (
+                  <motion.button
+                    key={platform.id}
+                    onClick={() => handlePlatformSelect(platform)}
+                    className={`flex items-center justify-center md:justify-start w-[calc(50%-0.25rem)] sm:w-auto md:w-full px-4 py-3 rounded-xl transition-all duration-300 ${
                       selectedPlatform?.id === platform.id
-                        ? "text-primary-600 dark:text-primary-400"
-                        : "text-gray-400 dark:text-gray-500"
+                        ? "bg-white dark:bg-gray-800 shadow-md shadow-primary-500/10 border border-primary-500/20 text-primary-600 dark:text-primary-400"
+                        : "hover:bg-white/50 dark:hover:bg-gray-800/50 text-gray-600 dark:text-gray-400 border border-transparent"
                     }`}
-                  />
-                  <span className="text-xs font-medium text-center">
-                    {platform.name}
-                  </span>
-                </motion.button>
-              ))}
+                  >
+                    <platform.resolvedIcon
+                      className={`h-5 w-5 mr-2 md:mr-3 transition-transform duration-300 ${
+                        selectedPlatform?.id === platform.id ? "scale-110" : ""
+                      }`}
+                    />
+                    <span className="text-sm font-medium whitespace-nowrap">
+                      {platform.name}
+                    </span>
+                  </motion.button>
+                ))}
+              </div>
+            </div>
+
+            {/* Right Content: Options & Download */}
+            <div className="relative z-20 flex-1 p-6 sm:p-8 flex flex-col min-h-[320px] md:min-h-[400px] overflow-hidden justify-center">
+              <AnimatePresence mode="wait">
+                {selectedPlatform && (
+                  <motion.div
+                    key={selectedPlatform.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3 }}
+                    className="w-full flex flex-col justify-center relative z-10"
+                  >
+                    {(() => {
+                      const hasOptions =
+                        selectedPlatform.operatingSystems.length > 1 ||
+                        (selectedOS && selectedOS.architectures.length > 1) ||
+                        (selectedArch && selectedArch.packageTypes.length > 1);
+
+                      return (
+                        <div className="flex flex-col w-full">
+                          {hasOptions && (
+                            <div className="space-y-6 mb-8 pb-8 border-b border-gray-200/50 dark:border-gray-800/50">
+                              {/* Row 2: OS Selection */}
+                              {selectedPlatform.operatingSystems.length > 1 && (
+                                <div>
+                                  <p className="text-xs font-bold text-gray-400 dark:text-gray-500 mb-3 uppercase tracking-widest">
+                                    {t("downloads.os")}
+                                  </p>
+                                  <div className="flex flex-wrap gap-2">
+                                    {selectedPlatform.operatingSystems.map(
+                                      (os) => (
+                                        <button
+                                          type="button"
+                                          key={os.id}
+                                          onClick={() => handleOSSelect(os)}
+                                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border ${
+                                            selectedOS?.id === os.id
+                                              ? "bg-gray-900 dark:bg-white text-white dark:text-gray-900 border-transparent shadow-md"
+                                              : "bg-white/50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300 border-gray-200/50 dark:border-gray-700/50 hover:border-gray-300 dark:hover:border-gray-600"
+                                          }`}
+                                        >
+                                          {os.name}
+                                        </button>
+                                      ),
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+
+                              {selectedOS && (
+                                <AnimatePresence mode="wait">
+                                  <motion.div
+                                    key={selectedOS.id}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="space-y-6"
+                                  >
+                                    {/* Row 3: Architecture Selection */}
+                                    {selectedOS.architectures.length > 1 && (
+                                      <div>
+                                        <p className="text-xs font-bold text-gray-400 dark:text-gray-500 mb-3 uppercase tracking-widest">
+                                          {t("downloads.arch")}
+                                        </p>
+                                        <div className="flex flex-wrap gap-2">
+                                          {selectedOS.architectures.map(
+                                            (arch) => (
+                                              <button
+                                                type="button"
+                                                key={arch.id}
+                                                onClick={() =>
+                                                  handleArchSelect(arch)
+                                                }
+                                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border ${
+                                                  selectedArch?.id === arch.id
+                                                    ? "bg-gray-900 dark:bg-white text-white dark:text-gray-900 border-transparent shadow-md"
+                                                    : "bg-white/50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300 border-gray-200/50 dark:border-gray-700/50 hover:border-gray-300 dark:hover:border-gray-600"
+                                                }`}
+                                              >
+                                                {arch.name}
+                                              </button>
+                                            ),
+                                          )}
+                                        </div>
+                                      </div>
+                                    )}
+
+                                    {/* Row 4: Package Type Selection */}
+                                    {selectedArch &&
+                                      selectedArch.packageTypes.length > 1 && (
+                                        <div>
+                                          <p className="text-xs font-bold text-gray-400 dark:text-gray-500 mb-3 uppercase tracking-widest">
+                                            {t("downloads.type")}
+                                          </p>
+                                          <div className="flex flex-wrap gap-2">
+                                            {selectedArch.packageTypes.map(
+                                              (pkg) => (
+                                                <button
+                                                  type="button"
+                                                  key={pkg.id}
+                                                  onClick={() =>
+                                                    handlePackageSelect(pkg)
+                                                  }
+                                                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border ${
+                                                    selectedPackage?.id ===
+                                                    pkg.id
+                                                      ? "bg-gray-900 dark:bg-white text-white dark:text-gray-900 border-transparent shadow-md"
+                                                      : "bg-white/50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300 border-gray-200/50 dark:border-gray-700/50 hover:border-gray-300 dark:hover:border-gray-600"
+                                                  }`}
+                                                >
+                                                  {pkg.name ||
+                                                    getPackageTypeName(pkg.id)}
+                                                </button>
+                                              ),
+                                            )}
+                                          </div>
+                                        </div>
+                                      )}
+                                  </motion.div>
+                                </AnimatePresence>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Download Action Area */}
+                          <div>
+                            <AnimatePresence mode="wait">
+                              {selectedFile && (
+                                <motion.div
+                                  key={selectedFile.name}
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, y: -10 }}
+                                  transition={{ duration: 0.2 }}
+                                >
+                                  {renderDownloadButton()}
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
-
-          <div className="space-y-6">
-            {selectedPlatform && (
-              <>
-                {/* Row 2: OS Selection - Only show for Web or multi-OS platforms */}
-                {selectedPlatform.operatingSystems.length > 1 && (
-                  <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
-                    <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3 uppercase tracking-wider">
-                      {t("downloads.os")}
-                    </p>
-                    <div className="flex flex-wrap gap-3">
-                      {selectedPlatform.operatingSystems.map((os, index) => (
-                        <motion.button
-                          key={os.id}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.2, delay: index * 0.05 }}
-                          onClick={() => handleOSSelect(os)}
-                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border ${
-                            selectedOS?.id === os.id
-                              ? "bg-primary-600 text-white border-primary-600 shadow-md shadow-primary-500/20"
-                              : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700"
-                          }`}
-                        >
-                          {os.name}
-                        </motion.button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {selectedOS && (
-                  <>
-                    {/* Row 3: Architecture Selection */}
-                    <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
-                      <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3 uppercase tracking-wider">
-                        {t("downloads.arch")}
-                      </p>
-                      <div className="flex flex-wrap gap-3">
-                        {selectedOS.architectures.map((arch, index) => (
-                          <motion.button
-                            key={arch.id}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.2, delay: index * 0.05 }}
-                            onClick={() => handleArchSelect(arch)}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border ${
-                              selectedArch?.id === arch.id
-                                ? "bg-primary-600 text-white border-primary-600 shadow-md shadow-primary-500/20"
-                                : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700"
-                            }`}
-                          >
-                            {arch.name}
-                          </motion.button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Row 4: Package Type Selection - Only show when multiple types */}
-                    {selectedArch && selectedArch.packageTypes.length > 1 && (
-                      <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
-                        <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3 uppercase tracking-wider">
-                          {t("downloads.type")}
-                        </p>
-                        <div className="flex flex-wrap gap-3">
-                          {selectedArch.packageTypes.map((pkg, index) => (
-                            <motion.button
-                              key={pkg.id}
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{
-                                duration: 0.2,
-                                delay: index * 0.05,
-                              }}
-                              onClick={() => handlePackageSelect(pkg)}
-                              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border ${
-                                selectedPackage?.id === pkg.id
-                                  ? "bg-primary-600 text-white border-primary-600 shadow-md shadow-primary-500/20"
-                                  : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700"
-                              }`}
-                            >
-                              {pkg.name || getPackageTypeName(pkg.id)}
-                            </motion.button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </>
-                )}
-              </>
-            )}
-          </div>
-
-          {/* 下载按钮可以放在容器内，也可以放在容器外，这里放里面稍微有点挤，放外面比较好 */}
         </div>
-
-        {/* 下载按钮区域 */}
-        {selectedFile && renderDownloadButton()}
       </div>
     </section>
   );

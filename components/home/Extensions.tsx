@@ -78,9 +78,20 @@ export function Extensions() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="relative group h-full"
               >
-                <div className="absolute inset-0 bg-linear-to-b from-primary-500/10 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="relative bg-white dark:bg-gray-800/50 backdrop-blur-sm rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700/50 group-hover:border-primary-500/50 transition-colors h-full flex flex-col">
-                  <div className="relative h-48">
+                {/* Hover Glow Effect */}
+                <div className="absolute -inset-0.5 bg-linear-to-br from-primary-500/30 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-500" />
+
+                <div className="relative bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-2xl overflow-hidden border border-gray-200/50 dark:border-gray-800/50 group-hover:border-primary-500/30 transition-colors duration-500 h-full flex flex-col">
+                  {/* Top Highlight Line */}
+                  <div className="absolute top-0 left-0 right-0 h-[1px] bg-linear-to-r from-transparent via-primary-500/0 to-transparent group-hover:via-primary-500/50 transition-all duration-500 z-20" />
+
+                  {/* Inner Decorative Gradient */}
+                  <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-primary-500/10 rounded-full blur-3xl group-hover:bg-primary-500/20 transition-colors duration-500 z-10 pointer-events-none" />
+
+                  {/* Subtle Grid Pattern */}
+                  <div className="absolute inset-0 bg-gradient-grid bg-[length:20px_20px] opacity-0 group-hover:opacity-5 dark:group-hover:opacity-10 transition-opacity duration-500 z-10 pointer-events-none" />
+
+                  <div className="relative h-48 z-10">
                     <Image
                       src={example.image}
                       alt={example.title}
@@ -88,11 +99,11 @@ export function Extensions() {
                       className="object-cover"
                     />
                   </div>
-                  <div className="p-6 flex flex-col flex-grow">
-                    <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+                  <div className="p-6 flex flex-col flex-grow relative z-10">
+                    <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
                       {example.title}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-400 flex-grow">
+                    <p className="text-gray-600 dark:text-gray-400 flex-grow leading-relaxed">
                       {example.description}
                     </p>
                   </div>
@@ -117,19 +128,32 @@ export function Extensions() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="relative group h-full"
+                className="relative group h-full block"
               >
-                <div className="absolute inset-0 bg-linear-to-b from-primary-500/10 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="relative bg-white dark:bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-200 dark:border-gray-700/50 group-hover:border-primary-500/50 transition-colors h-full">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                      {link.title}
-                    </h3>
-                    <ArrowTopRightOnSquareIcon className="h-5 w-5 text-primary-600 dark:text-primary-500 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                {/* Hover Glow Effect */}
+                <div className="absolute -inset-0.5 bg-linear-to-br from-primary-500/30 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-500" />
+
+                <div className="relative bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-2xl p-6 border border-gray-200/50 dark:border-gray-800/50 group-hover:border-primary-500/30 transition-colors duration-500 h-full overflow-hidden">
+                  {/* Top Highlight Line */}
+                  <div className="absolute top-0 left-0 right-0 h-[1px] bg-linear-to-r from-transparent via-primary-500/0 to-transparent group-hover:via-primary-500/50 transition-all duration-500" />
+
+                  {/* Inner Decorative Gradient */}
+                  <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-primary-500/10 rounded-full blur-3xl group-hover:bg-primary-500/20 transition-colors duration-500" />
+
+                  {/* Subtle Grid Pattern */}
+                  <div className="absolute inset-0 bg-gradient-grid bg-[length:20px_20px] opacity-0 group-hover:opacity-5 dark:group-hover:opacity-10 transition-opacity duration-500" />
+
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
+                        {link.title}
+                      </h3>
+                      <ArrowTopRightOnSquareIcon className="h-5 w-5 text-primary-600 dark:text-primary-500 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                      {link.description}
+                    </p>
                   </div>
-                  <p className="text-gray-600 dark:text-gray-400">
-                    {link.description}
-                  </p>
                 </div>
               </motion.a>
             ))}

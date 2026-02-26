@@ -85,17 +85,30 @@ export function Features() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="relative group h-full"
               >
-                <div className="absolute inset-0 bg-linear-to-b from-primary-500/10 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="relative bg-gray-50 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-200 dark:border-gray-700/50 group-hover:border-primary-500/50 transition-colors h-full flex flex-col">
-                  <div className="absolute inset-0 bg-linear-to-b from-white/50 dark:from-white/5 to-transparent rounded-xl" />
-                  <div className="relative flex flex-col h-full">
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-primary-500/20 text-primary-600 dark:text-primary-500 mb-4 group-hover:scale-110 transition-transform">
-                      <feature.icon className="h-6 w-6" />
+                {/* Hover Glow Effect */}
+                <div className="absolute -inset-0.5 bg-linear-to-br from-primary-500/30 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-500" />
+
+                <div className="relative bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-2xl p-8 border border-gray-200/50 dark:border-gray-800/50 group-hover:border-primary-500/30 transition-colors duration-500 h-full flex flex-col overflow-hidden">
+                  {/* Top Highlight Line */}
+                  <div className="absolute top-0 left-0 right-0 h-[1px] bg-linear-to-r from-transparent via-primary-500/0 to-transparent group-hover:via-primary-500/50 transition-all duration-500" />
+
+                  {/* Inner Decorative Gradient */}
+                  <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-primary-500/10 rounded-full blur-3xl group-hover:bg-primary-500/20 transition-colors duration-500" />
+
+                  {/* Subtle Grid Pattern */}
+                  <div className="absolute inset-0 bg-gradient-grid bg-[length:20px_20px] opacity-0 group-hover:opacity-5 dark:group-hover:opacity-10 transition-opacity duration-500" />
+
+                  <div className="relative flex flex-col h-full z-10">
+                    {/* Icon Container */}
+                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-linear-to-br from-primary-500/10 to-primary-500/5 border border-primary-500/20 text-primary-600 dark:text-primary-400 mb-6 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary-500/20 transition-all duration-300">
+                      <feature.icon className="h-7 w-7" />
                     </div>
-                    <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
+
+                    {/* Text Content */}
+                    <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
                       {feature.title}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-400 flex-grow">
+                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed flex-grow">
                       {feature.description}
                     </p>
                   </div>

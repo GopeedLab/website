@@ -37,13 +37,20 @@ export function LocalePreferenceTracker() {
 
       // Check if there's a saved locale preference
       const savedLocale = getLocalePreference();
+      const referrer = document.referrer;
+      const isSameOriginReferrer = (() => {
+        if (!referrer) return false;
+        try {
+          return new URL(referrer).origin === window.location.origin;
+        } catch {
+          return false;
+        }
+      })();
 
-      // If no saved preference, or if saved preference matches current location, sync the cookie
-      // This ensures the cookie is always in sync with where the user actually is
-      if (!savedLocale || savedLocale === currentLocale) {
+      // Sync cookie on same-origin navigations (e.g., language switch in docs)
+      if (!savedLocale || savedLocale === currentLocale || isSameOriginReferrer) {
         setLocalePreference(currentLocale);
       }
-      // If saved preference differs from current location, middleware will handle the redirect
       return;
     }
 

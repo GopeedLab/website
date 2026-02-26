@@ -4,20 +4,32 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { LocalePreferenceTracker } from "@/components/LocalePreferenceTracker";
 import { i18n, type Locale, locales } from "@/lib/i18n";
+import { getTranslation } from "@/lib/i18n/translations";
 import { localeNames } from "@/lib/i18n/config";
 import { LocaleProvider } from "@/lib/locale-context";
 
-export const metadata: Metadata = {
-  title: {
-    template: "%s | Gopeed",
-    default: "Gopeed - A Modern Download Manager",
-  },
-  description:
-    "A modern download manager that supports all platforms. Built with Golang and Flutter.",
-  icons: {
-    icon: "/images/logo.png",
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const locale = (
+    locales.includes(lang as Locale) ? lang : i18n.defaultLanguage
+  ) as Locale;
+  const t = (key: string) => getTranslation(locale, key);
+
+  return {
+    title: {
+      template: `%s | ${t("site.name")}`,
+      default: t("site.title"),
+    },
+    description: t("site.description"),
+    icons: {
+      icon: "/images/logo.png",
+    },
+  };
+}
 
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }));

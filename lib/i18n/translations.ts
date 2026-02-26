@@ -2,6 +2,12 @@ import type { Locale } from "../i18n";
 
 const translations: Record<Locale, Record<string, string>> = {
   en: {
+    // Site
+    "site.name": "Gopeed",
+    "site.title": "Gopeed - A Modern Download Manager",
+    "site.description":
+      "A modern download manager that supports all platforms. Built with Golang and Flutter.",
+
     // Navigation
     "nav.docs": "Docs",
     "nav.store": "Store",
@@ -89,6 +95,12 @@ const translations: Record<Locale, Record<string, string>> = {
     "footer.copyright": "© {year} Gopeed. All rights reserved.",
   },
   zh: {
+    // Site
+    "site.name": "Gopeed",
+    "site.title": "Gopeed - 现代化下载器",
+    "site.description":
+      "一款支持全平台的现代化下载器，使用 Golang 和 Flutter 构建。",
+
     // Navigation
     "nav.docs": "文档",
     "nav.store": "商店",
@@ -170,6 +182,12 @@ const translations: Record<Locale, Record<string, string>> = {
     "footer.copyright": "© {year} Gopeed. 保留所有权利。",
   },
   "zh-TW": {
+    // Site
+    "site.name": "Gopeed",
+    "site.title": "Gopeed - 現代化下載器",
+    "site.description":
+      "一款支援全平台的現代化下載器，使用 Golang 和 Flutter 建構。",
+
     // Navigation
     "nav.docs": "文件",
     "nav.store": "商店",
