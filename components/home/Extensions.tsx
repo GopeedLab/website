@@ -6,7 +6,8 @@ import Image from "next/image";
 import { useLocale } from "@/lib/locale-context";
 
 export function Extensions() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
+  const storeUrl = locale === "en" ? "/store" : `/${locale}/store`;
 
   const examples = [
     {
@@ -30,7 +31,7 @@ export function Extensions() {
     {
       title: t("extensions.store"),
       description: t("extensions.storeDesc"),
-      href: "https://gopeed.com/extensions",
+      href: storeUrl,
     },
     {
       title: t("extensions.devDocs"),

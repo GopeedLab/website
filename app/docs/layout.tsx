@@ -1,6 +1,13 @@
 import "@/app/global.css";
 import { RootProvider } from "fumadocs-ui/provider/next";
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
+
+export const metadata: Metadata = {
+  icons: {
+    icon: "/images/logo.png",
+  },
+};
 
 export default function DocsRootLayout({ children }: { children: ReactNode }) {
   return (
