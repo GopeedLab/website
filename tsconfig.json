@@ -3,6 +3,7 @@
     "baseUrl": ".",
     "target": "ESNext",
     "lib": ["dom", "dom.iterable", "esnext"],
+    "types": ["@cloudflare/workers-types", "node"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,

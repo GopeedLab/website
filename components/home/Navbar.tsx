@@ -105,15 +105,16 @@ export function Navbar({ version = "", stars = "" }: NavbarProps) {
     : SunIcon;
 
   const docsUrl = locale === "en" ? "/docs" : `/${locale}/docs`;
+  const storeUrl = locale === "en" ? "/store" : `/${locale}/store`;
 
   // Unified navigation data - used by both desktop and mobile
   const navLinks: NavLinkItem[] = [
     {
       type: "link",
       key: "store",
-      href: "https://gopeed.com/extensions",
+      href: storeUrl,
       labelKey: "nav.store",
-      external: true,
+      external: false,
     },
     {
       type: "link",

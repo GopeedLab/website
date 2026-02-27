@@ -18,6 +18,13 @@ service = "gopeed-website"
 binding = "NEXT_INC_CACHE_R2_BUCKET"
 bucket_name = "gopeed-website-cache"
 
+# D1 database for extension store
+[[d1_databases]]
+binding = "DB"
+database_name = "gopeed"
+database_id = "f6b574be-9c11-48e0-a129-deabb5e4368f"
+migrations_dir = "./db/migrations"
+
 # Environment variables
 [vars]
 NODE_ENV = "production"

@@ -39,7 +39,6 @@ async function cachedFetch<T>(url: string): Promise<T> {
     // Next.js cache config - works in dev and Vercel
     next: { revalidate: CACHE_TTL },
     // CF Workers cache config - used when deployed to CF
-    // @ts-expect-error - CF-specific option
     cf: {
       cacheTtl: CACHE_TTL,
       cacheEverything: true,
