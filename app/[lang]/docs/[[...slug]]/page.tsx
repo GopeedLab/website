@@ -8,6 +8,7 @@ import { createRelativeLink } from "fumadocs-ui/mdx";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { i18n, type Locale } from "@/lib/i18n";
+import { pageAlternates } from "@/lib/seo";
 import { getPageImage, source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
@@ -63,6 +64,7 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
   return {
     title: page.data.title,
     description: page.data.description,
+    alternates: pageAlternates(locale, page.url),
     openGraph: {
       images: getPageImage(page).url,
     },

@@ -7,6 +7,7 @@ import { i18n, type Locale, locales } from "@/lib/i18n";
 import { localeNames } from "@/lib/i18n/config";
 import { getTranslation } from "@/lib/i18n/translations";
 import { LocaleProvider } from "@/lib/locale-context";
+import { BASE_URL, pageAlternates } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -20,6 +21,7 @@ export async function generateMetadata({
   const t = (key: string) => getTranslation(locale, key);
 
   return {
+    metadataBase: new URL(BASE_URL),
     title: {
       template: `%s | ${t("site.name")}`,
       default: t("site.title"),
@@ -27,6 +29,17 @@ export async function generateMetadata({
     description: t("site.description"),
     icons: {
       icon: "/images/logo.png",
+    },
+    alternates: pageAlternates(locale, "/"),
+    openGraph: {
+      type: "website",
+      siteName: t("site.name"),
+      title: t("site.title"),
+      description: t("site.description"),
+      url: BASE_URL,
+    },
+    twitter: {
+      card: "summary_large_image",
     },
   };
 }

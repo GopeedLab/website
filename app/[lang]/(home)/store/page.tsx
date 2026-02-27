@@ -9,6 +9,7 @@ import { type Extension, extensions } from "@/db/schema";
 import { getAppData } from "@/lib/data";
 import { i18n, type Locale, locales } from "@/lib/i18n";
 import { getTranslation } from "@/lib/i18n/translations";
+import { pageAlternates } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -24,6 +25,7 @@ export async function generateMetadata({
   return {
     title: t("store.title"),
     description: t("store.subtitle"),
+    alternates: pageAlternates(locale, "/store"),
   };
 }
 

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import {
   Downloads,
   Extensions,
@@ -7,6 +8,22 @@ import {
   Navbar,
 } from "@/components/home";
 import { getAppData } from "@/lib/data";
+import { i18n, type Locale, locales } from "@/lib/i18n";
+import { pageAlternates } from "@/lib/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const locale = (
+    locales.includes(lang as Locale) ? lang : i18n.defaultLanguage
+  ) as Locale;
+  return {
+    alternates: pageAlternates(locale, "/"),
+  };
+}
 
 export default async function HomePage() {
   // Fetch data during SSR

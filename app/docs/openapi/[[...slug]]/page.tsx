@@ -9,6 +9,7 @@ import {
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { APIPage } from "@/components/api-page";
+import { BASE_URL } from "@/lib/seo";
 import { openapiPageSource } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
@@ -81,5 +82,8 @@ export async function generateMetadata({
   return {
     title: page.data.title,
     description: page.data.description,
+    alternates: {
+      canonical: `${BASE_URL}${page.url}`,
+    },
   };
 }

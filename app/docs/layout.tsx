@@ -2,10 +2,19 @@ import "@/app/global.css";
 import { RootProvider } from "fumadocs-ui/provider/next";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { BASE_URL } from "@/lib/seo";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL),
+  title: {
+    template: "%s | Gopeed",
+    default: "API Reference | Gopeed",
+  },
   icons: {
     icon: "/images/logo.png",
+  },
+  twitter: {
+    card: "summary_large_image",
   },
 };
 
