@@ -15,7 +15,7 @@ interface StoreGridProps {
 export function StoreGrid({ extensions }: StoreGridProps) {
   const { t } = useLocale();
   const [search, setSearch] = useState("");
-  const [sortKey, setSortKey] = useState<SortKey>("installs");
+  const [sortKey, setSortKey] = useState<SortKey>("stars");
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
@@ -33,7 +33,6 @@ export function StoreGrid({ extensions }: StoreGridProps) {
     list.sort((a, b) => {
       if (sortKey === "installs") return b.installCount - a.installCount;
       if (sortKey === "stars") return b.stars - a.stars;
-      // updated: compare timestamps
       return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
     });
 
@@ -41,19 +40,26 @@ export function StoreGrid({ extensions }: StoreGridProps) {
   }, [extensions, search, sortKey]);
 
   const sortOptions: { key: SortKey; label: string }[] = [
-    { key: "installs", label: t("store.sort.installs") },
     { key: "stars", label: t("store.sort.stars") },
+    { key: "installs", label: t("store.sort.installs") },
     { key: "updated", label: t("store.sort.updated") },
   ];
 
   return (
     <div>
-      {/* Search + Sort toolbar */}
+      {/* Toolbar */}
       <div className="flex flex-col sm:flex-row gap-3 mb-8">
         {/* Search */}
         <div className="relative flex-1">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={t("store.search")}
+            className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-gray-50 dark:bg-[#111111] border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300 dark:focus:ring-gray-600 focus:border-gray-300 dark:focus:border-gray-600 transition-all text-sm shadow-sm"
+          />
           <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -66,36 +72,36 @@ export function StoreGrid({ extensions }: StoreGridProps) {
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
             />
           </svg>
-          <input
-            type="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder={t("store.search")}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-gray-900/60 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-400 dark:focus:border-primary-500/50 transition-all text-sm"
-          />
         </div>
 
         {/* Sort tabs */}
-        <div className="flex items-center gap-1 bg-gray-100/80 dark:bg-gray-800/60 rounded-xl p-1 border border-gray-200/60 dark:border-white/8">
+        <div className="flex items-center gap-1 bg-gray-50 dark:bg-[#111111] rounded-xl p-1 border border-gray-200 dark:border-white/10 shadow-sm">
           {sortOptions.map((opt) => (
             <button
               key={opt.key}
               type="button"
               onClick={() => setSortKey(opt.key)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 whitespace-nowrap ${
+              className={`relative px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all duration-200 whitespace-nowrap ${
                 sortKey === opt.key
-                  ? "bg-white dark:bg-gray-700 text-primary-600 dark:text-primary-400 shadow-sm"
+                  ? "text-gray-900 dark:text-white"
                   : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
               }`}
             >
-              {opt.label}
+              {sortKey === opt.key && (
+                <motion.span
+                  layoutId="sort-pill"
+                  className="absolute inset-0 bg-white dark:bg-white/10 rounded-lg shadow-sm border border-gray-100 dark:border-white/5"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.3 }}
+                />
+              )}
+              <span className="relative z-10">{opt.label}</span>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Count badge */}
-      <p className="text-xs text-gray-400 dark:text-gray-500 mb-5">
+      {/* Count */}
+      <p className="text-[13px] font-medium text-gray-400 dark:text-gray-500 mb-6">
         {filtered.length} {filtered.length === 1 ? "extension" : "extensions"}
       </p>
 
@@ -107,11 +113,12 @@ export function StoreGrid({ extensions }: StoreGridProps) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="flex flex-col items-center justify-center py-24 text-center"
+            className="flex flex-col items-center justify-center py-32 text-center"
           >
-            <div className="w-16 h-16 mb-4 rounded-2xl bg-gray-100 dark:bg-gray-800/80 border border-gray-200 dark:border-white/10 flex items-center justify-center">
+            {/* Minimal empty state */}
+            <div className="w-16 h-16 mb-6 rounded-2xl bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-white/5 flex items-center justify-center">
               <svg
-                className="w-8 h-8 text-gray-300 dark:text-gray-600"
+                className="w-6 h-6 text-gray-300 dark:text-gray-600"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -125,10 +132,10 @@ export function StoreGrid({ extensions }: StoreGridProps) {
                 />
               </svg>
             </div>
-            <p className="text-gray-500 dark:text-gray-400 font-medium">
+            <p className="text-[15px] text-gray-900 dark:text-white font-medium">
               {search ? t("store.noResults") : t("store.empty")}
             </p>
-            <p className="text-sm text-gray-400 dark:text-gray-500 mt-1 max-w-xs">
+            <p className="text-[14px] text-gray-500 dark:text-gray-400 mt-1 max-w-xs leading-relaxed">
               {search ? t("store.noResultsDesc") : t("store.emptyDesc")}
             </p>
           </motion.div>
@@ -138,7 +145,8 @@ export function StoreGrid({ extensions }: StoreGridProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+            transition={{ duration: 0.2 }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
           >
             {filtered.map((ext, i) => (
               <ExtensionCard key={ext.id} extension={ext} index={i} />

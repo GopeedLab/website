@@ -5,7 +5,9 @@ import { integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
  * One row per extension (a single git repo can have multiple extensions via subdirectory)
  */
 export const extensions = sqliteTable("extensions", {
-  // Unique identifier: "<repo_full_name>#<directory>" or just "<repo_full_name>"
+  // Unique identifier: "<author>@<name>" from manifest.json
+  // e.g. "monkeyWie@gopeed-extension-bilibili"
+  // Falls back to repo owner if manifest author is absent.
   id: text("id").primaryKey(),
 
   // Git repo info

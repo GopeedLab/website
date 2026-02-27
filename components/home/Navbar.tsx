@@ -90,11 +90,24 @@ export function Navbar({ version = "", stars = "" }: NavbarProps) {
     // Save user's locale preference before navigation
     setLocalePreference(newLocale as Locale);
 
-    // Navigate to the appropriate locale path
+    // Preserve the current path segment (e.g. /store, /docs/...) when switching locale.
+    // Current pathname looks like: "/" | "/zh" | "/zh-TW" | "/store" | "/zh/store" etc.
+    const pathname = window.location.pathname;
+    const segments = pathname.split("/").filter(Boolean); // remove empty strings
+
+    // If the first segment is a known locale prefix, strip it
+    const knownLocales = locales as readonly string[];
+    const withoutLocale =
+      segments.length > 0 && knownLocales.includes(segments[0])
+        ? segments.slice(1)
+        : segments;
+
+    const rest = withoutLocale.length > 0 ? `/${withoutLocale.join("/")}` : "";
+
     if (newLocale === "en") {
-      window.location.href = "/";
+      window.location.href = rest || "/";
     } else {
-      window.location.href = `/${newLocale}`;
+      window.location.href = `/${newLocale}${rest}`;
     }
   };
 

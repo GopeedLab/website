@@ -28,11 +28,9 @@ export async function POST(request: NextRequest) {
 
     const db = getDb(d1);
 
-    // Optionally use a GitHub token from the Authorization header
-    const authHeader = request.headers.get("Authorization");
-    const token = authHeader?.startsWith("Bearer ")
-      ? authHeader.slice(7)
-      : undefined;
+    // Optionally use a GitHub token from the request body
+    const body = (await request.json().catch(() => ({}))) as { token?: string };
+    const token = typeof body.token === "string" ? body.token : undefined;
 
     const stats = await syncExtensions(db, token);
 

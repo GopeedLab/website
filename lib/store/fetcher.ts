@@ -60,9 +60,16 @@ function githubHeaders(token?: string): Record<string, string> {
 async function fetchJSON<T>(url: string, token?: string): Promise<T | null> {
   try {
     const res = await fetch(url, { headers: githubHeaders(token) });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      const body = await res.text().catch(() => "");
+      console.warn(
+        `[fetcher] HTTP ${res.status} ${res.statusText} — ${url}\n${body}`,
+      );
+      return null;
+    }
     return (await res.json()) as T;
-  } catch {
+  } catch (err) {
+    console.warn(`[fetcher] fetch error — ${url}`, err);
     return null;
   }
 }
@@ -214,17 +221,14 @@ async function findExtensionDirectories(
 
 /**
  * Sync a single extension (repo + optional directory) into the DB.
- * Uses commit SHA as cache key - skips if unchanged.
+ * Returns "skipped" if commit SHA unchanged, "synced" if upserted, "ignored" if manifest invalid.
  */
 async function syncExtension(
   db: Db,
   repo: GitHubRepo,
   directory: string | null,
   token?: string,
-): Promise<void> {
-  const id = directory ? `${repo.full_name}#${directory}` : repo.full_name;
-  const _manifestPath = directory ? directory : ".";
-
+): Promise<"synced" | "skipped" | "ignored"> {
   // Get latest commit SHA for the manifest path
   const commitSha = await getLatestCommitSha(
     repo.full_name,
@@ -232,6 +236,19 @@ async function syncExtension(
     directory ? `${directory}/manifest.json` : "manifest.json",
     token,
   );
+
+  // Fetch and parse manifest first — we need author+name to build the id
+  const manifest = await fetchManifest(
+    repo.full_name,
+    repo.default_branch,
+    directory,
+    token,
+  );
+  if (!manifest || !manifest.name) return "ignored";
+
+  // Construct id from manifest: "author@name" if author present, otherwise just "name"
+  const author = manifest.author?.trim() ?? "";
+  const id = author ? `${author}@${manifest.name}` : manifest.name;
 
   if (commitSha) {
     // Check if we already have this commit cached
@@ -247,18 +264,9 @@ async function syncExtension(
         .update(extensions)
         .set({ stars: repo.stargazers_count })
         .where(eq(extensions.id, id));
-      return;
+      return "skipped";
     }
   }
-
-  // Fetch and parse manifest
-  const manifest = await fetchManifest(
-    repo.full_name,
-    repo.default_branch,
-    directory,
-    token,
-  );
-  if (!manifest || !manifest.name) return;
 
   const iconUrl = resolveIconUrl(
     manifest.icon,
@@ -267,11 +275,6 @@ async function syncExtension(
     directory,
   );
 
-  // Build install URL base: repo URL + optional subdirectory
-  const _installUrl = directory
-    ? `${repo.html_url}#${directory}`
-    : repo.html_url;
-
   const data: NewExtension = {
     id,
     repoFullName: repo.full_name,
@@ -279,7 +282,7 @@ async function syncExtension(
     directory: directory ?? undefined,
     commitSha: commitSha ?? undefined,
     name: manifest.name,
-    author: manifest.author ?? "",
+    author: author,
     title: manifest.title || manifest.name,
     description: manifest.description ?? repo.description ?? "",
     icon: iconUrl ?? undefined,
@@ -309,6 +312,8 @@ async function syncExtension(
         updatedAt: data.updatedAt,
       },
     });
+
+  return "synced";
 }
 
 /**
@@ -330,8 +335,10 @@ export async function syncExtensions(
 
       for (const dir of dirs) {
         try {
-          await syncExtension(db, repo, dir, token);
-          stats.synced++;
+          const result = await syncExtension(db, repo, dir, token);
+          if (result === "synced") stats.synced++;
+          else if (result === "skipped") stats.skipped++;
+          // "ignored" = manifest missing/invalid, not counted
         } catch (err) {
           console.error(
             `Error syncing ${repo.full_name}${dir ? `#${dir}` : ""}:`,
