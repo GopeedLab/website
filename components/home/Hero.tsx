@@ -22,17 +22,17 @@ import {
 const browserExtensions = [
   {
     name: "Chrome",
-    href: "https://chrome.google.com/webstore/detail/gopeed/extension-id",
+    href: "https://chromewebstore.google.com/detail/gopeed/mijpgljlfcapndmchhjffkpckknofcnd",
     icon: "/images/chrome.svg",
   },
   {
     name: "Edge",
-    href: "https://microsoftedge.microsoft.com/addons/detail/gopeed/extension-id",
+    href: "https://microsoftedge.microsoft.com/addons/detail/dkajnckekendchdleoaenoophcobooce",
     icon: "/images/edge.svg",
   },
   {
     name: "Firefox",
-    href: "https://addons.mozilla.org/firefox/addon/gopeed/",
+    href: "https://addons.mozilla.org/firefox/addon/gopeed-extension",
     icon: "/images/firefox.svg",
   },
 ];
