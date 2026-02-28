@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { getRepoInfo } from "@/lib/cache";
 
-export const runtime = "edge";
-
 export async function GET() {
   try {
     const repo = await getRepoInfo();

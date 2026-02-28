@@ -3,6 +3,7 @@ import { RootProvider } from "fumadocs-ui/provider/next";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { LocalePreferenceTracker } from "@/components/LocalePreferenceTracker";
+import { NavigationProgress } from "@/components/NavigationProgress";
 import { i18n, type Locale, locales } from "@/lib/i18n";
 import { localeNames } from "@/lib/i18n/config";
 import { getTranslation } from "@/lib/i18n/translations";
@@ -65,6 +66,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body className="font-sans antialiased">
+        <NavigationProgress />
         <RootProvider
           theme={{
             enabled: true,

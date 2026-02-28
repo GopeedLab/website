@@ -319,15 +319,37 @@ async function syncExtension(
 /**
  * Main sync function: searches GitHub, finds all gopeed extensions,
  * and upserts them into the database.
- * Returns stats about the sync operation.
+ *
+ * Supports pagination to stay within Cloudflare Workers' 50-subrequest limit.
+ * Each repo costs ~3 subrequests; a pageSize of 10 uses ~30, leaving headroom
+ * for the initial GitHub search call.
+ *
+ * @param page     1-based page index of repos to process (default: 1)
+ * @param pageSize number of repos to process per call (default: 10)
  */
 export async function syncExtensions(
   db: Db,
   token?: string,
-): Promise<{ synced: number; skipped: number; errors: number }> {
-  const stats = { synced: 0, skipped: 0, errors: 0 };
+  page = 1,
+  pageSize = 10,
+): Promise<{
+  synced: number;
+  skipped: number;
+  ignored: number;
+  errors: number;
+  page: number;
+  pageSize: number;
+  totalRepos: number;
+  hasMore: boolean;
+}> {
+  const stats = { synced: 0, skipped: 0, ignored: 0, errors: 0 };
 
-  const repos = await searchGopeedExtensionRepos(token);
+  const allRepos = await searchGopeedExtensionRepos(token);
+  const totalRepos = allRepos.length;
+
+  const start = (page - 1) * pageSize;
+  const repos = allRepos.slice(start, start + pageSize);
+  const hasMore = start + pageSize < totalRepos;
 
   for (const repo of repos) {
     try {
@@ -338,7 +360,7 @@ export async function syncExtensions(
           const result = await syncExtension(db, repo, dir, token);
           if (result === "synced") stats.synced++;
           else if (result === "skipped") stats.skipped++;
-          // "ignored" = manifest missing/invalid, not counted
+          else stats.ignored++;
         } catch (err) {
           console.error(
             `Error syncing ${repo.full_name}${dir ? `#${dir}` : ""}:`,
@@ -353,5 +375,5 @@ export async function syncExtensions(
     }
   }
 
-  return stats;
+  return { ...stats, page, pageSize, totalRepos, hasMore };
 }

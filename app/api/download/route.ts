@@ -1,8 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { getLatestRelease } from "@/lib/cache";
 
-export const runtime = "edge";
-
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const tpl = searchParams.get("tpl");

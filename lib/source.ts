@@ -3,7 +3,7 @@ import { type InferPageType, loader } from "fumadocs-core/source";
 import { lucideIconsPlugin } from "fumadocs-core/source/lucide-icons";
 import { openapiPlugin, openapiSource } from "fumadocs-openapi/server";
 import { i18n } from "@/lib/i18n";
-import { openapi, SWAGGER_URL } from "@/lib/openapi";
+import { openapi, SWAGGER_KEY } from "@/lib/openapi";
 
 // i18n docs source
 export const source = loader({
@@ -40,7 +40,7 @@ const methodKeys = [
  * to avoid a second network request.
  */
 async function buildVirtualFiles() {
-  const processed = await openapi.getSchema(SWAGGER_URL);
+  const processed = await openapi.getSchema(SWAGGER_KEY);
   const swagger = processed.dereferenced as {
     info?: { title?: string; description?: string };
     tags?: { name: string }[];

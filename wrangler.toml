@@ -29,6 +29,15 @@ migrations_dir = "./db/migrations"
 [vars]
 NODE_ENV = "production"
 
+# esbuild define: tell wrangler/esbuild to tree-shake next/og's edge WASM branch.
+# next/dist/server/og/image-response.js uses:
+#   import(NEXT_RUNTIME === 'edge' ? 'index.edge.js' : 'index.node.js')
+# Without this define, esbuild bundles BOTH branches including index.edge.js
+# which has static `import resvg_wasm from "resvg.wasm?module"` (~543 KB gzip).
+# Setting this to "nodejs" causes esbuild to eliminate the edge branch entirely.
+[define]
+"process.env.NEXT_RUNTIME" = '"nodejs"'
+
 # Build configuration
 [build]
 command = "pnpm build:worker"

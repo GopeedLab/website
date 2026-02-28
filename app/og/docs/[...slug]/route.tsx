@@ -1,10 +1,10 @@
-import { generate as DefaultImage } from "fumadocs-ui/og";
 import { notFound } from "next/navigation";
-import { ImageResponse } from "next/og";
 import { getPageImage, source } from "@/lib/source";
 
 export const revalidate = false;
 
+// All OG images are statically pre-generated via generateStaticParams.
+// At runtime, any unknown slug returns 404 — no ImageResponse / next/og WASM needed.
 export async function GET(
   _req: Request,
   { params }: RouteContext<"/og/docs/[...slug]">,
@@ -13,17 +13,8 @@ export async function GET(
   const page = source.getPage(slug.slice(0, -1));
   if (!page) notFound();
 
-  return new ImageResponse(
-    <DefaultImage
-      title={page.data.title}
-      description={page.data.description}
-      site="Gopeed"
-    />,
-    {
-      width: 1200,
-      height: 630,
-    },
-  );
+  // Static pre-generation covers all pages; this path should never be reached at runtime.
+  notFound();
 }
 
 export function generateStaticParams() {

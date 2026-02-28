@@ -2,6 +2,7 @@ import "@/app/global.css";
 import { RootProvider } from "fumadocs-ui/provider/next";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { NavigationProgress } from "@/components/NavigationProgress";
 import { BASE_URL } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -22,6 +23,7 @@ export default function DocsRootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="font-sans antialiased">
+        <NavigationProgress />
         <RootProvider
           theme={{
             enabled: true,

@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "prebuild": "node scripts/fetch-swagger.mjs",
     "build": "next build",
-    "build:worker": "pnpm build && pnpm cf:build",
+    "build:worker": "pnpm build && pnpm cf:build && node scripts/patch-og-wasm.mjs",
     "cf:build": "opennextjs-cloudflare build",
     "cf:dev": "wrangler dev",
-    "cf:deploy": "wrangler deploy",
+    "cf:deploy": "wrangler deploy --minify",
     "dev": "next dev",
     "start": "next start",
     "types:check": "fumadocs-mdx && next typegen && tsc --noEmit",
@@ -16,10 +17,10 @@
     "format": "biome format --write",
     "db:migrate:dev": "wrangler d1 migrations apply --local gopeed",
     "db:migrate": "wrangler d1 migrations apply --remote gopeed",
-    "db:studio:dev": "cross-env LOCAL_DB_PATH=$(find .wrangler/state/v3/d1/miniflare-D1DatabaseObject -type f -name '*.sqlite' -print0 | xargs -0 ls -t | head -1) drizzle-kit studio"
+    "db:studio:dev": "cross-env LOCAL_DB_PATH=$(find .wrangler/state/v3/d1/miniflare-D1DatabaseObject -type f -name '*.sqlite' -print0 | xargs -0 ls -t | head -1) drizzle-kit studio",
+    "sync:extensions": "node scripts/sync-extensions.mjs"
   },
   "dependencies": {
-    "@cloudflare/workers-types": "^4.20260305.0",
     "@heroicons/react": "^2.2.0",
     "@libsql/client": "^0.17.0",
     "drizzle-orm": "^0.45.1",
@@ -38,6 +39,7 @@
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260305.0",
     "@biomejs/biome": "^2.3.11",
     "@opennextjs/cloudflare": "1.15.0",
     "@tailwindcss/postcss": "^4.1.18",
