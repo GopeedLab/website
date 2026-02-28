@@ -2,6 +2,7 @@ import "@/app/global.css";
 import { RootProvider } from "fumadocs-ui/provider/next";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { FirebaseAnalytics } from "@/components/FirebaseAnalytics";
 import { LocalePreferenceTracker } from "@/components/LocalePreferenceTracker";
 import { NavigationProgress } from "@/components/NavigationProgress";
 import { i18n, type Locale, locales } from "@/lib/i18n";
@@ -67,6 +68,7 @@ export default async function RootLayout({
     <html lang={locale} suppressHydrationWarning>
       <body className="font-sans antialiased">
         <NavigationProgress />
+        <FirebaseAnalytics />
         <RootProvider
           theme={{
             enabled: true,

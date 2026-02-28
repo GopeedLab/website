@@ -25,6 +25,7 @@
     "@libsql/client": "^0.17.0",
     "@scalar/nextjs-api-reference": "^0.9.24",
     "drizzle-orm": "^0.45.1",
+    "firebase": "^12.10.0",
     "framer-motion": "^11.18.2",
     "fumadocs-core": "16.6.5",
     "fumadocs-mdx": "14.2.8",
