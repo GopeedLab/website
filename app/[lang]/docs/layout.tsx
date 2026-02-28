@@ -1,8 +1,6 @@
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import type { ReactNode } from "react";
-import { SidebarFooter } from "@/components/docs/SidebarFooter";
 import { i18n, type Locale } from "@/lib/i18n";
-import { getTranslation } from "@/lib/i18n/translations";
 import { baseOptions } from "@/lib/layout.shared";
 import { source } from "@/lib/source";
 
@@ -17,28 +15,8 @@ export default async function Layout({ children, params }: LayoutProps) {
     i18n.languages.includes(lang as Locale) ? lang : i18n.defaultLanguage
   ) as Locale;
 
-  const t = (key: string) => getTranslation(locale, key);
-  const docsUrl = locale === i18n.defaultLanguage ? "/docs" : `/${locale}/docs`;
-
   return (
-    <DocsLayout
-      tree={source.getPageTree(locale)}
-      {...baseOptions(locale)}
-      i18n
-      sidebar={{
-        footer: <SidebarFooter />,
-        tabs: [
-          {
-            title: t("docs.tab.documentation"),
-            url: docsUrl,
-          },
-          {
-            title: t("docs.tab.apiReference"),
-            url: "/docs/openapi",
-          },
-        ],
-      }}
-    >
+    <DocsLayout tree={source.getPageTree(locale)} {...baseOptions(locale)} i18n>
       {children}
     </DocsLayout>
   );

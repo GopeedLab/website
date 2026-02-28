@@ -11,6 +11,7 @@ const translations: Record<Locale, Record<string, string>> = {
     // Navigation
     "nav.docs": "Docs",
     "nav.store": "Store",
+    "nav.api": "API",
     "nav.openMenu": "Open menu",
 
     // Theme
@@ -131,6 +132,7 @@ const translations: Record<Locale, Record<string, string>> = {
     // Navigation
     "nav.docs": "文档",
     "nav.store": "商店",
+    "nav.api": "API",
     "nav.openMenu": "打开菜单",
 
     // Theme
@@ -245,6 +247,7 @@ const translations: Record<Locale, Record<string, string>> = {
     // Navigation
     "nav.docs": "文件",
     "nav.store": "商店",
+    "nav.api": "API",
     "nav.openMenu": "開啟選單",
 
     // Theme

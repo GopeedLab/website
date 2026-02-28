@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { locales } from "@/lib/i18n";
-import { BASE_URL, canonicalUrl } from "@/lib/seo";
-import { openapiPageSource, source } from "@/lib/source";
+import { canonicalUrl } from "@/lib/seo";
+import { source } from "@/lib/source";
 
 // Static pages that exist for every locale
 const STATIC_PATHS = ["/", "/store"];
@@ -31,16 +31,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.7,
-    });
-  }
-
-  // ── OpenAPI reference pages (locale-agnostic) ───────────────────────────
-  for (const page of openapiPageSource.getPages()) {
-    entries.push({
-      url: `${BASE_URL}${page.url}`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.6,
     });
   }
 

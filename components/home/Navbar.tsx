@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ArrowTopRightOnSquareIcon,
   Bars3Icon,
   ComputerDesktopIcon,
   LanguageIcon,
@@ -136,6 +137,13 @@ export function Navbar({ version = "", stars = "" }: NavbarProps) {
       labelKey: "nav.docs",
       external: false,
     },
+    {
+      type: "link",
+      key: "api",
+      href: "/docs/openapi",
+      labelKey: "nav.api",
+      external: true,
+    },
   ];
 
   const navIconButtons: NavIconButtonItem[] = [
@@ -192,10 +200,11 @@ export function Navbar({ version = "", stars = "" }: NavbarProps) {
           href={item.href}
           target="_blank"
           rel="noopener noreferrer"
-          className={className}
+          className={`${className} inline-flex items-center gap-1`}
           onClick={onClick}
         >
           {t(item.labelKey)}
+          <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5 opacity-60" />
         </a>
       );
     }

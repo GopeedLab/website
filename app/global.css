@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
-@import "fumadocs-openapi/css/preset.css";
 
 /* Prevent layout shift when scrollbar appears/disappears */
 html {
@@ -87,6 +86,7 @@ body {
   }
 
   @keyframes float {
+
     0%,
     100% {
       transform: translateY(0);
@@ -98,6 +98,7 @@ body {
   }
 
   @keyframes pulse-slow {
+
     0%,
     100% {
       opacity: 0.2;
@@ -109,6 +110,7 @@ body {
   }
 
   @keyframes gradient-x {
+
     0%,
     100% {
       background-size: 200% 200%;
@@ -198,6 +200,8 @@ body {
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .scrollbar-hide {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
