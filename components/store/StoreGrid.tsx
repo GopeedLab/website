@@ -102,7 +102,9 @@ export function StoreGrid({ extensions }: StoreGridProps) {
 
       {/* Count */}
       <p className="text-[13px] font-medium text-gray-400 dark:text-gray-500 mb-6">
-        {filtered.length} {filtered.length === 1 ? "extension" : "extensions"}
+        {t(
+          filtered.length === 1 ? "store.count.one" : "store.count.other",
+        ).replace("{count}", String(filtered.length))}
       </p>
 
       {/* Grid */}

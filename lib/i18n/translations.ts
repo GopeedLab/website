@@ -110,6 +110,8 @@ const translations: Record<Locale, Record<string, string>> = {
     "store.sort.installs": "Most Installed",
     "store.sort.stars": "Most Stars",
     "store.sort.updated": "Recently Updated",
+    "store.count.one": "{count} extension",
+    "store.count.other": "{count} extensions",
     "store.empty": "No extensions yet",
     "store.emptyDesc": "Extensions will appear here once synced from GitHub.",
 
@@ -225,6 +227,8 @@ const translations: Record<Locale, Record<string, string>> = {
     "store.sort.installs": "最多安装",
     "store.sort.stars": "最多 Stars",
     "store.sort.updated": "最近更新",
+    "store.count.one": "{count} 个扩展",
+    "store.count.other": "{count} 个扩展",
     "store.empty": "暂无扩展",
     "store.emptyDesc": "扩展将在从 GitHub 同步后显示。",
 
@@ -340,6 +344,8 @@ const translations: Record<Locale, Record<string, string>> = {
     "store.sort.installs": "最多安裝",
     "store.sort.stars": "最多 Stars",
     "store.sort.updated": "最近更新",
+    "store.count.one": "{count} 個擴充功能",
+    "store.count.other": "{count} 個擴充功能",
     "store.empty": "暫無擴充功能",
     "store.emptyDesc": "擴充功能將在從 GitHub 同步後顯示。",
 
