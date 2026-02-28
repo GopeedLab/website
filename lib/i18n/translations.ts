@@ -112,6 +112,10 @@ const translations: Record<Locale, Record<string, string>> = {
     "store.sort.updated": "Recently Updated",
     "store.count.one": "{count} extension",
     "store.count.other": "{count} extensions",
+    "store.copyUrl": "Copy install URL",
+    "store.copied": "Copied!",
+    "store.installFailed":
+      "Auto-install failed. Please copy the URL and install manually in Gopeed.",
     "store.empty": "No extensions yet",
     "store.emptyDesc": "Extensions will appear here once synced from GitHub.",
 
@@ -229,6 +233,10 @@ const translations: Record<Locale, Record<string, string>> = {
     "store.sort.updated": "最近更新",
     "store.count.one": "{count} 个扩展",
     "store.count.other": "{count} 个扩展",
+    "store.copyUrl": "复制安装地址",
+    "store.copied": "已复制",
+    "store.installFailed":
+      "自动安装失败，请复制扩展地址，在 Gopeed 中手动安装。",
     "store.empty": "暂无扩展",
     "store.emptyDesc": "扩展将在从 GitHub 同步后显示。",
 
@@ -346,6 +354,10 @@ const translations: Record<Locale, Record<string, string>> = {
     "store.sort.updated": "最近更新",
     "store.count.one": "{count} 個擴充功能",
     "store.count.other": "{count} 個擴充功能",
+    "store.copyUrl": "複製安裝地址",
+    "store.copied": "已複製",
+    "store.installFailed":
+      "自動安裝失敗，請複製擴充功能地址，在 Gopeed 中手動安裝。",
     "store.empty": "暫無擴充功能",
     "store.emptyDesc": "擴充功能將在從 GitHub 同步後顯示。",
 

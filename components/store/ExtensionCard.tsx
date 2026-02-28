@@ -24,6 +24,12 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
   const { t } = useLocale();
   const [installing, setInstalling] = useState(false);
   const [iconError, setIconError] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [installFailed, setInstallFailed] = useState(false);
+
+  const installUrl = extension.directory
+    ? `${extension.repoUrl}#${extension.directory}`
+    : extension.repoUrl;
 
   const gopeedUrl = buildGopeedInstallUrl(
     extension.repoUrl,
@@ -33,8 +39,46 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
   const handleInstall = () => {
     if (installing) return;
     setInstalling(true);
+    setInstallFailed(false);
+
+    let appOpened = false;
+    const onVisibilityChange = () => {
+      if (document.hidden) appOpened = true;
+    };
+    const onBlur = () => {
+      appOpened = true;
+    };
+
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("blur", onBlur);
     window.location.href = gopeedUrl;
-    setTimeout(() => setInstalling(false), 2000);
+
+    setTimeout(() => {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("blur", onBlur);
+      setInstalling(false);
+      if (!appOpened) {
+        setInstallFailed(true);
+      }
+    }, 2000);
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(installUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // fallback for older browsers
+      const el = document.createElement("textarea");
+      el.value = installUrl;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand("copy");
+      document.body.removeChild(el);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   const displayTitle = extension.title || extension.name;
@@ -201,6 +245,47 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
                 )}
               </motion.button>
 
+              {/* Copy URL — Icon Only */}
+              <motion.button
+                type="button"
+                onClick={handleCopy}
+                whileTap={{ scale: 0.98 }}
+                title={copied ? t("store.copied") : t("store.copyUrl")}
+                className="flex items-center justify-center w-10 h-10 rounded-xl text-gray-600 dark:text-gray-400 bg-gray-50 hover:bg-gray-100 dark:bg-white/5 dark:hover:bg-white/10 transition-colors duration-200"
+              >
+                {copied ? (
+                  <svg
+                    className="w-4 h-4 text-primary-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2.5}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                )}
+              </motion.button>
+
               {/* GitHub — Icon Only */}
               <a
                 href={sourceUrl}
@@ -225,6 +310,29 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
               </a>
             </div>
           </div>
+
+          {/* Install failed notice */}
+          {installFailed && (
+            <div className="mt-3 flex items-start gap-2 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 px-3 py-2.5">
+              <svg
+                className="w-4 h-4 text-amber-500 shrink-0 mt-0.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+                />
+              </svg>
+              <p className="text-[12px] text-amber-700 dark:text-amber-400 leading-relaxed">
+                {t("store.installFailed")}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </motion.div>

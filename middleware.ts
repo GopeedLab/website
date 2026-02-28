@@ -47,6 +47,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // 301 redirect legacy /zh-CN/* paths (old site) to /zh/*
+  if (/^\/zh-CN(\/|$)/i.test(pathname)) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname.replace(/^\/zh-CN/i, "/zh");
+    return NextResponse.redirect(url, { status: 301 });
+  }
+
   // Normalize English locale: redirect /en/* to /* (hideLocale: "default-locale")
   if (pathname.startsWith("/en/") || pathname === "/en") {
     const url = request.nextUrl.clone();
