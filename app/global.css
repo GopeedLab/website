@@ -1,0 +1,207 @@
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+
+/* Prevent layout shift when scrollbar appears/disappears */
+html {
+  scrollbar-gutter: stable;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* Stable viewport height for mobile browsers */
+.stable-vh {
+  min-height: 100svh;
+}
+
+@supports (height: 100dvh) {
+  .stable-vh {
+    min-height: 100dvh;
+  }
+}
+
+/* Tailwind v4 Theme Configuration */
+@theme {
+  /* Primary colors - Gopeed Green #79C476 */
+  --color-primary: #79c476;
+  --color-primary-50: #f2f9f1;
+  --color-primary-100: #e4f3e2;
+  --color-primary-200: #c9e7c5;
+  --color-primary-300: #a9d9a4;
+  --color-primary-400: #8fcd8a;
+  --color-primary-500: #79c476;
+  --color-primary-600: #5fa05c;
+  --color-primary-700: #4c824a;
+  --color-primary-800: #3d673c;
+  --color-primary-900: #325431;
+  --color-primary-950: #1a2e1a;
+
+  /* Override fumadocs primary color */
+  --color-fd-primary: #79c476;
+  --color-fd-primary-foreground: #ffffff;
+
+  /* Animations */
+  --animate-fade-in: fade-in 0.5s ease-in-out;
+  --animate-fade-in-up: fade-in-up 0.5s ease-out;
+  --animate-fade-in-down: fade-in-down 0.5s ease-out;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-slow: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-gradient-x: gradient-x 15s ease infinite;
+
+  /* Keyframes */
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in-down {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  @keyframes pulse-slow {
+
+    0%,
+    100% {
+      opacity: 0.2;
+    }
+
+    50% {
+      opacity: 0.4;
+    }
+  }
+
+  @keyframes gradient-x {
+
+    0%,
+    100% {
+      background-size: 200% 200%;
+      background-position: left center;
+    }
+
+    50% {
+      background-size: 200% 200%;
+      background-position: right center;
+    }
+  }
+}
+
+/* Override fumadocs primary colors - must be outside @theme */
+:root {
+  --color-fd-primary: #79c476;
+  --color-fd-primary-foreground: #ffffff;
+}
+
+.dark {
+  --color-fd-primary: #79c476;
+  --color-fd-primary-foreground: #ffffff;
+}
+
+/* Background utilities */
+.bg-gradient-grid {
+  background-image:
+    linear-gradient(to right, rgba(121, 196, 118, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(121, 196, 118, 0.1) 1px, transparent 1px);
+}
+
+.bg-gradient-radial {
+  background: radial-gradient(var(--tw-gradient-stops));
+}
+
+/* Download component styles from websitev2 */
+@layer components {
+  .tab-grid {
+    @apply grid grid-cols-2 sm:grid-cols-5 gap-2;
+  }
+
+  .tab-button {
+    @apply h-12 flex items-center justify-center rounded-lg transition-all duration-200 px-4 border w-full;
+  }
+
+  .tab-button-selected {
+    @apply bg-primary-500/20 border-primary-500/50 text-primary-700 dark:text-white;
+  }
+
+  .tab-button-unselected {
+    @apply bg-gray-100 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700/50;
+  }
+
+  .download-container {
+    @apply mt-6 flex items-center;
+  }
+
+  .download-button {
+    @apply py-2.5 px-5 bg-primary-600 hover:bg-primary-500 rounded-lg text-white font-medium flex items-center space-x-2 transition-colors;
+  }
+
+  .download-info {
+    @apply text-sm text-gray-600 dark:text-gray-400 ml-3 flex items-center;
+  }
+
+  .command-container {
+    @apply mt-6;
+  }
+
+  .command-title {
+    @apply text-sm font-medium text-gray-900 dark:text-white mb-2 flex items-center;
+  }
+
+  .command-box {
+    @apply flex items-center justify-between bg-gray-100 dark:bg-gray-800/70 backdrop-blur-sm rounded-lg p-3 border border-gray-200 dark:border-gray-700/50;
+  }
+
+  .copy-button {
+    @apply p-1.5 rounded-md bg-gray-200 dark:bg-gray-700/50 hover:bg-gray-300 dark:hover:bg-gray-600/50 transition-colors ml-3;
+  }
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}

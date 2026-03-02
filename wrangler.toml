@@ -1,0 +1,43 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "gopeed-website"
+main = ".open-next/worker.js"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Workers Paid Plan needed for static assets
+assets = { directory = ".open-next/assets", binding = "ASSETS" }
+
+# Self reference for ISR revalidation
+[[services]]
+binding = "WORKER_SELF_REFERENCE"
+service = "gopeed-website"
+
+# R2 bucket for Next.js incremental cache (ISR/SSG + fetch cache)
+# Create via: wrangler r2 bucket create gopeed-website-cache
+[[r2_buckets]]
+binding = "NEXT_INC_CACHE_R2_BUCKET"
+bucket_name = "gopeed-website-cache"
+
+# D1 database for extension store
+[[d1_databases]]
+binding = "DB"
+database_name = "gopeed"
+database_id = "f6b574be-9c11-48e0-a129-deabb5e4368f"
+migrations_dir = "./db/migrations"
+
+# Environment variables
+[vars]
+NODE_ENV = "production"
+
+# esbuild define: tell wrangler/esbuild to tree-shake next/og's edge WASM branch.
+# next/dist/server/og/image-response.js uses:
+#   import(NEXT_RUNTIME === 'edge' ? 'index.edge.js' : 'index.node.js')
+# Without this define, esbuild bundles BOTH branches including index.edge.js
+# which has static `import resvg_wasm from "resvg.wasm?module"` (~543 KB gzip).
+# Setting this to "nodejs" causes esbuild to eliminate the edge branch entirely.
+[define]
+"process.env.NEXT_RUNTIME" = '"nodejs"'
+
+# Build configuration
+[build]
+command = "pnpm build:worker"
