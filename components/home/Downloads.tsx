@@ -17,6 +17,7 @@ import {
   FaWindows,
 } from "react-icons/fa";
 import { SiIos, SiQnap } from "react-icons/si";
+import { useDownload } from "@/hooks/useDownload";
 import type { ReleaseAsset } from "@/lib/data";
 import { useLocale } from "@/lib/locale-context";
 import { detectPlatform } from "@/lib/platform-detector";
@@ -24,7 +25,6 @@ import {
   type Architecture,
   buildPlatformsFromAssets,
   type DownloadFile,
-  getOptimizedDownloadUrl,
   normalizeArchForAsset,
   type OperatingSystem,
   type PackageType,
@@ -57,7 +57,7 @@ interface DownloadsProps {
 
 export function Downloads({ version, releaseAssets }: DownloadsProps) {
   const { t } = useLocale();
-  const [isDownloading, setIsDownloading] = useState(false);
+  const { isDownloading, triggerDownload } = useDownload();
 
   // 使用 useMemo 缓存平台数据，避免每次渲染都重新构建
   const platforms: Platform[] = useMemo(
@@ -232,16 +232,7 @@ export function Downloads({ version, releaseAssets }: DownloadsProps) {
     }
 
     const handleDownload = async () => {
-      setIsDownloading(true);
-      try {
-        const optimizedUrl = await getOptimizedDownloadUrl(downloadUrl);
-        window.open(optimizedUrl, "_blank");
-      } catch (error) {
-        console.error("Download failed:", error);
-        window.open(downloadUrl, "_blank");
-      } finally {
-        setIsDownloading(false);
-      }
+      await triggerDownload(downloadUrl, selectedFile.name);
     };
 
     return (

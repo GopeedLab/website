@@ -7,6 +7,7 @@ import {
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useDownload } from "@/hooks/useDownload";
 import type { ReleaseAsset } from "@/lib/data";
 import { useLocale } from "@/lib/locale-context";
 import {
@@ -14,10 +15,7 @@ import {
   type PlatformInfo,
   platformNames,
 } from "@/lib/platform-detector";
-import {
-  getOptimizedDownloadUrl,
-  getPreferredDownloadUrl,
-} from "@/lib/release-assets";
+import { getPreferredDownloadUrl } from "@/lib/release-assets";
 
 const browserExtensions = [
   {
@@ -44,7 +42,7 @@ interface HeroProps {
 
 export function Hero({ version, releaseAssets }: HeroProps) {
   const { t } = useLocale();
-  const [isDownloading, setIsDownloading] = useState(false);
+  const { isDownloading, triggerDownload } = useDownload();
   const [platformInfo, setPlatformInfo] = useState<PlatformInfo>({
     platform: "unknown",
     arch: "unknown",
@@ -74,16 +72,7 @@ export function Hero({ version, releaseAssets }: HeroProps) {
 
     const downloadUrl = getPreferredDownloadUrl(releaseAssets, platform, arch);
     if (downloadUrl) {
-      setIsDownloading(true);
-      try {
-        const optimizedUrl = await getOptimizedDownloadUrl(downloadUrl);
-        window.open(optimizedUrl, "_blank");
-      } catch (error) {
-        console.error("Download failed:", error);
-        window.open(downloadUrl, "_blank");
-      } finally {
-        setIsDownloading(false);
-      }
+      await triggerDownload(downloadUrl);
     } else {
       scrollToDownload();
     }
