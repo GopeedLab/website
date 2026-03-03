@@ -146,6 +146,11 @@ body {
   background: radial-gradient(var(--tw-gradient-stops));
 }
 
+/* Shared section heading style — matches the store page title aesthetic */
+.section-heading {
+  @apply font-semibold tracking-tight text-gray-950 dark:text-white;
+}
+
 /* Download component styles from websitev2 */
 @layer components {
   .tab-grid {

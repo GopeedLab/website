@@ -111,10 +111,8 @@ export function Hero({ version, releaseAssets }: HeroProps) {
               className="text-center lg:text-left space-y-4 lg:space-y-6 flex flex-col justify-center order-1"
             >
               <div className="space-y-4">
-                <h1 className="text-3xl sm:text-5xl font-bold leading-tight">
-                  <span className="bg-gradient-to-r from-primary-400 via-primary-500 to-primary-600 bg-clip-text text-transparent animate-gradient-x">
-                    {t("hero.title")}
-                  </span>
+                <h1 className="text-3xl sm:text-5xl leading-tight section-heading">
+                  {t("hero.title")}
                 </h1>
                 <p className="text-xl text-gray-600 dark:text-gray-400">
                   {t("hero.subtitle")}

@@ -65,10 +65,8 @@ export function Features() {
             transition={{ duration: 0.5 }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl font-bold mb-4">
-              <span className="bg-linear-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent">
-                {t("features.title")}
-              </span>
+            <h2 className="text-3xl section-heading mb-4">
+              {t("features.title")}
             </h2>
             <p className="text-gray-600 dark:text-gray-400">
               {t("features.subtitle")}
