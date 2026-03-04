@@ -5,7 +5,7 @@
   "scripts": {
     "prebuild": "node scripts/fetch-swagger.mjs",
     "build": "next build",
-    "build:worker": "pnpm build && pnpm cf:build",
+    "build:worker": "pnpm build && pnpm cf:build && node scripts/strip-og-wasm.mjs",
     "cf:build": "opennextjs-cloudflare build",
     "cf:dev": "wrangler dev",
     "cf:deploy": "wrangler deploy --minify",
