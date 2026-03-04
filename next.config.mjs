@@ -40,6 +40,9 @@ const config = {
         hostname: "raw.githubusercontent.com",
       },
     ],
+    // Allow SVG images through the optimization pipeline (extension icons may be SVG).
+    // CSP headers (script-src 'none'; frame-src 'none'; sandbox;) are applied automatically.
+    dangerouslyAllowSVG: true,
   },
   async rewrites() {
     return [

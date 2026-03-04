@@ -16,7 +16,7 @@ const WORKER_URL = (process.env.WORKER_URL ?? "https://gopeed.com").replace(
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const PAGE_SIZE = Math.min(
   5,
-  Math.max(1, parseInt(process.env.PAGE_SIZE ?? "5", 5)),
+  Math.max(1, parseInt(process.env.PAGE_SIZE ?? "5", 10)),
 );
 
 const endpoint = `${WORKER_URL}/api/extensions/sync`;

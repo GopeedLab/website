@@ -133,7 +133,6 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
                   height={48}
                   className="w-full h-full object-contain"
                   onError={() => setIconError(true)}
-                  unoptimized
                 />
               ) : (
                 <div className="w-full h-full rounded-[14px] bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 flex items-center justify-center">

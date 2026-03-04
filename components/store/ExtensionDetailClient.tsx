@@ -163,7 +163,6 @@ export function ExtensionDetailClient({
                   height={128}
                   className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                   onError={() => setIconError(true)}
-                  unoptimized
                 />
               ) : (
                 <svg
