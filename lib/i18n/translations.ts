@@ -119,6 +119,25 @@ const translations: Record<Locale, Record<string, string>> = {
     "store.empty": "No extensions yet",
     "store.emptyDesc": "Extensions will appear here once synced from GitHub.",
 
+    // Store detail page
+    "store.detail.back": "Back to Store",
+    "store.detail.install": "Install",
+    "store.detail.copyUrl": "Copy URL",
+    "store.detail.copied": "Copied!",
+    "store.detail.viewSource": "View Source",
+    "store.detail.installFailed":
+      "Auto-install failed. Please copy the URL and install manually in Gopeed.",
+    "store.detail.readme": "README",
+    "store.detail.noReadme": "No README available for this extension.",
+    "store.detail.installs": "Installs",
+    "store.detail.stars": "Stars",
+    "store.detail.version": "Version",
+    "store.detail.author": "Author",
+    "store.detail.updated": "Updated",
+    "store.detail.notFound": "Extension not found",
+    "store.detail.notFoundDesc":
+      "The extension you are looking for does not exist.",
+
     // Footer
     "footer.docs": "Documentation",
     "footer.privacy": "Privacy Policy",
@@ -240,6 +259,24 @@ const translations: Record<Locale, Record<string, string>> = {
     "store.empty": "暂无扩展",
     "store.emptyDesc": "扩展将在从 GitHub 同步后显示。",
 
+    // Store detail page
+    "store.detail.back": "返回商店",
+    "store.detail.install": "安装",
+    "store.detail.copyUrl": "复制地址",
+    "store.detail.copied": "已复制",
+    "store.detail.viewSource": "查看源码",
+    "store.detail.installFailed":
+      "自动安装失败，请复制扩展地址，在 Gopeed 中手动安装。",
+    "store.detail.readme": "README",
+    "store.detail.noReadme": "此扩展暂无 README。",
+    "store.detail.installs": "安装次数",
+    "store.detail.stars": "Stars",
+    "store.detail.version": "版本",
+    "store.detail.author": "作者",
+    "store.detail.updated": "更新时间",
+    "store.detail.notFound": "扩展不存在",
+    "store.detail.notFoundDesc": "您查找的扩展不存在。",
+
     // Footer
     "footer.docs": "文档",
     "footer.privacy": "隐私政策",
@@ -360,6 +397,24 @@ const translations: Record<Locale, Record<string, string>> = {
       "自動安裝失敗，請複製擴充功能地址，在 Gopeed 中手動安裝。",
     "store.empty": "暫無擴充功能",
     "store.emptyDesc": "擴充功能將在從 GitHub 同步後顯示。",
+
+    // Store detail page
+    "store.detail.back": "返回商店",
+    "store.detail.install": "安裝",
+    "store.detail.copyUrl": "複製地址",
+    "store.detail.copied": "已複製",
+    "store.detail.viewSource": "查看原始碼",
+    "store.detail.installFailed":
+      "自動安裝失敗，請複製擴充功能地址，在 Gopeed 中手動安裝。",
+    "store.detail.readme": "README",
+    "store.detail.noReadme": "此擴充功能暫無 README。",
+    "store.detail.installs": "安裝次數",
+    "store.detail.stars": "Stars",
+    "store.detail.version": "版本",
+    "store.detail.author": "作者",
+    "store.detail.updated": "更新時間",
+    "store.detail.notFound": "擴充功能不存在",
+    "store.detail.notFoundDesc": "您查找的擴充功能不存在。",
 
     // Footer
     "footer.docs": "文件",

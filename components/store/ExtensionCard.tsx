@@ -2,8 +2,10 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import type { Extension } from "@/db/schema";
+import { defaultLocale } from "@/lib/i18n";
 import { useLocale } from "@/lib/locale-context";
 
 interface ExtensionCardProps {
@@ -21,11 +23,16 @@ function buildGopeedInstallUrl(
 }
 
 export function ExtensionCard({ extension, index }: ExtensionCardProps) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const [installing, setInstalling] = useState(false);
   const [iconError, setIconError] = useState(false);
   const [copied, setCopied] = useState(false);
   const [installFailed, setInstallFailed] = useState(false);
+
+  const detailHref =
+    locale === defaultLocale
+      ? `/store/${extension.id}`
+      : `/${locale}/store/${extension.id}`;
 
   const installUrl = extension.directory
     ? `${extension.repoUrl}#${extension.directory}`
@@ -102,13 +109,19 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
       <div className="absolute -inset-0.5 bg-linear-to-br from-primary-500/30 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-500" />
 
       <div className="relative h-full flex flex-col bg-white dark:bg-[#111111] rounded-2xl border border-gray-100 dark:border-white/5 group-hover:border-primary-500/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:hover:shadow-[0_8px_30px_rgb(0,0,0,0.2)] transition-all duration-500 overflow-hidden p-6">
+        {/* Card-level link overlay (covers non-interactive areas) */}
+        <Link
+          href={detailHref}
+          className="absolute inset-0 z-10"
+          aria-label={displayTitle}
+        />
         {/* Top Highlight Line */}
         <div className="absolute top-0 left-0 right-0 h-[1px] bg-linear-to-r from-transparent via-primary-500/0 to-transparent group-hover:via-primary-500/50 transition-all duration-500 z-20" />
 
         {/* Inner Decorative Gradient */}
         <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-primary-500/10 rounded-full blur-3xl group-hover:bg-primary-500/20 transition-colors duration-500 z-0 pointer-events-none" />
 
-        <div className="relative z-10 flex flex-col h-full">
+        <div className="relative z-20 flex flex-col h-full pointer-events-none">
           {/* Header */}
           <div className="flex items-start gap-4 mb-5">
             <div className="shrink-0 w-12 h-12 flex items-center justify-center">
@@ -162,7 +175,7 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
           </p>
 
           {/* Footer: Stats & Actions */}
-          <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 dark:border-white/5 group-hover:border-primary-500/20 transition-colors duration-300">
+          <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 dark:border-white/5 group-hover:border-primary-500/20 transition-colors duration-300 pointer-events-auto">
             {/* Stats */}
             <div className="flex items-center gap-4 text-[13px] font-medium text-gray-500 dark:text-gray-400">
               <span className="flex items-center gap-1.5 group-hover:text-primary-600/70 dark:group-hover:text-primary-400/70 transition-colors duration-300">
@@ -204,7 +217,7 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
                 disabled={installing}
                 whileTap={{ scale: 0.98 }}
                 title={t("store.install") || "Install"}
-                className="flex items-center justify-center w-10 h-10 rounded-xl bg-gray-950 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-white dark:text-gray-950 transition-colors duration-200"
+                className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary-500 hover:bg-primary-600 text-white shadow-md shadow-primary-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {installing ? (
                   <svg

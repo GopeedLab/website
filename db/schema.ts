@@ -27,6 +27,9 @@ export const extensions = sqliteTable("extensions", {
   version: text("version").notNull().default("0.0.0"),
   homepage: text("homepage"),
 
+  // README content (raw markdown, with relative image paths resolved to absolute URLs)
+  readme: text("readme"),
+
   // Stats
   installCount: integer("install_count").notNull().default(0),
 

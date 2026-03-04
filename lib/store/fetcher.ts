@@ -89,6 +89,86 @@ async function getLatestCommitSha(
 }
 
 /**
+ * Fetch README content from a repo directory, trying common filename variants.
+ * Returns the raw markdown text, or null if not found.
+ */
+async function fetchReadme(
+  repoFullName: string,
+  branch: string,
+  directory: string | null,
+  _token?: string,
+): Promise<string | null> {
+  const candidates = ["README.md", "readme.md", "Readme.md", "README.MD"];
+  const base = directory ? `${directory}/` : "";
+
+  for (const filename of candidates) {
+    const url = `${RAW_GITHUB}/${repoFullName}/${branch}/${base}${filename}`;
+    try {
+      const res = await fetch(url, {
+        headers: { "User-Agent": "Gopeed-Website/1.0" },
+      });
+      if (res.ok) {
+        return await res.text();
+      }
+    } catch {
+      // continue trying next variant
+    }
+  }
+  return null;
+}
+
+/**
+ * Resolve relative image URLs in a markdown string to absolute raw GitHub URLs.
+ * Handles both markdown image syntax ![alt](src) and HTML <img src="..."> tags.
+ */
+function resolveMarkdownImageUrls(
+  markdown: string,
+  repoFullName: string,
+  branch: string,
+  directory: string | null,
+): string {
+  const base = directory ? `${directory}/` : "";
+  const rawBase = `${RAW_GITHUB}/${repoFullName}/${branch}/${base}`;
+
+  // Replace markdown image syntax: ![alt](relative/path)
+  let resolved = markdown.replace(
+    /!\[([^\]]*)\]\(([^)]+)\)/g,
+    (match, alt, src) => {
+      const trimmed = src.trim();
+      if (
+        trimmed.startsWith("http://") ||
+        trimmed.startsWith("https://") ||
+        trimmed.startsWith("data:")
+      ) {
+        return match;
+      }
+      // Remove leading ./ if present
+      const cleanSrc = trimmed.replace(/^\.\//, "");
+      return `![${alt}](${rawBase}${cleanSrc})`;
+    },
+  );
+
+  // Replace HTML img tags: <img src="relative/path" ...>
+  resolved = resolved.replace(
+    /(<img\s[^>]*src=)(["'])([^"']+)\2/gi,
+    (match, prefix, quote, src) => {
+      const trimmed = src.trim();
+      if (
+        trimmed.startsWith("http://") ||
+        trimmed.startsWith("https://") ||
+        trimmed.startsWith("data:")
+      ) {
+        return match;
+      }
+      const cleanSrc = trimmed.replace(/^\.\//, "");
+      return `${prefix}${quote}${rawBase}${cleanSrc}${quote}`;
+    },
+  );
+
+  return resolved;
+}
+
+/**
  * Fetch manifest.json content from a specific path in a repo.
  */
 async function fetchManifest(
@@ -275,6 +355,22 @@ async function syncExtension(
     directory,
   );
 
+  // Fetch README and resolve relative image paths
+  const rawReadme = await fetchReadme(
+    repo.full_name,
+    repo.default_branch,
+    directory,
+    token,
+  );
+  const readme = rawReadme
+    ? resolveMarkdownImageUrls(
+        rawReadme,
+        repo.full_name,
+        repo.default_branch,
+        directory,
+      )
+    : null;
+
   const data: NewExtension = {
     id,
     repoFullName: repo.full_name,
@@ -288,6 +384,7 @@ async function syncExtension(
     icon: iconUrl ?? undefined,
     version: manifest.version ?? "0.0.0",
     homepage: manifest.homepage ?? repo.html_url,
+    readme: readme ?? undefined,
     stars: repo.stargazers_count,
     topics: JSON.stringify(repo.topics ?? []),
     updatedAt: new Date(),
@@ -307,6 +404,7 @@ async function syncExtension(
         icon: data.icon,
         version: data.version,
         homepage: data.homepage,
+        readme: data.readme,
         stars: data.stars,
         topics: data.topics,
         updatedAt: data.updatedAt,
