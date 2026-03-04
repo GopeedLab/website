@@ -6,7 +6,7 @@
  * Environment variables:
  *   WORKER_URL      Base URL of the deployed worker (default: https://gopeed.com)
  *   GITHUB_TOKEN    GitHub personal access token for higher API rate limits
- *   PAGE_SIZE       Repos to process per batch (default: 10, max: 10 — Worker subrequest limit)
+ *   PAGE_SIZE       Repos to process per batch (default: 5, max: 5 — Worker subrequest limit)
  */
 
 const WORKER_URL = (process.env.WORKER_URL ?? "https://gopeed.com").replace(
@@ -15,8 +15,8 @@ const WORKER_URL = (process.env.WORKER_URL ?? "https://gopeed.com").replace(
 );
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const PAGE_SIZE = Math.min(
-  10,
-  Math.max(1, parseInt(process.env.PAGE_SIZE ?? "10", 10)),
+  5,
+  Math.max(1, parseInt(process.env.PAGE_SIZE ?? "5", 5)),
 );
 
 const endpoint = `${WORKER_URL}/api/extensions/sync`;
