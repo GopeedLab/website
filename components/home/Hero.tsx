@@ -89,7 +89,7 @@ export function Hero({ version, releaseAssets }: HeroProps) {
   };
 
   return (
-    <section className="relative pt-18">
+    <section className="relative pt-18" aria-label="Gopeed Download Manager">
       {/* Background Grid */}
       <div className="absolute inset-0 bg-gradient-grid bg-[length:50px_50px] opacity-5 dark:opacity-10" />
 

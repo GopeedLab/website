@@ -4,9 +4,16 @@ const translations: Record<Locale, Record<string, string>> = {
   en: {
     // Site
     "site.name": "Gopeed",
-    "site.title": "Gopeed - A Modern Download Manager",
+    "site.title":
+      "Gopeed - Free Modern Open Source Download Manager | HTTP, BitTorrent & Magnet",
     "site.description":
-      "A modern download manager that supports all platforms. Built with Golang and Flutter.",
+      "Gopeed is a free, open-source download manager supporting HTTP, HTTPS, BitTorrent, and magnet links. Multi-threaded high-speed downloads across Windows, macOS, Linux, Android, and iOS. Built with Golang and Flutter.",
+
+    // SEO-specific metadata (not shown in UI, used only for meta tags)
+    "seo.keywords.en":
+      "download manager,free download manager,open source downloader,BitTorrent client,magnet link downloader,HTTP downloader,multi-threaded download,Gopeed,torrent downloader,cross-platform download manager,file downloader,download accelerator",
+    "seo.keywords.store":
+      "Gopeed extensions,download extensions,YouTube downloader,HuggingFace downloader,cloud storage downloader,browser extension",
 
     // Navigation
     "nav.docs": "Docs",
@@ -20,9 +27,9 @@ const translations: Record<Locale, Record<string, string>> = {
     "theme.system": "System",
 
     // Hero
-    "hero.title": "A Modern Downloader Manager",
+    "hero.title": "A Modern Download Manager",
     "hero.subtitle":
-      "Cross-platform, clean interface, fast downloads. Download experience made easy.",
+      "Free, open-source, cross-platform. Support HTTP, BitTorrent & magnet links with multi-threaded high-speed downloads.",
     "hero.downloadNow": "Download Now",
     "hero.downloadFor": "Download for {platform}",
     "hero.moreVersions": "More Versions",
@@ -33,34 +40,39 @@ const translations: Record<Locale, Record<string, string>> = {
     // Features
     "features.title": "Why Choose Gopeed?",
     "features.subtitle":
-      "A powerful yet lightweight downloader with amazing features",
+      "A powerful yet lightweight download manager with cutting-edge features",
     "features.speed.title": "Lightning Fast",
-    "features.speed.desc": "Multi-threaded download engine for maximum speed",
+    "features.speed.desc":
+      "Multi-threaded download engine maximizes your bandwidth for the fastest download speeds",
     "features.cross.title": "Cross Platform",
     "features.cross.desc":
-      "Available on Windows, macOS, Linux, Android, iOS, and Web",
+      "Available on Windows, macOS, Linux, Android, iOS, and Web — one download manager for all devices",
     "features.protocol.title": "Multi Protocol",
     "features.protocol.desc":
-      "Support HTTP, BitTorrent, Magnet and more protocols",
+      "Support HTTP, HTTPS, BitTorrent, magnet links and more download protocols",
     "features.extension.title": "Extensible",
-    "features.extension.desc": "Powerful extension system based on JavaScript",
+    "features.extension.desc":
+      "Powerful JavaScript extension system — add YouTube, HuggingFace, cloud storage downloading and more",
     "features.api.title": "API Support",
-    "features.api.desc": "RESTful API for automation and integration",
+    "features.api.desc":
+      "RESTful API for automation, integration and remote download management",
     "features.open.title": "Open Source",
-    "features.open.desc": "Free and open source, community driven development",
+    "features.open.desc":
+      "100% free and open source, community driven. No ads, no tracking.",
 
     // Extensions
     "extensions.title": "Powerful Extensions",
-    "extensions.subtitle": "Extend functionality through the extension system",
+    "extensions.subtitle":
+      "Extend Gopeed's download capabilities through the JavaScript extension system",
     "extensions.youtube.title": "YouTube Video Download",
     "extensions.youtube.desc":
-      "Easily download YouTube videos and playlists, supporting different quality and formats.",
+      "Download YouTube videos and playlists in various qualities and formats, including 4K and 1080p.",
     "extensions.huggingface.title": "HuggingFace Model Download",
     "extensions.huggingface.desc":
-      "Quickly download AI model files with resume support and automatic file verification.",
+      "Download AI model files from HuggingFace with resume support and automatic file verification.",
     "extensions.cloud.title": "Cloud Storage Download",
     "extensions.cloud.desc":
-      "Support various cloud storage file downloads, break speed limits, batch download made easy.",
+      "Download files from various cloud storage services, bypass speed limits, and batch download with ease.",
     "extensions.store": "Extension Store",
     "extensions.storeDesc":
       "Browse and install community-contributed download extensions",
@@ -92,7 +104,8 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // Store
     "store.title": "Extension Store",
-    "store.subtitle": "Browse and install community extensions for Gopeed",
+    "store.subtitle":
+      "Browse and install community extensions for Gopeed — YouTube, HuggingFace, cloud storage and more",
     "store.search": "Search extensions...",
     "store.install": "Install",
     "store.installing": "Installing...",
@@ -150,9 +163,15 @@ const translations: Record<Locale, Record<string, string>> = {
   zh: {
     // Site
     "site.name": "Gopeed",
-    "site.title": "Gopeed - 现代化下载器",
+    "site.title": "Gopeed - 免费现代化开源下载器 | 支持HTTP、BT种子和磁力链接",
     "site.description":
-      "一款支持全平台的现代化下载器，使用 Golang 和 Flutter 构建。",
+      "Gopeed 是一款免费开源的现代化下载管理器，支持 HTTP、HTTPS、BitTorrent 和磁力链接下载。多线程高速下载，跨平台支持 Windows、macOS、Linux、Android 和 iOS。",
+
+    // SEO-specific metadata
+    "seo.keywords.en":
+      "下载器,下载管理器,免费下载器,开源下载器,BT下载,磁力链接下载,HTTP下载,多线程下载,Gopeed,种子下载,跨平台下载器,文件下载器,下载加速器",
+    "seo.keywords.store":
+      "Gopeed扩展,下载扩展,YouTube下载器,HuggingFace下载,网盘下载,浏览器扩展",
 
     // Navigation
     "nav.docs": "文档",
@@ -166,8 +185,9 @@ const translations: Record<Locale, Record<string, string>> = {
     "theme.system": "系统",
 
     // Hero
-    "hero.title": "一款现代化下载器",
-    "hero.subtitle": "支持全平台，界面简洁，下载快速，让下载体验更轻松",
+    "hero.title": "一款现代化下载管理器",
+    "hero.subtitle":
+      "免费开源，跨平台支持。HTTP、BT种子、磁力链接多协议多线程高速下载。",
     "hero.downloadNow": "立即下载",
     "hero.downloadFor": "下载 {platform} 版",
     "hero.moreVersions": "更多版本",
@@ -177,32 +197,36 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // Features
     "features.title": "为什么选择 Gopeed？",
-    "features.subtitle": "一个功能强大而轻量的下载器",
+    "features.subtitle": "一个功能强大而轻量的下载管理器",
     "features.speed.title": "极速下载",
-    "features.speed.desc": "多线程下载引擎，实现最大下载速度",
+    "features.speed.desc": "多线程下载引擎，充分利用带宽，实现最大下载速度",
     "features.cross.title": "跨平台",
-    "features.cross.desc": "支持 Windows、macOS、Linux、Android、iOS 和 Web",
+    "features.cross.desc":
+      "支持 Windows、macOS、Linux、Android、iOS 和 Web，一个下载器覆盖所有设备",
     "features.protocol.title": "多协议",
-    "features.protocol.desc": "支持 HTTP、BitTorrent、磁力链接等多种协议",
+    "features.protocol.desc":
+      "支持 HTTP、HTTPS、BitTorrent、磁力链接等多种下载协议",
     "features.extension.title": "可扩展",
-    "features.extension.desc": "基于 JavaScript 的强大扩展系统",
+    "features.extension.desc":
+      "强大的 JavaScript 扩展系统，轻松添加 YouTube、HuggingFace、网盘下载等功能",
     "features.api.title": "API 支持",
-    "features.api.desc": "RESTful API 支持自动化和集成",
+    "features.api.desc": "RESTful API 支持自动化、集成和远程下载管理",
     "features.open.title": "开源免费",
-    "features.open.desc": "开源免费，社区驱动开发",
+    "features.open.desc": "完全免费开源，社区驱动开发，无广告无追踪",
 
     // Extensions
     "extensions.title": "强大的扩展能力",
-    "extensions.subtitle": "使用 JavaScript 编写扩展，轻松实现各类下载需求",
+    "extensions.subtitle":
+      "使用 JavaScript 编写扩展，轻松扩展 Gopeed 的下载能力",
     "extensions.youtube.title": "YouTube 视频下载",
     "extensions.youtube.desc":
-      "轻松下载 YouTube 视频和播放列表，支持选择不同清晰度和格式。",
+      "下载 YouTube 视频和播放列表，支持 4K、1080p 等多种清晰度和格式。",
     "extensions.huggingface.title": "HuggingFace 模型下载",
     "extensions.huggingface.desc":
-      "快速下载 AI 模型文件，支持断点续传，自动验证文件完整性。",
+      "从 HuggingFace 下载 AI 模型文件，支持断点续传和自动验证文件完整性。",
     "extensions.cloud.title": "网盘文件下载",
     "extensions.cloud.desc":
-      "支持各类网盘的文件下载，突破速度限制，批量下载更便捷。",
+      "支持各类网盘文件下载，突破速度限制，批量下载更便捷。",
     "extensions.store": "扩展商店",
     "extensions.storeDesc": "浏览和安装社区贡献的各类下载扩展",
     "extensions.devDocs": "开发文档",
@@ -232,7 +256,8 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // Store
     "store.title": "扩展商店",
-    "store.subtitle": "浏览并安装社区贡献的 Gopeed 扩展",
+    "store.subtitle":
+      "浏览并安装社区贡献的 Gopeed 扩展 — YouTube、HuggingFace、网盘下载等",
     "store.search": "搜索扩展...",
     "store.install": "安装",
     "store.installing": "安装中...",
@@ -289,9 +314,15 @@ const translations: Record<Locale, Record<string, string>> = {
   "zh-TW": {
     // Site
     "site.name": "Gopeed",
-    "site.title": "Gopeed - 現代化下載器",
+    "site.title": "Gopeed - 免費現代化開源下載器 | 支援HTTP、BT種子和磁力連結",
     "site.description":
-      "一款支援全平台的現代化下載器，使用 Golang 和 Flutter 建構。",
+      "Gopeed 是一款免費開源的現代化下載管理器，支援 HTTP、HTTPS、BitTorrent 和磁力連結下載。多執行緒高速下載，跨平台支援 Windows、macOS、Linux、Android 和 iOS。",
+
+    // SEO-specific metadata
+    "seo.keywords.en":
+      "下載器,下載管理器,免費下載器,開源下載器,BT下載,磁力連結下載,HTTP下載,多執行緒下載,Gopeed,種子下載,跨平台下載器,檔案下載器,下載加速器",
+    "seo.keywords.store":
+      "Gopeed擴充,下載擴充,YouTube下載器,HuggingFace下載,雲端硬碟下載,瀏覽器擴充",
 
     // Navigation
     "nav.docs": "文件",
@@ -305,8 +336,9 @@ const translations: Record<Locale, Record<string, string>> = {
     "theme.system": "系統",
 
     // Hero
-    "hero.title": "一款現代化下載器",
-    "hero.subtitle": "支援全平台，介面簡潔，下載快速，讓下載體驗更輕鬆",
+    "hero.title": "一款現代化下載管理器",
+    "hero.subtitle":
+      "免費開源，跨平台支援。HTTP、BT種子、磁力連結多協定多執行緒高速下載。",
     "hero.downloadNow": "立即下載",
     "hero.downloadFor": "下載 {platform} 版",
     "hero.moreVersions": "更多版本",
@@ -316,32 +348,36 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // Features
     "features.title": "為什麼選擇 Gopeed？",
-    "features.subtitle": "一個功能強大而輕量的下載器",
+    "features.subtitle": "一個功能強大而輕量的下載管理器",
     "features.speed.title": "極速下載",
-    "features.speed.desc": "多執行緒下載引擎，實現最大下載速度",
+    "features.speed.desc": "多執行緒下載引擎，充分利用頻寬，實現最大下載速度",
     "features.cross.title": "跨平台",
-    "features.cross.desc": "支援 Windows、macOS、Linux、Android、iOS 和 Web",
+    "features.cross.desc":
+      "支援 Windows、macOS、Linux、Android、iOS 和 Web，一個下載器覆蓋所有裝置",
     "features.protocol.title": "多協定",
-    "features.protocol.desc": "支援 HTTP、BitTorrent、磁力連結等多種協定",
+    "features.protocol.desc":
+      "支援 HTTP、HTTPS、BitTorrent、磁力連結等多種下載協定",
     "features.extension.title": "可擴充",
-    "features.extension.desc": "基於 JavaScript 的強大擴充系統",
+    "features.extension.desc":
+      "強大的 JavaScript 擴充系統，輕鬆新增 YouTube、HuggingFace、網盤下載等功能",
     "features.api.title": "API 支援",
-    "features.api.desc": "RESTful API 支援自動化和整合",
+    "features.api.desc": "RESTful API 支援自動化、整合和遠端下載管理",
     "features.open.title": "開源免費",
-    "features.open.desc": "開源免費，社群驅動開發",
+    "features.open.desc": "完全免費開源，社群驅動開發，無廣告無追蹤",
 
     // Extensions
     "extensions.title": "強大的擴充能力",
-    "extensions.subtitle": "使用 JavaScript 編寫擴充功能，輕鬆實現各類下載需求",
+    "extensions.subtitle":
+      "使用 JavaScript 編寫擴充功能，輕鬆擴展 Gopeed 的下載能力",
     "extensions.youtube.title": "YouTube 影片下載",
     "extensions.youtube.desc":
-      "輕鬆下載 YouTube 影片和播放清單，支援選擇不同解析度和格式。",
+      "下載 YouTube 影片和播放清單，支援 4K、1080p 等多種解析度和格式。",
     "extensions.huggingface.title": "HuggingFace 模型下載",
     "extensions.huggingface.desc":
-      "快速下載 AI 模型檔案，支援斷點續傳，自動驗證檔案完整性。",
+      "從 HuggingFace 下載 AI 模型檔案，支援斷點續傳和自動驗證檔案完整性。",
     "extensions.cloud.title": "網盤檔案下載",
     "extensions.cloud.desc":
-      "支援各類網盤的檔案下載，突破速度限制，批次下載更便捷。",
+      "支援各類網盤檔案下載，突破速度限制，批次下載更便捷。",
     "extensions.store": "擴充商店",
     "extensions.storeDesc": "瀏覽和安裝社群貢獻的各類下載擴充功能",
     "extensions.devDocs": "開發文件",
@@ -371,7 +407,8 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // Store
     "store.title": "擴充商店",
-    "store.subtitle": "瀏覽並安裝社群貢獻的 Gopeed 擴充功能",
+    "store.subtitle":
+      "瀏覽並安裝社群貢獻的 Gopeed 擴充功能 — YouTube、HuggingFace、網盤下載等",
     "store.search": "搜尋擴充功能...",
     "store.install": "安裝",
     "store.installing": "安裝中...",

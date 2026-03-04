@@ -25,7 +25,12 @@ export async function generateMetadata({
   return {
     title: t("store.title"),
     description: t("store.subtitle"),
+    keywords: t("seo.keywords.store"),
     alternates: pageAlternates(locale, "/store"),
+    openGraph: {
+      title: `${t("store.title")} | Gopeed`,
+      description: t("store.subtitle"),
+    },
   };
 }
 

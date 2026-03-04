@@ -48,7 +48,11 @@ export function Features() {
   ];
 
   return (
-    <section id="features" className="relative py-20 overflow-hidden">
+    <section
+      id="features"
+      className="relative py-20 overflow-hidden"
+      aria-label={t("features.title")}
+    >
       {/* Background Decoration */}
       <div className="absolute inset-0 bg-gradient-grid bg-[length:50px_50px] opacity-5 dark:opacity-10" />
 

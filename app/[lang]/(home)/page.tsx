@@ -9,6 +9,12 @@ import {
 } from "@/components/home";
 import { getAppData } from "@/lib/data";
 import { i18n, type Locale, locales } from "@/lib/i18n";
+import { getTranslation } from "@/lib/i18n/translations";
+import {
+  faqJsonLd,
+  jsonLdScriptContent,
+  softwareApplicationJsonLd,
+} from "@/lib/jsonld";
 import { pageAlternates } from "@/lib/seo";
 
 export async function generateMetadata({
@@ -20,8 +26,17 @@ export async function generateMetadata({
   const locale = (
     locales.includes(lang as Locale) ? lang : i18n.defaultLanguage
   ) as Locale;
+  const t = (key: string) => getTranslation(locale, key);
+
   return {
+    title: t("site.title"),
+    description: t("site.description"),
+    keywords: t("seo.keywords.en"),
     alternates: pageAlternates(locale, "/"),
+    openGraph: {
+      title: t("site.title"),
+      description: t("site.description"),
+    },
   };
 }
 
@@ -31,6 +46,17 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen stable-vh overflow-x-clip bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 relative">
+      {/* JSON-LD: SoftwareApplication + FAQ */}
+      {/* biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data is server-generated and safe */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLdScriptContent(
+            softwareApplicationJsonLd("en", appData.version),
+            faqJsonLd("en"),
+          ),
+        }}
+      />
       {/* Global background effects - only visible in dark mode */}
       <div className="fixed inset-0 -z-10 dark:block hidden">
         {/* Main background gradient */}

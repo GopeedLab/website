@@ -301,7 +301,11 @@ export function Downloads({ version, releaseAssets }: DownloadsProps) {
   };
 
   return (
-    <section id="downloads" className="relative py-20 overflow-hidden">
+    <section
+      id="downloads"
+      className="relative py-20 overflow-hidden"
+      aria-label={t("downloads.title")}
+    >
       {/* 背景装饰 */}
       <div className="absolute inset-0 bg-gradient-grid bg-[length:50px_50px] opacity-5 dark:opacity-10" />
 
