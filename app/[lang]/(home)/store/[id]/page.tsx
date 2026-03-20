@@ -56,7 +56,7 @@ export async function generateMetadata({
       `${displayTitle} by ${authorName} — Gopeed Extension`,
     alternates: pageAlternates(locale, `/store/${encodeURIComponent(id)}`),
     openGraph: {
-      title: `${displayTitle} — Gopeed ${getTranslation(locale, "store.title")}`,
+      title: `${displayTitle} — ${getTranslation(locale, "store.title")} | Gopeed`,
       description:
         extension.description ||
         `${displayTitle} by ${authorName} — Gopeed Extension`,

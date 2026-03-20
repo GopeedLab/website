@@ -29,7 +29,9 @@ export async function generateMetadata({
   const t = (key: string) => getTranslation(locale, key);
 
   return {
-    title: t("site.title"),
+    title: {
+      absolute: t("site.title"),
+    },
     description: t("site.description"),
     keywords: t("seo.keywords.en"),
     alternates: pageAlternates(locale, "/"),

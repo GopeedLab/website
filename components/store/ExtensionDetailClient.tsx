@@ -144,53 +144,74 @@ export function ExtensionDetailClient({
         </motion.div>
 
         {/* Hero Section */}
-        <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start mb-16 relative">
+        <div className="flex flex-col md:flex-row gap-6 md:gap-12 items-start mb-10 md:mb-16 relative w-full">
           {/* Background Glow */}
           <div className="absolute top-1/2 left-0 -translate-y-1/2 -ml-20 w-64 h-64 bg-primary-500/10 rounded-full blur-[80px] pointer-events-none" />
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="shrink-0 relative z-10"
-          >
-            <div className="w-28 h-28 sm:w-40 sm:h-40 rounded-[32px] bg-white dark:bg-[#111111] border border-gray-200 dark:border-white/10 shadow-sm flex items-center justify-center p-4 relative overflow-hidden group">
-              {extension.icon && !iconError ? (
-                <Image
-                  src={extension.icon}
-                  alt={displayTitle}
-                  width={128}
-                  height={128}
-                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
-                  onError={() => setIconError(true)}
-                />
-              ) : (
-                <svg
-                  aria-hidden="true"
-                  className="w-12 h-12 text-gray-300 dark:text-gray-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z"
+          {/* Icon & Mobile Title Wrapper */}
+          <div className="flex flex-row items-center md:items-start gap-4 md:gap-0 w-full md:w-auto relative z-10 shrink-0">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="shrink-0 relative z-10"
+            >
+              <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-40 md:h-40 rounded-[20px] sm:rounded-[28px] md:rounded-[32px] bg-white dark:bg-[#111111] border border-gray-200 dark:border-white/10 shadow-sm flex items-center justify-center p-3 md:p-4 relative overflow-hidden group">
+                {extension.icon && !iconError ? (
+                  <Image
+                    src={extension.icon}
+                    alt={displayTitle}
+                    width={128}
+                    height={128}
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                    onError={() => setIconError(true)}
                   />
-                </svg>
-              )}
-              <div className="absolute inset-0 border border-black/5 dark:border-white/5 rounded-[32px] pointer-events-none" />
-            </div>
-          </motion.div>
+                ) : (
+                  <svg
+                    aria-hidden="true"
+                    className="w-10 h-10 md:w-12 md:h-12 text-gray-300 dark:text-gray-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z"
+                    />
+                  </svg>
+                )}
+                <div className="absolute inset-0 border border-black/5 dark:border-white/5 rounded-[20px] sm:rounded-[28px] md:rounded-[32px] pointer-events-none" />
+              </div>
+            </motion.div>
+
+            {/* Mobile Title */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="flex-1 min-w-0 md:hidden"
+            >
+              <div className="flex flex-col gap-1.5">
+                <h1 className="text-[20px] sm:text-[24px] font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight line-clamp-2">
+                  {displayTitle}
+                </h1>
+                <span className="self-start px-2 py-0.5 rounded-full text-[12px] font-mono font-bold bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400 border border-primary-100 dark:border-primary-500/20">
+                  v{extension.version}
+                </span>
+              </div>
+            </motion.div>
+          </div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="flex-1 min-w-0 pt-2 relative z-10"
+            className="flex-1 min-w-0 md:pt-2 relative z-10 w-full"
           >
-            <div className="flex flex-wrap items-center gap-4 mb-4">
+            {/* Desktop Title */}
+            <div className="hidden md:flex flex-wrap items-center gap-4 mb-4">
               <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight">
                 {displayTitle}
               </h1>
@@ -199,12 +220,14 @@ export function ExtensionDetailClient({
               </span>
             </div>
 
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[14px] font-medium mb-6">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 md:gap-x-4 text-[13px] md:text-[14px] font-medium mb-5 md:mb-6">
               <div className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300">
                 <span className="text-gray-400 dark:text-gray-500">
                   {t.author}
                 </span>
-                {authorName}
+                <span className="truncate max-w-[120px] sm:max-w-none">
+                  {authorName}
+                </span>
               </div>
               <span className="text-gray-300 dark:text-gray-700">•</span>
               <div
@@ -252,18 +275,18 @@ export function ExtensionDetailClient({
             </div>
 
             {extension.description && (
-              <p className="text-[16px] sm:text-[17px] text-gray-600 dark:text-gray-400 leading-relaxed mb-8 max-w-2xl">
+              <p className="text-[15px] sm:text-[17px] text-gray-600 dark:text-gray-400 leading-relaxed mb-6 md:mb-8 max-w-2xl">
                 {extension.description}
               </p>
             )}
 
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3">
               <motion.button
                 type="button"
                 onClick={handleInstall}
                 disabled={installing}
                 whileTap={{ scale: 0.98 }}
-                className="h-12 px-8 rounded-2xl bg-primary-500 hover:bg-primary-600 text-white font-semibold text-[15px] shadow-lg shadow-primary-500/25 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="h-12 w-full sm:w-auto px-8 rounded-2xl bg-primary-500 hover:bg-primary-600 text-white font-semibold text-[15px] shadow-lg shadow-primary-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {installing ? (
                   <svg
@@ -309,7 +332,7 @@ export function ExtensionDetailClient({
                 type="button"
                 onClick={handleCopy}
                 whileTap={{ scale: 0.98 }}
-                className="h-12 px-6 rounded-2xl bg-gray-50 hover:bg-gray-100 dark:bg-white/5 dark:hover:bg-white/10 text-gray-700 dark:text-gray-200 font-medium text-[15px] border border-gray-200 dark:border-white/10 transition-all flex items-center gap-2"
+                className="h-12 w-full sm:w-auto px-6 rounded-2xl bg-gray-50 hover:bg-gray-100 dark:bg-white/5 dark:hover:bg-white/10 text-gray-700 dark:text-gray-200 font-medium text-[15px] border border-gray-200 dark:border-white/10 transition-all flex items-center justify-center gap-2"
               >
                 {copied ? (
                   <svg
@@ -350,7 +373,7 @@ export function ExtensionDetailClient({
                 target="_blank"
                 rel="noopener noreferrer"
                 whileTap={{ scale: 0.98 }}
-                className="h-12 px-6 rounded-2xl bg-gray-50 hover:bg-gray-100 dark:bg-white/5 dark:hover:bg-white/10 text-gray-700 dark:text-gray-200 font-medium text-[15px] border border-gray-200 dark:border-white/10 transition-all flex items-center gap-2"
+                className="h-12 w-full sm:w-auto px-6 rounded-2xl bg-gray-50 hover:bg-gray-100 dark:bg-white/5 dark:hover:bg-white/10 text-gray-700 dark:text-gray-200 font-medium text-[15px] border border-gray-200 dark:border-white/10 transition-all flex items-center justify-center gap-2"
               >
                 <svg
                   aria-hidden="true"

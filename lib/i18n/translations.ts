@@ -5,13 +5,13 @@ const translations: Record<Locale, Record<string, string>> = {
     // Site
     "site.name": "Gopeed",
     "site.title":
-      "Gopeed - Free Modern Open Source Download Manager | HTTP, BitTorrent & Magnet",
+      "Gopeed - Free Modern Open Source Download Manager | HTTP, BitTorrent, Magnet & ed2k",
     "site.description":
-      "Gopeed is a free, open-source download manager supporting HTTP, HTTPS, BitTorrent, and magnet links. Multi-threaded high-speed downloads across Windows, macOS, Linux, Android, and iOS. Built with Golang and Flutter.",
+      "Gopeed is a free, open-source download manager supporting HTTP, HTTPS, BitTorrent, magnet, and ed2k links. Multi-threaded high-speed downloads across Windows, macOS, Linux, Android, and iOS. Built with Golang and Flutter.",
 
     // SEO-specific metadata (not shown in UI, used only for meta tags)
     "seo.keywords.en":
-      "download manager,free download manager,open source downloader,BitTorrent client,magnet link downloader,HTTP downloader,multi-threaded download,Gopeed,torrent downloader,cross-platform download manager,file downloader,download accelerator",
+      "download manager,free download manager,open source downloader,BitTorrent client,magnet link downloader,ed2k downloader,HTTP downloader,multi-threaded download,Gopeed,torrent downloader,cross-platform download manager,file downloader,download accelerator",
     "seo.keywords.store":
       "Gopeed extensions,download extensions,YouTube downloader,HuggingFace downloader,cloud storage downloader,browser extension",
 
@@ -29,7 +29,7 @@ const translations: Record<Locale, Record<string, string>> = {
     // Hero
     "hero.title": "A Modern Download Manager",
     "hero.subtitle":
-      "Free, open-source, cross-platform. Support HTTP, BitTorrent & magnet links with multi-threaded high-speed downloads.",
+      "Free, open-source, cross-platform. Support HTTP, BitTorrent, magnet and ed2k links with multi-threaded high-speed downloads.",
     "hero.downloadNow": "Download Now",
     "hero.downloadFor": "Download for {platform}",
     "hero.moreVersions": "More Versions",
@@ -49,7 +49,7 @@ const translations: Record<Locale, Record<string, string>> = {
       "Available on Windows, macOS, Linux, Android, iOS, and Web — one download manager for all devices",
     "features.protocol.title": "Multi Protocol",
     "features.protocol.desc":
-      "Support HTTP, HTTPS, BitTorrent, magnet links and more download protocols",
+      "Support HTTP, HTTPS, BitTorrent, magnet, ed2k and more download protocols",
     "features.extension.title": "Extensible",
     "features.extension.desc":
       "Powerful JavaScript extension system — add YouTube, HuggingFace, cloud storage downloading and more",
@@ -163,13 +163,14 @@ const translations: Record<Locale, Record<string, string>> = {
   zh: {
     // Site
     "site.name": "Gopeed",
-    "site.title": "Gopeed - 免费现代化开源下载器 | 支持HTTP、BT种子和磁力链接",
+    "site.title":
+      "Gopeed - 免费现代化开源下载器 | 支持HTTP、BT种子、磁力和ed2k链接",
     "site.description":
-      "Gopeed 是一款免费开源的现代化下载管理器，支持 HTTP、HTTPS、BitTorrent 和磁力链接下载。多线程高速下载，跨平台支持 Windows、macOS、Linux、Android 和 iOS。",
+      "Gopeed 是一款免费开源的现代化下载管理器，支持 HTTP、HTTPS、BitTorrent、磁力和 ed2k 链接下载。多线程高速下载，跨平台支持 Windows、macOS、Linux、Android 和 iOS。",
 
     // SEO-specific metadata
     "seo.keywords.en":
-      "下载器,下载管理器,免费下载器,开源下载器,BT下载,磁力链接下载,HTTP下载,多线程下载,Gopeed,种子下载,跨平台下载器,文件下载器,下载加速器",
+      "下载器,下载管理器,免费下载器,开源下载器,BT下载,磁力链接下载,ed2k下载,HTTP下载,多线程下载,Gopeed,种子下载,跨平台下载器,文件下载器,下载加速器",
     "seo.keywords.store":
       "Gopeed扩展,下载扩展,YouTube下载器,HuggingFace下载,网盘下载,浏览器扩展",
 
@@ -187,7 +188,7 @@ const translations: Record<Locale, Record<string, string>> = {
     // Hero
     "hero.title": "一款现代化下载管理器",
     "hero.subtitle":
-      "免费开源，跨平台支持。HTTP、BT种子、磁力链接多协议多线程高速下载。",
+      "免费开源，跨平台支持。HTTP、BT种子、磁力和 ed2k 链接多协议多线程高速下载。",
     "hero.downloadNow": "立即下载",
     "hero.downloadFor": "下载 {platform} 版",
     "hero.moreVersions": "更多版本",
@@ -205,7 +206,7 @@ const translations: Record<Locale, Record<string, string>> = {
       "支持 Windows、macOS、Linux、Android、iOS 和 Web，一个下载器覆盖所有设备",
     "features.protocol.title": "多协议",
     "features.protocol.desc":
-      "支持 HTTP、HTTPS、BitTorrent、磁力链接等多种下载协议",
+      "支持 HTTP、HTTPS、BitTorrent、磁力、ed2k 等多种下载协议",
     "features.extension.title": "可扩展",
     "features.extension.desc":
       "强大的 JavaScript 扩展系统，轻松添加 YouTube、HuggingFace、网盘下载等功能",
@@ -314,13 +315,14 @@ const translations: Record<Locale, Record<string, string>> = {
   "zh-TW": {
     // Site
     "site.name": "Gopeed",
-    "site.title": "Gopeed - 免費現代化開源下載器 | 支援HTTP、BT種子和磁力連結",
+    "site.title":
+      "Gopeed - 免費現代化開源下載器 | 支援HTTP、BT種子、磁力和ed2k連結",
     "site.description":
-      "Gopeed 是一款免費開源的現代化下載管理器，支援 HTTP、HTTPS、BitTorrent 和磁力連結下載。多執行緒高速下載，跨平台支援 Windows、macOS、Linux、Android 和 iOS。",
+      "Gopeed 是一款免費開源的現代化下載管理器，支援 HTTP、HTTPS、BitTorrent、磁力和 ed2k 連結下載。多執行緒高速下載，跨平台支援 Windows、macOS、Linux、Android 和 iOS。",
 
     // SEO-specific metadata
     "seo.keywords.en":
-      "下載器,下載管理器,免費下載器,開源下載器,BT下載,磁力連結下載,HTTP下載,多執行緒下載,Gopeed,種子下載,跨平台下載器,檔案下載器,下載加速器",
+      "下載器,下載管理器,免費下載器,開源下載器,BT下載,磁力連結下載,ed2k下載,HTTP下載,多執行緒下載,Gopeed,種子下載,跨平台下載器,檔案下載器,下載加速器",
     "seo.keywords.store":
       "Gopeed擴充,下載擴充,YouTube下載器,HuggingFace下載,雲端硬碟下載,瀏覽器擴充",
 
@@ -338,7 +340,7 @@ const translations: Record<Locale, Record<string, string>> = {
     // Hero
     "hero.title": "一款現代化下載管理器",
     "hero.subtitle":
-      "免費開源，跨平台支援。HTTP、BT種子、磁力連結多協定多執行緒高速下載。",
+      "免費開源，跨平台支援。HTTP、BT種子、磁力和 ed2k 連結多協定多執行緒高速下載。",
     "hero.downloadNow": "立即下載",
     "hero.downloadFor": "下載 {platform} 版",
     "hero.moreVersions": "更多版本",
@@ -356,7 +358,7 @@ const translations: Record<Locale, Record<string, string>> = {
       "支援 Windows、macOS、Linux、Android、iOS 和 Web，一個下載器覆蓋所有裝置",
     "features.protocol.title": "多協定",
     "features.protocol.desc":
-      "支援 HTTP、HTTPS、BitTorrent、磁力連結等多種下載協定",
+      "支援 HTTP、HTTPS、BitTorrent、磁力、ed2k 等多種下載協定",
     "features.extension.title": "可擴充",
     "features.extension.desc":
       "強大的 JavaScript 擴充系統，輕鬆新增 YouTube、HuggingFace、網盤下載等功能",

@@ -102,7 +102,7 @@ export function Hero({ version, releaseAssets }: HeroProps) {
 
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-16 py-12 lg:py-20 relative">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col lg:grid lg:grid-cols-2 gap-3 lg:gap-8 items-stretch">
+          <div className="flex flex-col lg:grid lg:grid-cols-2 gap-3 lg:gap-12 xl:gap-16 items-stretch">
             {/* Text Content - Order 1 */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -202,7 +202,7 @@ export function Hero({ version, releaseAssets }: HeroProps) {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="relative w-full lg:scale-[1.2] origin-center order-2"
+              className="relative w-full lg:pl-6 xl:pl-8 lg:scale-[1.2] origin-center order-2"
             >
               <motion.div
                 animate={{ y: [0, -10, 0] }}

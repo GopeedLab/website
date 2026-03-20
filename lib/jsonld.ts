@@ -43,6 +43,7 @@ export function softwareApplicationJsonLd(locale: Locale, version?: string) {
       "HTTP/HTTPS protocol support",
       "BitTorrent protocol support",
       "Magnet link support",
+      "ed2k link support",
       "Cross-platform (Windows, macOS, Linux, Android, iOS, Web)",
       "JavaScript extension system",
       "RESTful API",
