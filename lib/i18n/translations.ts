@@ -27,9 +27,9 @@ const translations: Record<Locale, Record<string, string>> = {
     "theme.system": "System",
 
     // Hero
-    "hero.title": "A Modern Download Manager",
+    "hero.title": "Free Download Manager for HTTP, Torrent, Magnet and ed2k",
     "hero.subtitle":
-      "Free, open-source, cross-platform. Support HTTP, BitTorrent, magnet and ed2k links with multi-threaded high-speed downloads.",
+      "Gopeed is a free, open-source, cross-platform download manager with multi-threaded acceleration for HTTP, BitTorrent, magnet and ed2k links.",
     "hero.downloadNow": "Download Now",
     "hero.downloadFor": "Download for {platform}",
     "hero.moreVersions": "More Versions",
@@ -186,9 +186,9 @@ const translations: Record<Locale, Record<string, string>> = {
     "theme.system": "系统",
 
     // Hero
-    "hero.title": "一款现代化下载管理器",
+    "hero.title": "免费开源下载管理器，支持 HTTP、BT、磁力和 ed2k",
     "hero.subtitle":
-      "免费开源，跨平台支持。HTTP、BT种子、磁力和 ed2k 链接多协议多线程高速下载。",
+      "Gopeed 是一款免费开源、跨平台的下载管理器，支持 HTTP、BT 种子、磁力和 ed2k 链接的多线程高速下载。",
     "hero.downloadNow": "立即下载",
     "hero.downloadFor": "下载 {platform} 版",
     "hero.moreVersions": "更多版本",
@@ -338,9 +338,9 @@ const translations: Record<Locale, Record<string, string>> = {
     "theme.system": "系統",
 
     // Hero
-    "hero.title": "一款現代化下載管理器",
+    "hero.title": "免費開源下載管理器，支援 HTTP、BT、磁力和 ed2k",
     "hero.subtitle":
-      "免費開源，跨平台支援。HTTP、BT種子、磁力和 ed2k 連結多協定多執行緒高速下載。",
+      "Gopeed 是一款免費開源、跨平台的下載管理器，支援 HTTP、BT 種子、磁力和 ed2k 連結的多執行緒高速下載。",
     "hero.downloadNow": "立即下載",
     "hero.downloadFor": "下載 {platform} 版",
     "hero.moreVersions": "更多版本",

@@ -7,6 +7,7 @@ import {
   Hero,
   Navbar,
 } from "@/components/home";
+import { SeoFaq } from "@/components/home/SeoFaq";
 import { getAppData } from "@/lib/data";
 import { i18n, type Locale, locales } from "@/lib/i18n";
 import { getTranslation } from "@/lib/i18n/translations";
@@ -42,23 +43,28 @@ export async function generateMetadata({
   };
 }
 
-export default async function HomePage() {
+export default async function HomePage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang } = await params;
+  const locale = (
+    locales.includes(lang as Locale) ? lang : i18n.defaultLanguage
+  ) as Locale;
+
   // Fetch data during SSR
   const appData = await getAppData();
 
   return (
     <main className="min-h-screen stable-vh overflow-x-clip bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 relative">
       {/* JSON-LD: SoftwareApplication + FAQ */}
-      {/* biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data is server-generated and safe */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: jsonLdScriptContent(
-            softwareApplicationJsonLd("en", appData.version),
-            faqJsonLd("en"),
-          ),
-        }}
-      />
+      <script type="application/ld+json">
+        {jsonLdScriptContent(
+          softwareApplicationJsonLd(locale, appData.version),
+          faqJsonLd(locale),
+        )}
+      </script>
       {/* Global background effects - only visible in dark mode */}
       <div className="fixed inset-0 -z-10 dark:block hidden">
         {/* Main background gradient */}
@@ -76,6 +82,7 @@ export default async function HomePage() {
       <Hero version={appData.version} releaseAssets={appData.releaseAssets} />
       <Features />
       <Extensions />
+      <SeoFaq locale={locale} />
       <Downloads
         version={appData.version}
         releaseAssets={appData.releaseAssets}

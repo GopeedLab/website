@@ -8,6 +8,8 @@ import { createRelativeLink } from "fumadocs-ui/mdx";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { i18n, type Locale } from "@/lib/i18n";
+import { getTranslation } from "@/lib/i18n/translations";
+import { breadcrumbJsonLd, jsonLdScriptContent } from "@/lib/jsonld";
 import { pageAlternates } from "@/lib/seo";
 import { getPageImage, source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
@@ -27,6 +29,18 @@ export default async function Page(props: PageProps) {
   if (!page) notFound();
 
   const MDX = page.data.body;
+  const docsLabel = getTranslation(locale, "nav.docs");
+  const breadcrumbItems =
+    page.url === "/docs"
+      ? [
+          { name: "Gopeed", path: "/" },
+          { name: docsLabel, path: "/docs" },
+        ]
+      : [
+          { name: "Gopeed", path: "/" },
+          { name: docsLabel, path: "/docs" },
+          { name: page.data.title, path: page.url },
+        ];
 
   return (
     <DocsPage
@@ -34,6 +48,9 @@ export default async function Page(props: PageProps) {
       full={page.data.full}
       tableOfContent={{ style: "clerk" }}
     >
+      <script type="application/ld+json">
+        {jsonLdScriptContent(breadcrumbJsonLd(locale, breadcrumbItems))}
+      </script>
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
       <DocsBody>

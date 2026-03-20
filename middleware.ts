@@ -41,6 +41,13 @@ function detectLocale(request: NextRequest): string {
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const hostname = request.nextUrl.hostname.toLowerCase();
+
+  if (hostname === "www.gopeed.com") {
+    const url = request.nextUrl.clone();
+    url.hostname = "gopeed.com";
+    return NextResponse.redirect(url, { status: 301 });
+  }
 
   // Skip locale handling for the standalone OpenAPI reference route
   if (pathname.startsWith("/docs/openapi")) {

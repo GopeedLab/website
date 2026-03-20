@@ -1,5 +1,6 @@
 ---
 title: 擴充開發
+description: 學習如何開發 Gopeed JavaScript 擴充、進行本機偵錯，並理解擴充清單與運行機制。
 ---
 
 Gopeed 支援使用`JavaScript`進行擴展開發，擴展可以增強Gopeed 的功能，例如下載某個網站的視頻，或者下載某個網站的音樂等等，可以通過[官方示例](https://github.com/ GopeedLab/gopeed-extension-samples/blob/main/README_zh-CN.md)快速了解一下。
@@ -199,7 +200,7 @@ gopeed.events.onResolve((ctx) => {
 
 簡而言之就是需要在`onResolve`回調函數中，根據`ctx.req`裡的請求信息，解析出需要下載的文件列表賦值給`ctx.res`即可，那麼上面的腳本就很好理解 了，就是解析出一個`index.html`檔案和對應的下載位址，然後賦值給`ctx.res`。
 
-> 關於`ctx`的詳細說明可以參考[文件](https://docs.gopeed.com/site/reference/interfaces/gopeed.OnResovleContext.html)。
+> 關於`ctx`相關型別定義與擴充原始碼，可以參考[官方 Gopeed JS 倉庫](https://github.com/GopeedLab/gopeed-js)。
 
 ## 擴充設定
 
@@ -279,7 +280,7 @@ gopeed.events.onResolve((ctx) => {
 });
 ```
 
-> 附註：詳細的 API 可以參考[文件](https://docs.gopeed.com/site/reference/interfaces/gopeed.Storage.html)。
+> 附註：更完整的型別定義與 API 原始碼可以參考[官方 Gopeed JS 倉庫](https://github.com/GopeedLab/gopeed-js)。
 
 ## 擴充調試
 

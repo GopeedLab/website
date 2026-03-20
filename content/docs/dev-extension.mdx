@@ -1,5 +1,6 @@
 ---
 title: Extension Development
+description: Build Gopeed JavaScript extensions, debug them locally, and understand the extension manifest and runtime.
 ---
 
 Gopeed supports extension development using `JavaScript`. Extensions can enhance Gopeed's functionality, such as downloading videos or music from a website. You can quickly learn more about it through the [official examples](https://github.com/GopeedLab/gopeed-extension-samples/blob/main/README_zh-CN.md).
@@ -216,4 +217,4 @@ Let's explain the script content:
 
 In short, in the `onResolve` callback function, you need to parse the file list to download based on the request information in `ctx.req` and assign it to `ctx.res`.
 
-> For detailed information about `ctx`, please refer to the [documentation](https://docs.gopeed.com/site/reference/interfaces/gopeed.OnResovleContext.html).
+> For detailed extension typings and related source code, please refer to the [official Gopeed JS repository](https://github.com/GopeedLab/gopeed-js).

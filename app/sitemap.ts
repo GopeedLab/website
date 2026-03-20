@@ -7,10 +7,36 @@ import { canonicalUrl } from "@/lib/seo";
 import { source } from "@/lib/source";
 
 // Static pages that exist for every locale
-const STATIC_PATHS = ["/", "/store"];
+const STATIC_PATHS = [
+  "/",
+  "/store",
+  "/download-manager",
+  "/torrent-downloader",
+  "/magnet-link-downloader",
+  "/ed2k-downloader",
+];
+
+function parseTimestamp(value?: string) {
+  if (!value) return null;
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function getSitemapTimestamp() {
+  return (
+    parseTimestamp(process.env.SITEMAP_BUILD_TIME) ??
+    parseTimestamp(process.env.BUILT_AT) ??
+    parseTimestamp(process.env.CF_PAGES_COMMIT_TIMESTAMP) ??
+    new Date()
+  );
+}
+
+// Keep fallback timestamps stable for the lifetime of the deployment instead
+// of changing on every sitemap request.
+const sitemapTimestamp = getSitemapTimestamp();
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const now = new Date();
   const entries: MetadataRoute.Sitemap = [];
 
   // ── Static pages (home, store) ──────────────────────────────────────────
@@ -18,7 +44,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const locale of locales) {
       entries.push({
         url: canonicalUrl(locale, path),
-        lastModified: now,
+        lastModified: sitemapTimestamp,
         changeFrequency: "weekly",
         priority: path === "/" ? 1.0 : 0.8,
         alternates: {
@@ -36,7 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const locale = page.locale ?? "en";
     entries.push({
       url: canonicalUrl(locale, page.url),
-      lastModified: now,
+      lastModified: sitemapTimestamp,
       changeFrequency: "weekly",
       priority: 0.7,
       alternates: {
@@ -62,7 +88,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         for (const locale of locales) {
           entries.push({
             url: canonicalUrl(locale, extPath),
-            lastModified: ext.updatedAt ? new Date(ext.updatedAt) : now,
+            lastModified: ext.updatedAt
+              ? new Date(ext.updatedAt)
+              : sitemapTimestamp,
             changeFrequency: "weekly",
             priority: 0.6,
             alternates: {

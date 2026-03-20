@@ -101,16 +101,9 @@ export default async function RootLayout({
     <html lang={locale} suppressHydrationWarning>
       <head>
         {/* JSON-LD Structured Data: Organization + WebSite */}
-        {/* biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data is server-generated and safe */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: jsonLdScriptContent(
-              organizationJsonLd(),
-              webSiteJsonLd(locale),
-            ),
-          }}
-        />
+        <script type="application/ld+json">
+          {jsonLdScriptContent(organizationJsonLd(), webSiteJsonLd(locale))}
+        </script>
       </head>
       <body className="font-sans antialiased">
         <NavigationProgress />

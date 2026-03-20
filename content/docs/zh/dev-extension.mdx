@@ -1,5 +1,6 @@
 ---
 title: 扩展开发
+description: 学习如何开发 Gopeed JavaScript 扩展、进行本地调试，并理解扩展清单和运行机制。
 ---
 
 Gopeed 支持使用`JavaScript`进行扩展开发，扩展可以增强 Gopeed 的功能，比如下载某个网站的视频，或者下载某个网站的音乐等等，可以通过[官方示例](https://github.com/GopeedLab/gopeed-extension-samples/blob/main/README_zh-CN.md)快速了解一下。
@@ -197,4 +198,4 @@ gopeed.events.onResolve((ctx) => {
 
 简而言之就是需要在`onResolve`回调函数中，根据`ctx.req`里的请求信息，解析出需要下载的文件列表赋值给`ctx.res`即可。
 
-> 关于`ctx`的详细说明可以参考[文档](https://docs.gopeed.com/site/reference/interfaces/gopeed.OnResovleContext.html)。
+> 关于`ctx`相关类型定义与扩展源码，可以参考[官方 Gopeed JS 仓库](https://github.com/GopeedLab/gopeed-js)。
