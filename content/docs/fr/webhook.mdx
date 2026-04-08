@@ -1,0 +1,66 @@
+---
+title: Webhook
+description: Configurez des webhooks pour envoyer automatiquement des notifications vers une URL spécifiée lorsqu'un téléchargement se termine ou échoue.
+---
+
+Gopeed prend en charge la configuration de webhooks, envoyant automatiquement des requêtes HTTP POST vers une URL spécifiée lorsqu'une tâche de téléchargement se termine ou échoue. Cette fonctionnalité s'intègre avec des services de notification comme Gotify, Bark, WeCom, DingTalk et Telegram Bot pour vous tenir informé en temps réel de l'état de vos téléchargements.
+
+## Comment activer
+
+1. Ouvrez le client Gopeed
+2. Accédez à **Paramètres** → **Avancé** → **Développeur**
+3. Recherchez la section **Webhook** et cliquez pour ajouter une URL
+4. Saisissez l'adresse HTTP de réception des notifications et confirmez
+
+## Format de envoi
+
+Les webhooks utilisent des requêtes HTTP POST avec `Content-Type: application/json`. La structure du corps de la requête est la suivante :
+
+```json
+{
+  "event": "DOWNLOAD_DONE",
+  "time": 1712000000000,
+  "payload": {
+    "task": {
+      "id": "task-uuid",
+      "protocol": "http",
+      "meta": {
+        "req": {
+          "url": "https://example.com/file.zip"
+        },
+        "opts": {
+          "name": "file.zip",
+          "path": "/downloads"
+        },
+        "res": {
+          "size": 104857600,
+          "files": [
+            { "name": "file.zip", "size": 104857600 }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+### Types d'événements
+
+| Événement | Description |
+| --- | --- |
+| `DOWNLOAD_DONE` | Tâche de téléchargement terminée |
+| `DOWNLOAD_ERROR` | Tâche de téléchargement échouée |
+
+## Tester le webhook
+
+Lors de l'ajout d'une URL de webhook, vous pouvez cliquer sur le bouton **Tester**. Gopeed enverra un événement `DOWNLOAD_DONE` simulé à l'URL spécifiée. Le test est considéré comme réussi uniquement lorsque le serveur renvoie HTTP 200.
+
+## Support de plusieurs URLs
+
+Vous pouvez configurer plusieurs URLs de webhook. Les événements de téléchargement seront envoyés simultanément à toutes les adresses configurées, facilitant ainsi l'intégration avec plusieurs canaux de notification.
+
+## Cas d'utilisation courants
+
+- **Notifications push** : Intégration avec des services de notification auto-hébergés comme Gotify, Bark ou Pushover
+- **Messagerie instantanée** : Envoi de notifications de téléchargement via les webhooks WeCom/DingTalk/Telegram Bot
+- **Automatisation** : Déclenchement de tâches en aval telles que l'extraction, le transcodage ou l'archivage

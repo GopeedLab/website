@@ -1,0 +1,17 @@
+{
+  "root": true,
+  "title": "문서",
+  "pages": [
+    "index",
+    "install",
+    "---개발---",
+    "dev",
+    "dev-api",
+    "dev-extension",
+    "webhook",
+    "script",
+    "scheme",
+    "---지원---",
+    "donate"
+  ]
+}

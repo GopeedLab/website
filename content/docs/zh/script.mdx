@@ -1,0 +1,84 @@
+---
+title: 脚本执行
+description: 配置钩子脚本在下载完成后自动执行，实现文件移动、通知推送等自动化操作。
+---
+
+Gopeed 支持在下载任务**成功完成**后自动执行指定的钩子脚本。利用这个功能可以实现自动移动文件、发送通知、触发转码等操作。
+
+## 开启方法
+
+1. 打开 Gopeed 客户端
+2. 进入 **设置** → **高级** → **开发者**
+3. 找到 **脚本执行** 区域，开启开关
+4. 添加脚本文件的完整路径
+
+## 支持的脚本类型
+
+Gopeed 根据文件扩展名自动选择解释器执行：
+
+| 扩展名 | 解释器 | 平台 |
+| --- | --- | --- |
+| `.sh` / `.bash` | Bash | macOS / Linux |
+| `.py` | Python 3 | 全平台 |
+| `.js` | Node.js | 全平台 |
+| `.bat` / `.cmd` | cmd.exe | 仅 Windows |
+| `.ps1` | PowerShell | 全平台 |
+| 无扩展名 | 直接执行（需有 shebang 或可执行权限） | macOS / Linux |
+
+## 环境变量
+
+脚本执行时会收到以下环境变量，根据这些信息可以编写自动化逻辑：
+
+| 变量名 | 说明 | 示例 |
+| --- | --- | --- |
+| `GOPEED_EVENT` | 事件类型 | `DOWNLOAD_DONE` |
+| `GOPEED_TASK_ID` | 任务唯一 ID | `abc123-def456` |
+| `GOPEED_TASK_NAME` | 任务显示名称 | `ubuntu-24.04.iso` |
+| `GOPEED_TASK_STATUS` | 任务状态 | `done` |
+| `GOPEED_TASK_PATH` | 下载文件/文件夹的完整路径 | `/downloads/ubuntu-24.04.iso` |
+
+其中 `GOPEED_TASK_PATH` 会根据任务类型自动判断：
+- **单文件任务**：指向下载的文件路径
+- **多文件任务**：指向下载的文件夹路径
+
+## 示例脚本
+
+### 自动移动文件到指定目录
+
+```bash
+#!/bin/bash
+# move_to_hdd.sh - 下载完成后自动从 SSD 移动到 HDD
+DEST="/data/hdd/downloads/"
+mkdir -p "$DEST"
+mv "$GOPEED_TASK_PATH" "$DEST"
+echo "Moved $GOPEED_TASK_NAME to $DEST"
+```
+
+### 发送下载完成通知
+
+```python
+#!/usr/bin/env python3
+# notify.py - 下载完成后发送通知
+import os
+import urllib.request
+import json
+
+task_name = os.environ.get("GOPEED_TASK_NAME", "Unknown")
+task_path = os.environ.get("GOPEED_TASK_PATH", "")
+
+# 替换为你的通知服务地址
+notify_url = "https://your-notify-service.com/api/send"
+data = json.dumps({
+    "title": "下载完成",
+    "body": f"{task_name}\n路径: {task_path}"
+}).encode()
+
+req = urllib.request.Request(notify_url, data=data, headers={"Content-Type": "application/json"})
+urllib.request.urlopen(req)
+```
+
+## 注意事项
+
+- 脚本仅在下载**成功**时触发，下载失败不会执行脚本
+- 可以配置多个脚本路径，它们会按顺序执行
+- 请确保脚本文件有正确的执行权限（macOS/Linux 下使用 `chmod +x`）

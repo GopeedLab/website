@@ -1,0 +1,66 @@
+---
+title: Webhook
+description: 配置 Webhook 在下载完成或失败时自动推送通知到指定 URL。
+---
+
+Gopeed 支持配置 Webhook，在下载任务完成或失败时自动向指定 URL 发送 HTTP POST 请求。利用这个功能可以接入 Gotify、Bark、企业微信、钉钉、Telegram Bot 等通知服务，实时掌握下载状态。
+
+## 开启方法
+
+1. 打开 Gopeed 客户端
+2. 进入 **设置** → **高级** → **开发者**
+3. 找到 **Webhook** 区域，点击添加 URL
+4. 输入接收通知的 HTTP 地址，点击确认
+
+## 推送格式
+
+Webhook 使用 HTTP POST 请求，`Content-Type` 为 `application/json`，请求体结构如下：
+
+```json
+{
+  "event": "DOWNLOAD_DONE",
+  "time": 1712000000000,
+  "payload": {
+    "task": {
+      "id": "task-uuid",
+      "protocol": "http",
+      "meta": {
+        "req": {
+          "url": "https://example.com/file.zip"
+        },
+        "opts": {
+          "name": "file.zip",
+          "path": "/downloads"
+        },
+        "res": {
+          "size": 104857600,
+          "files": [
+            { "name": "file.zip", "size": 104857600 }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+### 事件类型
+
+| 事件 | 说明 |
+| --- | --- |
+| `DOWNLOAD_DONE` | 下载任务完成 |
+| `DOWNLOAD_ERROR` | 下载任务失败 |
+
+## 测试 Webhook
+
+在添加 Webhook URL 时可以点击 **测试** 按钮，Gopeed 会发送一条模拟的 `DOWNLOAD_DONE` 事件到指定 URL。只有当服务端返回 HTTP 200 时测试才算成功。
+
+## 多 URL 支持
+
+可以配置多个 Webhook URL，下载事件会同时推送到所有已配置的地址，适合同时接入多个通知渠道。
+
+## 常见用途
+
+- **消息推送**：接入 Gotify、Bark、Pushover 等自建推送服务
+- **即时通讯**：通过企业微信/钉钉/Telegram Bot Webhook 发送下载通知
+- **自动化流程**：触发下游任务，如解压、转码、归档等

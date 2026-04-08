@@ -1,0 +1,17 @@
+{
+  "root": true,
+  "title": "Документация",
+  "pages": [
+    "index",
+    "install",
+    "---Разработка---",
+    "dev",
+    "dev-api",
+    "dev-extension",
+    "webhook",
+    "script",
+    "scheme",
+    "---Поддержка---",
+    "donate"
+  ]
+}

@@ -1,0 +1,84 @@
+---
+title: Ejecución de scripts
+description: Configura scripts hook para ejecutarse automáticamente después de que las descargas se completen, permitiendo mover archivos, enviar notificaciones y otras automatizaciones.
+---
+
+Gopeed soporta la ejecución automática de scripts hook especificados cuando una tarea de descarga **se completa con éxito**. Usa esta función para automatizar el movimiento de archivos, enviar notificaciones, activar transcodificación y más.
+
+## Cómo habilitarlo
+
+1. Abre el cliente de Gopeed
+2. Ve a **Configuración** → **Avanzado** → **Desarrollador**
+3. Busca la sección **Ejecución de scripts** y habilita el interruptor
+4. Añade la ruta completa a tu archivo de script
+
+## Tipos de scripts soportados
+
+Gopeed selecciona automáticamente el intérprete basándose en la extensión del archivo:
+
+| Extensión | Intérprete | Plataforma |
+| --- | --- | --- |
+| `.sh` / `.bash` | Bash | macOS / Linux |
+| `.py` | Python 3 | Todas las plataformas |
+| `.js` | Node.js | Todas las plataformas |
+| `.bat` / `.cmd` | cmd.exe | Solo Windows |
+| `.ps1` | PowerShell | Todas las plataformas |
+| Sin extensión | Ejecución directa (requiere shebang o permiso de ejecución) | macOS / Linux |
+
+## Variables de entorno
+
+Los scripts reciben las siguientes variables de entorno en el momento de la ejecución:
+
+| Variable | Descripción | Ejemplo |
+| --- | --- | --- |
+| `GOPEED_EVENT` | Tipo de evento | `DOWNLOAD_DONE` |
+| `GOPEED_TASK_ID` | ID único de la tarea | `abc123-def456` |
+| `GOPEED_TASK_NAME` | Nombre para mostrar de la tarea | `ubuntu-24.04.iso` |
+| `GOPEED_TASK_STATUS` | Estado de la tarea | `done` |
+| `GOPEED_TASK_PATH` | Ruta completa al archivo o carpeta descargado | `/downloads/ubuntu-24.04.iso` |
+
+`GOPEED_TASK_PATH` se adapta al tipo de tarea:
+- **Tareas de archivo único**: Apunta a la ruta del archivo descargado
+- **Tareas de múltiples archivos**: Apunta a la ruta de la carpeta descargada
+
+## Scripts de ejemplo
+
+### Mover archivos automáticamente a un directorio específico
+
+```bash
+#!/bin/bash
+# move_to_hdd.sh - Mover automáticamente de SSD a HDD después de la descarga
+DEST="/data/hdd/downloads/"
+mkdir -p "$DEST"
+mv "$GOPEED_TASK_PATH" "$DEST"
+echo "Moved $GOPEED_TASK_NAME to $DEST"
+```
+
+### Enviar notificación de descarga completada
+
+```python
+#!/usr/bin/env python3
+# notify.py - Enviar notificación después de que la descarga se complete
+import os
+import urllib.request
+import json
+
+task_name = os.environ.get("GOPEED_TASK_NAME", "Unknown")
+task_path = os.environ.get("GOPEED_TASK_PATH", "")
+
+# Reemplaza con la URL de tu servicio de notificaciones
+notify_url = "https://your-notify-service.com/api/send"
+data = json.dumps({
+    "title": "Download Complete",
+    "body": f"{task_name}\nPath: {task_path}"
+}).encode()
+
+req = urllib.request.Request(notify_url, data=data, headers={"Content-Type": "application/json"})
+urllib.request.urlopen(req)
+```
+
+## Notas
+
+- Los scripts solo se activan en descargas **exitosas**; las descargas fallidas no ejecutarán scripts
+- Puedes configurar múltiples rutas de scripts, y se ejecutarán en orden
+- Asegúrate de que los archivos de script tengan los permisos de ejecución adecuados (usa `chmod +x` en macOS/Linux)

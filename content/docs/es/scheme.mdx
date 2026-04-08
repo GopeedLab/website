@@ -1,0 +1,90 @@
+---
+title: Protocolo Scheme
+description: "Usa el protocolo gopeed: para iniciar Gopeed desde aplicaciones externas y crear tareas de descarga o instalar extensiones."
+---
+
+Gopeed registra el protocolo personalizado `gopeed:`, lo que te permite iniciar Gopeed directamente desde un navegador, otra aplicación o la línea de comandos para realizar acciones.
+
+## Formato de URI
+
+```
+gopeed:///create?params=<base64-encoded JSON>
+gopeed:///extension?params=<base64-encoded JSON>
+```
+
+- `<path>`: Tipo de acción, actualmente soporta `/create` y `/extension`
+- `params`: Parámetros JSON codificados en Base64
+
+## Crear tarea de descarga
+
+Ruta: `/create`
+
+### Parámetros
+
+| Campo | Tipo | Descripción |
+| --- | --- | --- |
+| `req.url` | string | URL de descarga (HTTP, magnet, ed2k, etc.) |
+
+La estructura completa de los parámetros coincide con el cuerpo de la solicitud de la API de creación de tareas. Consulta la [documentación de la API de creación de tareas](https://gopeed.com/docs/openapi#tag/tasks/POST/api/v1/tasks) para más detalles.
+
+### Ejemplo
+
+JSON de parámetros:
+
+```json
+{
+  "req": {
+    "url": "https://example.com/file.zip"
+  }
+}
+```
+
+URI generado:
+
+<SchemeUriBlock uri="gopeed:///create?params=eyJyZXEiOnsidXJsIjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9maWxlLnppcCJ9fQ==" />
+
+## Instalar extensión
+
+Ruta: `/extension`
+
+### Parámetros
+
+| Campo | Tipo | Descripción |
+| --- | --- | --- |
+| `url` | string | URL del repositorio Git de la extensión |
+| `devMode` | boolean | Si se instala en modo de desarrollo, por defecto `false` |
+
+### Ejemplo
+
+JSON de parámetros:
+
+```json
+{
+  "url": "https://github.com/user/gopeed-extension-example",
+  "devMode": false
+}
+```
+
+URI generado:
+
+<SchemeUriBlock uri="gopeed:///extension?params=eyJ1cmwiOiJodHRwczovL2dpdGh1Yi5jb20vdXNlci9nb3BlZWQtZXh0ZW5zaW9uLWV4YW1wbGUiLCJkZXZNb2RlIjpmYWxzZX0=" />
+
+## Constructor de URI
+
+Usa la herramienta a continuación para generar dinámicamente una URI completa `gopeed:` basada en los parámetros:
+
+<SchemeUriBuilder />
+
+## Intercepción de descargas en Android
+
+En Android, Gopeed registra un Intent Filter estándar para la gestión de descargas. Después de la instalación, cuando tocas un enlace de descarga en un navegador u otra aplicación, el sistema mostrará un selector de aplicaciones donde podrás seleccionar Gopeed para gestionar la descarga.
+
+Escenarios soportados:
+
+- Seleccionar Gopeed cuando un navegador muestra un diálogo de descarga
+- Seleccionar Gopeed al compartir enlaces HTTP/HTTPS desde otras aplicaciones
+- Establecer Gopeed como el gestor de descargas predeterminado en la configuración de aplicaciones predeterminadas de Android
+
+<Callout type="info">
+  Después de instalar una nueva versión, Android puede necesitar volver a escanear las aplicaciones para reconocer los nuevos Intent Filters. Prueba a limpiar la caché de la aplicación, reiniciar el dispositivo o borrar las preferencias de aplicaciones predeterminadas en la configuración del sistema.
+</Callout>

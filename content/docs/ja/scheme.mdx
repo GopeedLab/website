@@ -1,0 +1,90 @@
+---
+title: スキームプロトコル
+description: "gopeed: スキームプロトコルを使用して、外部アプリから Gopeed を起動し、ダウンロードタスクの作成や拡張機能のインストールを行います。"
+---
+
+Gopeed は `gopeed:` カスタムプロトコルを登録しており、ブラウザ、他のアプリ、またはコマンドラインから直接 Gopeed を起動してアクションを実行できます。
+
+## URI 形式
+
+```
+gopeed:///create?params=<base64-encoded JSON>
+gopeed:///extension?params=<base64-encoded JSON>
+```
+
+- `<path>`：アクションタイプ。現在は `/create` と `/extension` に対応しています。
+- `params`：Base64 エンコードされた JSON パラメータ
+
+## ダウンロードタスクの作成
+
+パス：`/create`
+
+### パラメータ
+
+| フィールド | 型 | 説明 |
+| --- | --- | --- |
+| `req.url` | string | ダウンロード URL（HTTP、マグネット、ed2k など） |
+
+完全なパラメータ構造はタスク作成 API のリクエストボディと同じです。詳細は[タスク作成 API ドキュメント](https://gopeed.com/docs/openapi#tag/tasks/POST/api/v1/tasks)を参照してください。
+
+### 例
+
+パラメータ JSON：
+
+```json
+{
+  "req": {
+    "url": "https://example.com/file.zip"
+  }
+}
+```
+
+生成される URI：
+
+<SchemeUriBlock uri="gopeed:///create?params=eyJyZXEiOnsidXJsIjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9maWxlLnppcCJ9fQ==" />
+
+## 拡張機能のインストール
+
+パス：`/extension`
+
+### パラメータ
+
+| フィールド | 型 | 説明 |
+| --- | --- | --- |
+| `url` | string | 拡張機能の Git リポジトリ URL |
+| `devMode` | boolean | 開発モードでインストールするかどうか。デフォルトは `false` |
+
+### 例
+
+パラメータ JSON：
+
+```json
+{
+  "url": "https://github.com/user/gopeed-extension-example",
+  "devMode": false
+}
+```
+
+生成される URI：
+
+<SchemeUriBlock uri="gopeed:///extension?params=eyJ1cmwiOiJodHRwczovL2dpdGh1Yi5jb20vdXNlci9nb3BlZWQtZXh0ZW5zaW9uLWV4YW1wbGUiLCJkZXZNb2RlIjpmYWxzZX0=" />
+
+## URI ビルダー
+
+以下のツールを使用して、パラメータに基づいて動的に完全な `gopeed:` URI を生成できます：
+
+<SchemeUriBuilder />
+
+## Android ダウンロードインターセプト
+
+Android では、Gopeed は標準的なダウンロードハンドラーの Intent Filter を登録しています。インストール後、ブラウザや他のアプリでダウンロードリンクをタップすると、システムがアプリ選択画面を表示し、Gopeed を選択してダウンロードを処理できます。
+
+対応シナリオ：
+
+- ブラウザのダウンロードダイアログで Gopeed を選択
+- 他のアプリから HTTP/HTTPS リンクを共有する際に Gopeed を選択
+- Android のデフォルトアプリ設定で Gopeed をデフォルトのダウンロードハンドラーに設定
+
+<Callout type="info">
+  新しいバージョンをインストールした後、新しい Intent Filter を認識するために、Android がアプリを再スキャンする必要がある場合があります。アプリキャッシュのクリア、デバイスの再起動、またはシステム設定でデフォルトアプリの設定をクリアしてお試しください。
+</Callout>

@@ -1,0 +1,91 @@
+---
+title: Scheme 協定
+description: "透過 gopeed: Scheme 協定從外部應用程式喚起 Gopeed 建立下載任務或安裝擴充功能。"
+---
+
+Gopeed 註冊了 `gopeed:` 自訂協定，支援從瀏覽器、其他應用程式或命令列直接喚起 Gopeed 並執行操作。
+
+## URI 格式
+
+```
+gopeed:///create?params=<base64 編碼的 JSON>
+gopeed:///extension?params=<base64 編碼的 JSON>
+```
+
+- `<path>`：操作類型，目前支援 `/create` 和 `/extension`
+- `params`：Base64 編碼的 JSON 參數
+
+## 建立下載任務
+
+路徑：`/create`
+
+### 參數
+
+| 欄位      | 類型   | 說明                                |
+| --------- | ------ | ----------------------------------- |
+| `req.url` | string | 下載連結（HTTP、磁力、ed2k 等均可） |
+
+完整參數結構同建立任務 API 的請求體，詳見 [建立任務介面文件](https://gopeed.com/docs/openapi#tag/tasks/POST/api/v1/tasks)。
+
+### 範例
+
+參數 JSON：
+
+```json
+{
+  "req": {
+    "url": "https://example.com/file.zip"
+  }
+}
+```
+
+生成的 URI：
+
+<SchemeUriBlock uri="gopeed:///create?params=eyJyZXEiOnsidXJsIjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9maWxlLnppcCJ9fQ==" />
+
+## 安裝擴充功能
+
+路徑：`/extension`
+
+### 參數
+
+| 欄位      | 類型    | 說明                             |
+| --------- | ------- | -------------------------------- |
+| `url`     | string  | 擴充功能的 Git 儲存庫位址              |
+| `devMode` | boolean | 是否以開發模式安裝，預設 `false` |
+
+### 範例
+
+參數 JSON：
+
+```json
+{
+  "url": "https://github.com/user/gopeed-extension-example",
+  "devMode": false
+}
+```
+
+生成的 URI：
+
+<SchemeUriBlock uri="gopeed:///extension?params=eyJ1cmwiOiJodHRwczovL2dpdGh1Yi5jb20vdXNlci9nb3BlZWQtZXh0ZW5zaW9uLWV4YW1wbGUiLCJkZXZNb2RlIjpmYWxzZX0=" />
+
+## URI 產生器
+
+使用下面的工具根據參數動態產生完整的 `gopeed:` URI：
+
+<SchemeUriBuilder />
+
+## Android 下載接管
+
+在 Android 上，Gopeed 註冊了標準的下載處理器 Intent Filter。安裝後在瀏覽器或其他應用程式中點擊下載連結時，系統會彈出應用程式選擇器，可以選擇 Gopeed 來處理下載。
+
+支援的情境：
+
+- 瀏覽器彈出下載對話框時選擇 Gopeed
+- 其他應用程式分享 HTTP/HTTPS 連結時選擇 Gopeed
+- 在 Android 預設應用程式設定中將 Gopeed 設為預設下載器
+
+<Callout type="info">
+  安裝新版本後，Android 可能需要重新掃描應用程式才能識別新的 Intent
+  Filter。可以嘗試清除應用程式快取、重新啟動裝置，或在系統設定中清除預設應用程式偏好。
+</Callout>

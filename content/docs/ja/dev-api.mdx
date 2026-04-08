@@ -1,0 +1,65 @@
+---
+title: API 連携
+description: Gopeed HTTP API と公式 SDK を使用して、ダウンロードタスクを作成・管理します。
+---
+
+Gopeed は外部向けに HTTP API インターフェースを提供しており、API を通じてダウンロード管理を行うことができます。
+
+## API の有効化
+
+まず、通信プロトコルを TCP に設定する必要があります。**設定 → 詳細 → 通信プロトコル** に移動し、通信プロトコルを TCP に設定します。その後、以下の図のように IP とポートを設定します：
+
+![](/images/dev/set-port.png)
+
+<Callout type="info">
+  任意の `port` を設定できますが、既に使用中のポートやシステム予約ポートは使用しないでください。
+  アクセス障害の原因となる可能性があります。
+</Callout>
+
+その後、`http://127.0.0.1:9999` から API にアクセスできます。セキュリティ上の理由から、トークンの設定をお勧めします。**設定 → 詳細 → API トークン** に移動し、以下の図のようにトークンを設定します：
+
+![](/images/dev/set-token.png)
+
+> 注意：上記の設定は再起動後に有効になります。
+
+## JS SDK の使用
+
+Gopeed は公式 JS ライブラリを提供しています。まず `npm install @gopeed/rest` を実行してインストールする必要があります：
+
+```
+npm install @gopeed/rest
+```
+
+その後、すぐに使用できます。例えば：
+
+```js
+import { Client } from "@gopeed/rest";
+
+(async function () {
+  // クライアントを作成
+  const client = new Client();
+  // タスクを作成
+  const res = await client.createTask({
+    req: {
+      url: "https://example.com/file.zip",
+    },
+  });
+})();
+```
+
+より多くの使い方、ソースコード、パッケージの更新は [公式 Gopeed JS リポジトリ](https://github.com/GopeedLab/gopeed-js) で入手できます。
+
+## Python SDK の使用
+
+コミュニティユーザー [@tick97115115](https://github.com/tick97115115) が提供する Python SDK です。
+
+```bash
+pip install gospeed_api
+```
+
+- Github：https://github.com/tick97115115/gospeed_api
+- 例：https://github.com/tick97115115/gospeed_api/blob/main/tests/test_index.py
+
+## HTTP API の使用
+
+もちろん、HTTP リクエストを通じて直接 API を呼び出すこともできます。詳細は [API ドキュメント](/docs/openapi) を参照してください。

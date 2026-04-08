@@ -1,0 +1,90 @@
+---
+title: Scheme-Protokoll
+description: "Verwenden Sie das gopeed: Scheme-Protokoll, um Gopeed aus externen Apps zu starten und Download-Aufgaben zu erstellen oder Erweiterungen zu installieren."
+---
+
+Gopeed registriert das benutzerdefinierte Protokoll `gopeed:`, mit dem Sie Gopeed direkt aus einem Browser, einer anderen App oder der Kommandozeile starten können, um Aktionen auszuführen.
+
+## URI-Format
+
+```
+gopeed:///create?params=<base64-kodiertes JSON>
+gopeed:///extension?params=<base64-kodiertes JSON>
+```
+
+- `<path>`: Aktionstyp, derzeit werden `/create` und `/extension` unterstützt
+- `params`: Base64-kodierte JSON-Parameter
+
+## Download-Aufgabe erstellen
+
+Pfad: `/create`
+
+### Parameter
+
+| Feld | Typ | Beschreibung |
+| --- | --- | --- |
+| `req.url` | string | Download-URL (HTTP, Magnet, ed2k usw.) |
+
+Die vollständige Parameterstruktur entspricht dem Anfragekörper der API zum Erstellen von Aufgaben. Details finden Sie in der [API-Dokumentation zum Erstellen von Aufgaben](https://gopeed.com/docs/openapi#tag/tasks/POST/api/v1/tasks).
+
+### Beispiel
+
+Parameter-JSON:
+
+```json
+{
+  "req": {
+    "url": "https://example.com/file.zip"
+  }
+}
+```
+
+Generierte URI:
+
+<SchemeUriBlock uri="gopeed:///create?params=eyJyZXEiOnsidXJsIjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9maWxlLnppcCJ9fQ==" />
+
+## Erweiterung installieren
+
+Pfad: `/extension`
+
+### Parameter
+
+| Feld | Typ | Beschreibung |
+| --- | --- | --- |
+| `url` | string | Git-Repository-URL der Erweiterung |
+| `devMode` | boolean | Ob die Installation im Entwicklermodus erfolgen soll, Standardwert `false` |
+
+### Beispiel
+
+Parameter-JSON:
+
+```json
+{
+  "url": "https://github.com/user/gopeed-extension-example",
+  "devMode": false
+}
+```
+
+Generierte URI:
+
+<SchemeUriBlock uri="gopeed:///extension?params=eyJ1cmwiOiJodHRwczovL2dpdGh1Yi5jb20vdXNlci9nb3BlZWQtZXh0ZW5zaW9uLWV4YW1wbGUiLCJkZXZNb2RlIjpmYWxzZX0=" />
+
+## URI-Generator
+
+Verwenden Sie das untenstehende Tool, um dynamisch eine vollständige `gopeed:`-URI basierend auf Parametern zu generieren:
+
+<SchemeUriBuilder />
+
+## Android-Download-Abfang
+
+Unter Android registriert Gopeed einen Standard-Download-Handler Intent Filter. Nach der Installation wird beim Antippen eines Download-Links in einem Browser oder einer anderen App eine App-Auswahl angezeigt, in der Sie Gopeed zur Behandlung des Downloads auswählen können.
+
+Unterstützte Szenarien:
+
+- Gopeed auswählen, wenn ein Browser einen Download-Dialog anzeigt
+- Gopeed auswählen, wenn HTTP/HTTPS-Links aus anderen Apps geteilt werden
+- Gopeed als Standard-Download-Handler in den Android-Standardeinstellungen für Apps festlegen
+
+<Callout type="info">
+  Nach der Installation einer neuen Version muss Android möglicherweise die Apps neu scannen, um neue Intent Filters zu erkennen. Versuchen Sie, den App-Cache zu leeren, das Gerät neu zu starten oder die Standard-App-Einstellungen in den Systemeinstellungen zurückzusetzen.
+</Callout>

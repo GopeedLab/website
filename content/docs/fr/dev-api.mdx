@@ -1,0 +1,65 @@
+---
+title: Intégration API
+description: Utilisez l'API HTTP de Gopeed et les SDK officiels pour créer et gérer des tâches de téléchargement.
+---
+
+Gopeed fournit une interface API HTTP pour une utilisation externe, permettant la gestion des téléchargements via l'API.
+
+## Activer l'API
+
+Tout d'abord, vous devez définir le protocole de communication sur TCP. Accédez à **Paramètres -> Avancé -> Protocole de communication** et définissez le protocole sur TCP. Ensuite, configurez l'adresse IP et le port comme illustré ci-dessous :
+
+![](/images/dev/set-port.png)
+
+<Callout type="info">
+  Vous pouvez définir n'importe quel `port`, mais veillez à ne pas utiliser des ports
+  déjà occupés ou réservés par le système, car cela pourrait entraîner des échecs d'accès.
+</Callout>
+
+Ensuite, vous pouvez accéder à l'API via `http://127.0.0.1:9999`. Pour des raisons de sécurité, il est recommandé de définir un jeton (token). Accédez à **Paramètres -> Avancé -> API Token** et configurez un jeton comme illustré ci-dessous :
+
+![](/images/dev/set-token.png)
+
+> Remarque : Les paramètres ci-dessus prennent effet après un redémarrage.
+
+## Utiliser le SDK JS
+
+Gopeed fournit une bibliothèque JS officielle, qui doit d'abord être installée en exécutant `npm install @gopeed/rest` :
+
+```
+npm install @gopeed/rest
+```
+
+Ensuite, vous pouvez l'utiliser, par exemple :
+
+```js
+import { Client } from "@gopeed/rest";
+
+(async function () {
+  // Créer un client
+  const client = new Client();
+  // Créer une tâche
+  const res = await client.createTask({
+    req: {
+      url: "https://example.com/file.zip",
+    },
+  });
+})();
+```
+
+Pour plus d'utilisations, le code source et les mises à jour du paquet, consultez le [dépôt officiel Gopeed JS](https://github.com/GopeedLab/gopeed-js).
+
+## Utiliser le SDK Python
+
+Un SDK Python fourni par l'utilisateur de la communauté [@tick97115115](https://github.com/tick97115115).
+
+```bash
+pip install gospeed_api
+```
+
+- Github : https://github.com/tick97115115/gospeed_api
+- Exemple : https://github.com/tick97115115/gospeed_api/blob/main/tests/test_index.py
+
+## Utiliser l'API HTTP
+
+Bien sûr, vous pouvez également appeler l'API directement via des requêtes HTTP. Pour plus de détails, veuillez consulter la [documentation API](/docs/openapi).

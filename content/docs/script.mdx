@@ -1,0 +1,84 @@
+---
+title: Script Execution
+description: Configure hook scripts to run automatically after downloads complete, enabling file moving, notifications, and other automation.
+---
+
+Gopeed supports automatically executing specified hook scripts when a download task **completes successfully**. Use this feature to automate file moving, send notifications, trigger transcoding, and more.
+
+## How to Enable
+
+1. Open the Gopeed client
+2. Go to **Settings** → **Advanced** → **Developer**
+3. Find the **Script Execution** section and enable the toggle
+4. Add the full path to your script file
+
+## Supported Script Types
+
+Gopeed automatically selects the interpreter based on the file extension:
+
+| Extension | Interpreter | Platform |
+| --- | --- | --- |
+| `.sh` / `.bash` | Bash | macOS / Linux |
+| `.py` | Python 3 | All platforms |
+| `.js` | Node.js | All platforms |
+| `.bat` / `.cmd` | cmd.exe | Windows only |
+| `.ps1` | PowerShell | All platforms |
+| No extension | Direct execution (requires shebang or executable permission) | macOS / Linux |
+
+## Environment Variables
+
+Scripts receive the following environment variables at execution time:
+
+| Variable | Description | Example |
+| --- | --- | --- |
+| `GOPEED_EVENT` | Event type | `DOWNLOAD_DONE` |
+| `GOPEED_TASK_ID` | Unique task ID | `abc123-def456` |
+| `GOPEED_TASK_NAME` | Task display name | `ubuntu-24.04.iso` |
+| `GOPEED_TASK_STATUS` | Task status | `done` |
+| `GOPEED_TASK_PATH` | Full path to the downloaded file or folder | `/downloads/ubuntu-24.04.iso` |
+
+`GOPEED_TASK_PATH` adapts to the task type:
+- **Single file tasks**: Points to the downloaded file path
+- **Multi-file tasks**: Points to the downloaded folder path
+
+## Example Scripts
+
+### Auto-move files to a specific directory
+
+```bash
+#!/bin/bash
+# move_to_hdd.sh - Auto-move from SSD to HDD after download
+DEST="/data/hdd/downloads/"
+mkdir -p "$DEST"
+mv "$GOPEED_TASK_PATH" "$DEST"
+echo "Moved $GOPEED_TASK_NAME to $DEST"
+```
+
+### Send download completion notification
+
+```python
+#!/usr/bin/env python3
+# notify.py - Send notification after download completes
+import os
+import urllib.request
+import json
+
+task_name = os.environ.get("GOPEED_TASK_NAME", "Unknown")
+task_path = os.environ.get("GOPEED_TASK_PATH", "")
+
+# Replace with your notification service URL
+notify_url = "https://your-notify-service.com/api/send"
+data = json.dumps({
+    "title": "Download Complete",
+    "body": f"{task_name}\nPath: {task_path}"
+}).encode()
+
+req = urllib.request.Request(notify_url, data=data, headers={"Content-Type": "application/json"})
+urllib.request.urlopen(req)
+```
+
+## Notes
+
+- Scripts are only triggered on **successful** downloads; failed downloads will not execute scripts
+- You can configure multiple script paths, and they will execute in order
+- Make sure script files have proper execute permissions (use `chmod +x` on macOS/Linux)

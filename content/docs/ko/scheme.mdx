@@ -1,0 +1,90 @@
+---
+title: Scheme 프로토콜
+description: "gopeed: scheme 프로토콜을 사용하여 외부 앱에서 Gopeed를 실행하여 다운로드 작업을 생성하거나 확장 프로그램을 설치하세요."
+---
+
+Gopeed는 `gopeed:` 커스텀 프로토콜을 등록하여, 브라우저, 다른 앱 또는 명령줄에서 Gopeed를 직접 실행하여 작업을 수행할 수 있습니다.
+
+## URI 형식
+
+```
+gopeed:///create?params=<base64-encoded JSON>
+gopeed:///extension?params=<base64-encoded JSON>
+```
+
+- `<path>`: 작업 유형으로, 현재 `/create` 및 `/extension`을 지원합니다
+- `params`: Base64로 인코딩된 JSON 매개변수
+
+## 다운로드 작업 생성
+
+경로: `/create`
+
+### 매개변수
+
+| 필드 | 유형 | 설명 |
+| --- | --- | --- |
+| `req.url` | string | 다운로드 URL (HTTP, magnet, ed2k 등) |
+
+전체 매개변수 구조는 작업 생성 API의 요청 본문과 일치합니다. 자세한 내용은 [작업 생성 API 문서](https://gopeed.com/docs/openapi#tag/tasks/POST/api/v1/tasks)를 참조하세요.
+
+### 예시
+
+매개변수 JSON:
+
+```json
+{
+  "req": {
+    "url": "https://example.com/file.zip"
+  }
+}
+```
+
+생성된 URI:
+
+<SchemeUriBlock uri="gopeed:///create?params=eyJyZXEiOnsidXJsIjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9maWxlLnppcCJ9fQ==" />
+
+## 확장 프로그램 설치
+
+경로: `/extension`
+
+### 매개변수
+
+| 필드 | 유형 | 설명 |
+| --- | --- | --- |
+| `url` | string | 확장 프로그램 Git 저장소 URL |
+| `devMode` | boolean | 개발 모드로 설치할지 여부, 기본값은 `false` |
+
+### 예시
+
+매개변수 JSON:
+
+```json
+{
+  "url": "https://github.com/user/gopeed-extension-example",
+  "devMode": false
+}
+```
+
+생성된 URI:
+
+<SchemeUriBlock uri="gopeed:///extension?params=eyJ1cmwiOiJodHRwczovL2dpdGh1Yi5jb20vdXNlci9nb3BlZWQtZXh0ZW5zaW9uLWV4YW1wbGUiLCJkZXZNb2RlIjpmYWxzZX0=" />
+
+## URI 빌더
+
+아래 도구를 사용하여 매개변수를 기반으로 완전한 `gopeed:` URI를 동적으로 생성할 수 있습니다:
+
+<SchemeUriBuilder />
+
+## Android 다운로드 가로채기
+
+Android에서 Gopeed는 표준 다운로드 핸들러 인텐트 필터를 등록합니다. 설치 후 브라우저나 다른 앱에서 다운로드 링크를 탭하면 시스템에서 Gopeed를 선택하여 다운로드를 처리할 수 있는 앱 선택기가 표시됩니다.
+
+지원되는 시나리오:
+
+- 브라우저에서 다운로드 대화상자가 표시될 때 Gopeed 선택
+- 다른 앱에서 HTTP/HTTPS 링크를 공유할 때 Gopeed 선택
+- Android 기본 앱 설정에서 Gopeed를 기본 다운로드 핸들러로 설정
+
+<Callout type="info">
+  새 버전을 설치한 후 Android가 새로운 인텐트 필터를 인식하기 위해 앱을 다시 스캔해야 할 수 있습니다. 앱 캐시를 지우거나, 기기를 다시 시작하거나, 시스템 설정에서 기본 앱 기본 설정을 지워보세요.
+</Callout>

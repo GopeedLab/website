@@ -1,0 +1,84 @@
+---
+title: 腳本執行
+description: 設定鉤子腳本在下載完成後自動執行，實現檔案移動、通知推送等自動化操作。
+---
+
+Gopeed 支援在下載任務**成功完成**後自動執行指定的鉤子腳本。利用這個功能可以實現自動移動檔案、發送通知、觸發轉碼等操作。
+
+## 開啟方法
+
+1. 開啟 Gopeed 用戶端
+2. 進入 **設定** → **進階** → **開發者**
+3. 找到 **腳本執行** 區域，開啟開關
+4. 新增腳本檔案的完整路徑
+
+## 支援的腳本類型
+
+Gopeed 根據副檔名自動選擇直譯器執行：
+
+| 副檔名 | 直譯器 | 平台 |
+| --- | --- | --- |
+| `.sh` / `.bash` | Bash | macOS / Linux |
+| `.py` | Python 3 | 全平台 |
+| `.js` | Node.js | 全平台 |
+| `.bat` / `.cmd` | cmd.exe | 僅 Windows |
+| `.ps1` | PowerShell | 全平台 |
+| 無副檔名 | 直接執行（需有 shebang 或可執行權限） | macOS / Linux |
+
+## 環境變數
+
+腳本執行時會收到以下環境變數，根據這些資訊可以編寫自動化邏輯：
+
+| 變數名稱 | 說明 | 範例 |
+| --- | --- | --- |
+| `GOPEED_EVENT` | 事件類型 | `DOWNLOAD_DONE` |
+| `GOPEED_TASK_ID` | 任務唯一 ID | `abc123-def456` |
+| `GOPEED_TASK_NAME` | 任務顯示名稱 | `ubuntu-24.04.iso` |
+| `GOPEED_TASK_STATUS` | 任務狀態 | `done` |
+| `GOPEED_TASK_PATH` | 下載檔案/資料夾的完整路徑 | `/downloads/ubuntu-24.04.iso` |
+
+其中 `GOPEED_TASK_PATH` 會根據任務類型自動判斷：
+- **單檔案任務**：指向下載的檔案路徑
+- **多檔案任務**：指向下載的資料夾路徑
+
+## 範例腳本
+
+### 自動移動檔案到指定目錄
+
+```bash
+#!/bin/bash
+# move_to_hdd.sh - 下載完成後自動從 SSD 移動到 HDD
+DEST="/data/hdd/downloads/"
+mkdir -p "$DEST"
+mv "$GOPEED_TASK_PATH" "$DEST"
+echo "Moved $GOPEED_TASK_NAME to $DEST"
+```
+
+### 發送下載完成通知
+
+```python
+#!/usr/bin/env python3
+# notify.py - 下載完成後發送通知
+import os
+import urllib.request
+import json
+
+task_name = os.environ.get("GOPEED_TASK_NAME", "Unknown")
+task_path = os.environ.get("GOPEED_TASK_PATH", "")
+
+# 替換為您的通知服務位址
+notify_url = "https://your-notify-service.com/api/send"
+data = json.dumps({
+    "title": "下載完成",
+    "body": f"{task_name}\n路徑: {task_path}"
+}).encode()
+
+req = urllib.request.Request(notify_url, data=data, headers={"Content-Type": "application/json"})
+urllib.request.urlopen(req)
+```
+
+## 注意事項
+
+- 腳本僅在下載**成功**時觸發，下載失敗不會執行腳本
+- 可以設定多個腳本路徑，它們會按順序執行
+- 請確保腳本檔案有正確的執行權限（macOS/Linux 下使用 `chmod +x`）

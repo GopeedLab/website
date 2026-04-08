@@ -1,6 +1,6 @@
 {
   "root": true,
-  "title": "文档",
+  "title": "文件",
   "pages": [
     "index",
     "install",
@@ -8,6 +8,9 @@
     "dev",
     "dev-api",
     "dev-extension",
+    "webhook",
+    "script",
+    "scheme",
     "---捐贈---",
     "donate"
   ]

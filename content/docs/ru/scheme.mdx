@@ -1,0 +1,90 @@
+---
+title: Протокол Scheme
+description: "Используйте протокол gopeed: для запуска Gopeed из внешних приложений для создания задач загрузки или установки расширений."
+---
+
+Gopeed регистрирует пользовательский протокол `gopeed:`, позволяя запускать Gopeed напрямую из браузера, другого приложения или командной строки для выполнения действий.
+
+## Формат URI
+
+```
+gopeed:///create?params=<base64-encoded JSON>
+gopeed:///extension?params=<base64-encoded JSON>
+```
+
+- `<path>`: Тип действия, в настоящее время поддерживается `/create` и `/extension`
+- `params`: JSON-параметры в кодировке Base64
+
+## Создание задачи загрузки
+
+Путь: `/create`
+
+### Параметры
+
+| Поле | Тип | Описание |
+| --- | --- | --- |
+| `req.url` | string | URL загрузки (HTTP, magnet, ed2k и т. д.) |
+
+Полная структура параметров соответствует телу запроса API создания задачи. Подробнее см. в [документации API создания задач](https://gopeed.com/docs/openapi#tag/tasks/POST/api/v1/tasks).
+
+### Пример
+
+JSON параметров:
+
+```json
+{
+  "req": {
+    "url": "https://example.com/file.zip"
+  }
+}
+```
+
+Сгенерированный URI:
+
+<SchemeUriBlock uri="gopeed:///create?params=eyJyZXEiOnsidXJsIjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9maWxlLnppcCJ9fQ==" />
+
+## Установка расширения
+
+Путь: `/extension`
+
+### Параметры
+
+| Поле | Тип | Описание |
+| --- | --- | --- |
+| `url` | string | URL git-репозитория расширения |
+| `devMode` | boolean | Установка в режиме разработчика, по умолчанию `false` |
+
+### Пример
+
+JSON параметров:
+
+```json
+{
+  "url": "https://github.com/user/gopeed-extension-example",
+  "devMode": false
+}
+```
+
+Сгенерированный URI:
+
+<SchemeUriBlock uri="gopeed:///extension?params=eyJ1cmwiOiJodHRwczovL2dpdGh1Yi5jb20vdXNlci9nb3BlZWQtZXh0ZW5zaW9uLWV4YW1wbGUiLCJkZXZNb2RlIjpmYWxzZX0=" />
+
+## Конструктор URI
+
+Используйте инструмент ниже для динамической генерации полного URI `gopeed:` на основе параметров:
+
+<SchemeUriBuilder />
+
+## Перехват загрузок на Android
+
+На Android Gopeed регистрирует стандартный Intent Filter для обработки загрузок. После установки, когда вы нажимаете на ссылку загрузки в браузере или другом приложении, система покажет диалог выбора приложения, в котором вы сможете выбрать Gopeed для обработки загрузки.
+
+Поддерживаемые сценарии:
+
+- Выбор Gopeed, когда браузер показывает диалог загрузки
+- Выбор Gopeed при передаче HTTP/HTTPS ссылок из других приложений
+- Установка Gopeed в качестве обработчика загрузок по умолчанию в настройках приложений Android по умолчанию
+
+<Callout type="info">
+  После установки новой версии Android может потребоваться повторное сканирование приложений для распознавания новых Intent Filters. Попробуйте очистить кеш приложения, перезагрузить устройство или сбросить настройки приложений по умолчанию в системных настройках.
+</Callout>

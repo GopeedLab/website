@@ -1,0 +1,91 @@
+---
+title: Scheme 协议
+description: "通过 gopeed: Scheme 协议从外部应用唤起 Gopeed 创建下载任务或安装扩展。"
+---
+
+Gopeed 注册了 `gopeed:` 自定义协议，支持从浏览器、其他应用或命令行直接唤起 Gopeed 并执行操作。
+
+## URI 格式
+
+```
+gopeed:///create?params=<base64 编码的 JSON>
+gopeed:///extension?params=<base64 编码的 JSON>
+```
+
+- `<path>`：操作类型，目前支持 `/create` 和 `/extension`
+- `params`：Base64 编码的 JSON 参数
+
+## 创建下载任务
+
+路径：`/create`
+
+### 参数
+
+| 字段      | 类型   | 说明                                |
+| --------- | ------ | ----------------------------------- |
+| `req.url` | string | 下载链接（HTTP、磁力、ed2k 等均可） |
+
+完整参数结构同创建任务 API 的请求体，详见 [创建任务接口文档](https://gopeed.com/docs/openapi#tag/tasks/POST/api/v1/tasks)。
+
+### 示例
+
+参数 JSON：
+
+```json
+{
+  "req": {
+    "url": "https://example.com/file.zip"
+  }
+}
+```
+
+生成的 URI：
+
+<SchemeUriBlock uri="gopeed:///create?params=eyJyZXEiOnsidXJsIjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9maWxlLnppcCJ9fQ==" />
+
+## 安装扩展
+
+路径：`/extension`
+
+### 参数
+
+| 字段      | 类型    | 说明                             |
+| --------- | ------- | -------------------------------- |
+| `url`     | string  | 扩展的 Git 仓库地址              |
+| `devMode` | boolean | 是否以开发模式安装，默认 `false` |
+
+### 示例
+
+参数 JSON：
+
+```json
+{
+  "url": "https://github.com/user/gopeed-extension-example",
+  "devMode": false
+}
+```
+
+生成的 URI：
+
+<SchemeUriBlock uri="gopeed:///extension?params=eyJ1cmwiOiJodHRwczovL2dpdGh1Yi5jb20vdXNlci9nb3BlZWQtZXh0ZW5zaW9uLWV4YW1wbGUiLCJkZXZNb2RlIjpmYWxzZX0=" />
+
+## URI 生成器
+
+使用下面的工具根据参数动态生成完整的 `gopeed:` URI：
+
+<SchemeUriBuilder />
+
+## Android 下载接管
+
+在 Android 上，Gopeed 注册了标准的下载处理器 Intent Filter。安装后在浏览器或其他应用中点击下载链接时，系统会弹出应用选择器，可以选择 Gopeed 来处理下载。
+
+支持的场景：
+
+- 浏览器弹出下载对话框时选择 Gopeed
+- 其他应用分享 HTTP/HTTPS 链接时选择 Gopeed
+- 在 Android 默认应用设置中将 Gopeed 设为默认下载器
+
+<Callout type="info">
+  安装新版本后，Android 可能需要重新扫描应用才能识别新的 Intent
+  Filter。可以尝试清除应用缓存、重启设备，或在系统设置中清除默认应用偏好。
+</Callout>

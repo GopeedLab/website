@@ -1,0 +1,264 @@
+---
+title: Instructions d'installation
+description: Installez Gopeed sur Windows, macOS, Linux, Android, iOS, le Web, Docker et en ligne de commande.
+---
+
+Les méthodes suivantes fonctionnent sur toutes les plateformes pour télécharger rapidement Gopeed :
+
+1. Rendez-vous sur le [site officiel](https://gopeed.com) pour le télécharger. La version correspondante sera automatiquement sélectionnée en fonction de votre système d'exploitation.
+2. Rendez-vous sur [GitHub](https://github.com/GopeedLab/gopeed/releases) pour télécharger la version de votre choix.
+
+## Guide d'installation par plateforme
+
+### Windows
+
+Windows propose deux versions : une version portable et une version installable. La version portable ne nécessite aucune installation, il suffit de la décompresser et de l'exécuter. La version installable nécessite une installation classique. Vous pouvez choisir selon vos préférences.
+
+> Le nom du fichier de la version portable est : Gopeed-v1.x.x-windows-amd64-portable.zip
+
+En plus du téléchargement direct, vous pouvez également installer ou mettre à jour Gopeed via des gestionnaires de paquets :
+
+- [Scoop](https://github.com/ScoopInstaller/Scoop) : Un gestionnaire de paquets en ligne de commande maintenu par la communauté pour Windows. Léger et flexible, il ne nécessite pas de privilèges administrateur pour l'installation et facilite la gestion et la mise à jour des logiciels.
+
+  ```powershell
+  scoop bucket add extras
+  scoop install extras/gopeed
+  ```
+
+- [Winget](https://learn.microsoft.com/en-us/windows/package-manager/winget) : Le gestionnaire de paquets officiel de Microsoft, profondément intégré au système d'exploitation Windows.
+
+  ```powershell
+  winget install -e --id monkeyWie.Gopeed
+  ```
+
+#### Faux positifs du pare-feu
+
+Sous Windows, certains logiciels antivirus peuvent signaler à tort deux composants essentiels de Gopeed : `host.exe` pour la communication avec l'extension de navigateur et `updater.exe` pour les mises à jour de l'application. Pour garantir que l'extension de navigateur puisse correctement intercepter les tâches de téléchargement et que l'application puisse se mettre à jour automatiquement, veuillez ajouter le `répertoire d'installation de Gopeed` à la liste blanche de votre pare-feu ou de votre logiciel antivirus.
+
+<Callout type="info">
+**Téléchargement sécurisé** : Assurez-vous de télécharger Gopeed en utilisant les méthodes décrites dans ce document — soit depuis le [site officiel](https://gopeed.com), le [dépôt GitHub officiel](https://github.com/GopeedLab/gopeed/releases), ou via Scoop ou Winget. Évitez les sources tierces pour garantir la sécurité du logiciel.
+
+**À propos des faux positifs** : Cela peut être lié aux caractéristiques des applications compilées en Go, et il n'existe actuellement pas de solution idéale. À l'avenir, nous envisagerons de migrer ces composants vers Rust pour améliorer la situation.
+
+</Callout>
+
+### Linux
+
+Sous Linux, nous proposons des paquets `.deb` et `.AppImage` pour l'installation. Vous pouvez choisir celui qui vous convient le mieux. Vous pouvez également installer rapidement Gopeed à l'aide des commandes suivantes :
+
+- Flatpak
+
+  ```sh
+  flatpak install flathub com.gopeed.Gopeed
+  ```
+
+- Snap
+
+  ```sh
+  sudo snap install gopeed
+  ```
+
+### macOS
+
+La version macOS est fournie sous forme de fichier `.dmg`, installable par un simple double-clic. Le paquet d'installation prend en charge deux architectures : `Intel` et `Apple Silicon`.
+
+> Astuce : Si l'ouverture de l'application échoue sous macOS, exécutez la commande `xattr -d com.apple.quarantine /Applications/Gopeed.app` dans le terminal.
+
+### Android
+
+La version Android est fournie sous forme de fichier `.apk`, téléchargeable et installable directement. Elle prend en charge toutes les architectures CPU.
+
+### iOS
+
+Actuellement, seule une version `.ipa` est disponible pour iOS. Elle doit être signée et installée manuellement. Il est recommandé d'utiliser [TrollStore](https://github.com/opa334/TrollStore) pour l'installation.
+
+> Pourquoi n'est-elle pas disponible sur l'App Store ?
+>
+> En raison de la politique de révision d'Apple, les applications liées au protocole BitTorrent ne sont pas autorisées.
+>
+> Pourquoi n'est-elle pas disponible sur TestFlight ?
+>
+> Par manque de financement ! Le projet est maintenu bénévolement avec passion. Si nous obtenons suffisamment de soutiens, elle sera immédiatement disponible sur TestFlight. Merci de nous soutenir. L'open source n'est pas facile. Merci !
+
+### Web
+
+Si vous avez besoin d'un service de téléchargement à distance, vous pouvez envisager la version Web. Gopeed propose des versions Web pour différentes plateformes. Vous pouvez les télécharger en fonction de votre système et de votre architecture CPU.
+
+![web](/images/guide/install/web.png)
+
+Voici un exemple d'utilisation de la version Web sous Windows. L'utilisation sur les autres plateformes est similaire.
+
+1. Téléchargez la version Web. Après décompression, vous obtiendrez un dossier. Placez-le où vous le souhaitez.
+2. Ouvrez un terminal dans le répertoire racine du dossier et exécutez `./gopeed.exe`. Si l'exécution est réussie, vous verrez la sortie suivante :
+
+   ```bash
+      _______   ______   .______    _______  _______  _______
+    /  _____| /  __  \  |   _  \  |   ____||   ____||       \
+    |  |  __  |  |  |  | |  |_)  | |  |__   |  |__   |  .--.  |
+    |  | |_ | |  |  |  | |   ___/  |   __|  |   __|  |  |  |  |
+    |  |__| | |  `--'  | |  |      |  |____ |  |____ |  '--'  |
+    \______|  \______/  | _|      |_______||_______||_______/
+
+    Server start success on http://[::]:9999
+   ```
+
+3. Ouvrez votre navigateur et accédez à `http://localhost:9999`.
+
+#### Configuration Web
+
+La version Web prend en charge la configuration via des paramètres en ligne de commande ou des fichiers de configuration. Les paramètres en ligne de commande peuvent être consultés via `./gopeed.exe -h` :
+
+```sh
+$ ./gopeed.exe -h
+Usage of C:\Users\levi\Downloads\gopeed-web-v1.3.13-windows-amd64\gopeed.exe:
+  -A string
+        Bind Address (default "0.0.0.0")
+  -P int
+        Bind Port (default 9999)
+  -T string
+        API token, that can only be used when basic authentication is enabled.
+  -c string
+        Config file path (default "./config.json")
+  -d string
+        Storage directory
+  -p string
+        HTTP Basic Auth Password
+  -u string
+        HTTP Basic Auth Username (default "gopeed")
+```
+
+Elle prend également en charge la configuration via un fichier de configuration. Créez un fichier `config.json` dans le répertoire racine avec le contenu suivant :
+
+```json
+{
+  "address": "",
+  "port": 0,
+  "username": "",
+  "password": "",
+  "apiToken": "",
+  "storageDir": "",
+  "whiteDownloadDirs": ["/root/downloads", "/root/dir/*", "/root/dir?abc"]
+}
+```
+
+Elle prend également en charge la configuration via des variables d'environnement, avec la règle `GOPEED_ConfigKey`, par exemple :
+
+```sh
+export GOPEED_ADDRESS="0.0.0.0"
+export GOPEED_PORT="9999"
+export GOPEED_USERNAME="gopeed"
+export GOPEED_PASSWORD="xxx"
+export GOPEED_APITOKEN=""
+export GOPEED_STORAGEDIR=""
+export GOPEED_WHITEDOWNLOADDIRS="/root/downloads,/root/dir/*,/root/dir?abc"
+```
+
+<Callout type="warn">
+  Si vous déployez sur une IP publique, assurez-vous d'activer l'authentification,
+  sinon il y aura des risques de sécurité.
+</Callout>
+
+#### Configuration de téléchargement par défaut
+
+Si vous souhaitez définir la configuration de téléchargement par défaut au premier démarrage du serveur, vous pouvez ajouter le champ `downloadConfig` dans `config.json`. Pour plus de détails sur la configuration, consultez [DownloaderStoreConfig](https://pkg.go.dev/github.com/GopeedLab/gopeed/pkg/base#DownloaderStoreConfig). Voici un exemple :
+
+```json
+{
+  "address": "127.0.0.1",
+  "port": 9999,
+  "downloadConfig": {
+    "downloadDir": "d:/test"
+  }
+}
+```
+
+### Docker
+
+Une seule commande :
+
+```sh
+docker run --name gopeed -d -p 9999:9999 liwei2633/gopeed
+```
+
+Monter le répertoire de téléchargement
+
+```sh
+docker run --name gopeed -d -p 9999:9999 \
+    -v /path/to/download:/app/Downloads \
+    liwei2633/gopeed
+```
+
+Monter le répertoire de données
+
+```sh
+docker run --name gopeed -d -p 9999:9999 \
+    -v /path/to/download:/app/Downloads \
+    -v /path/to/storage:/app/storage liwei2633/gopeed
+```
+
+Spécifier l'ID de groupe et l'ID utilisateur du conteneur
+
+```sh
+docker run --name gopeed -d -p 9999:9999 \
+    -e PGID=100 \
+    -e PUID=1000 \
+    liwei2633/gopeed
+```
+
+Si vous souhaitez activer l'authentification, vous pouvez passer des paramètres via des variables d'environnement :
+
+```sh
+docker run --name gopeed -d -p 9999:9999 \
+    -e GOPEED_USERNAME="admin" \
+    -e GOPEED_PASSWORD="123" \
+    -v /path/to/download:/app/Downloads \
+    -v /path/to/storage:/app/storage \
+    liwei2633/gopeed
+```
+
+### Ligne de commande
+
+La version en ligne de commande nécessite un environnement `Golang`. Si vous n'avez pas installé `Golang`, vous pouvez vous référer à [cette page](https://golang.org/doc/install) pour l'installation.
+
+Commande d'installation :
+
+```sh
+go install github.com/GopeedLab/gopeed/cmd/gopeed@latest
+```
+
+Après l'installation, vous pouvez utiliser la commande `gopeed` pour télécharger. Vous pouvez consulter l'utilisation détaillée via `gopeed -h` :
+
+```sh
+$ gopeed -h
+Usage of gopeed:
+  -C int
+        Concurrent connections. (default 16)
+  -D string
+        Store directory. (default "C:\\Users\\levi")
+```
+
+#### Exemples d'utilisation en ligne de commande
+
+Télécharger une ressource HTTP :
+
+```sh
+gopeed https://example.com/file.zip
+```
+
+Télécharger un fichier torrent :
+
+```sh
+gopeed D:/Downloads/file.torrent
+```
+
+Télécharger un lien magnet :
+
+```sh
+gopeed magnet:?xt=urn:btih:xxxx
+```
+
+Télécharger un lien ed2k :
+
+```sh
+gopeed 'ed2k://|file|example.iso|123456789|0123456789ABCDEF0123456789ABCDEF|/'
+```

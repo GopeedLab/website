@@ -1,0 +1,220 @@
+---
+title: Erweiterungsentwicklung
+description: Erstellen Sie Gopeed JavaScript-Erweiterungen, debuggen Sie diese lokal und lernen Sie das Erweiterungs-Manifest und die Laufzeitumgebung kennen.
+---
+
+Gopeed unterstützt die Erweiterungsentwicklung mit `JavaScript`. Erweiterungen können die Funktionalität von Gopeed erweitern, z. B. das Herunterladen von Videos oder Musik von einer Website. Sie können sich schnell über die [offiziellen Beispiele](https://github.com/GopeedLab/gopeed-extension-samples/blob/main/README_zh-CN.md) informieren.
+
+Gopeed-Erweiterungen basieren auf `git`, um eine dezentrale Erweiterungsverwaltung zu realisieren. Solange der Erweiterungsquellcode in einem entfernten Git-Repository gehostet wird, kann er über Gopeed installiert und aktualisiert werden. Daher können `github`, `gitee`, `gitlab` und andere Git-Hosting-Plattformen als Erweiterungs-Repositories verwendet werden.
+
+## Schnellstart
+
+### Mit Scaffolding
+
+Gopeed bietet ein Scaffolding-Tool, das Ihnen hilft, schnell eine Erweiterungsentwicklungs-Projektvorlage zu erstellen:
+
+```sh
+npx create-gopeed-ext@latest
+```
+
+Während des Erstellungsprozesses sehen Sie folgende Eingabeaufforderungen:
+
+```sh
+√ Project name (gopeed-extension-demo) ...
+√ Choose a template » Webpack
+
+Success! Created gopeed-extension-demo at D:\code\study\js\gopeed-extension-demo
+Inside that directory, you can run several commands:
+
+  git init
+    Initialize git repository
+
+  npm install
+    Install dependencies
+
+  npm run dev
+    Compiles and hot-reloads for development.
+
+  npm run build
+    Compiles and minifies for production.
+
+We suggest that you begin by typing:
+
+  cd gopeed-extension-demo
+
+Happy coding!
+```
+
+### Manuelle Einrichtung
+
+Wenn Sie mit den `node.js`-Werkzeugen nicht vertraut sind, können Sie ein Projekt auch manuell erstellen. Die Dateistruktur sieht wie folgt aus:
+
+```sh
+├── index.js
+├── manifest.json
+```
+
+## Lokales Debugging
+
+Nachdem das Projekt erstellt wurde, müssen Sie es lokal debuggen. Sie können das lokale Erweiterungsprojekt in Gopeed zur Fehlersuche installieren. Gehen Sie wie folgt vor:
+
+1. Aktivieren Sie den `Gopeed`-Entwicklermodus, indem Sie auf der Erweiterungsseite `5-mal hintereinander` auf die Installieren-Schaltfläche klicken.
+
+![](/images/dev/extension/dev-mode.gif)
+
+2. Klicken Sie auf die Schaltfläche, um das Erweiterungsverzeichnis im Verzeichnisauswahldialog auszuwählen und zu installieren.
+
+3. Wenn Sie den `webpack`-Modus im Scaffolding verwenden, können Sie die automatische Kompilierung mit `npm run dev` starten.
+
+4. Erstellen Sie eine Aufgabe, um die Erweiterung in Aktion zu sehen.
+
+![](/images/dev/extension/demo.gif)
+
+Es ist zu erkennen, dass die über das Scaffolding erstellte Beispielerweiterung beim Erstellen einer Aufgabe mit dem Link `https://github.com/hello` eine `example/index.html`-Datei analysieren kann.
+
+> Hinweis: Der Entwicklermodus ist nur auf der Desktop-Plattform verfügbar.
+
+## Entwicklungserklärung
+
+Im vorherigen Abschnitt konnten wir eine grundlegende Erweiterung erstellen und lokal debuggen. Aber was passiert im Hintergrund?
+
+Sehen wir uns zunächst die Datei `manifest.json` an. Dies ist die Manifestdatei der Erweiterung und beschreibt die Informationen der Erweiterung. Jedes Erweiterungsprojekt muss eine `manifest.json`-Datei im Hauptverzeichnis enthalten. Die Beispieldatei in diesem Abschnitt sieht wie folgt aus:
+
+```json
+{
+  "name": "gopeed-extention-demo",
+  "author": "",
+  "title": "gopeed extention demo title",
+  "description": "gopeed extention demo description",
+  "icon": "",
+  "version": "1.0.0",
+  "homepage": "",
+  "repository": {
+    "url": ""
+  },
+  "scripts": [
+    {
+      "event": "onResolve",
+      "match": {
+        "urls": ["*://github.com/*"]
+      },
+      "entry": "dist/index.js"
+    }
+  ],
+  "settings": []
+}
+```
+
+Nun stellen wir die Bedeutung der einzelnen Felder vor:
+
+- `name` und `author`: Gopeed verwendet `<author>@<name>` als ID der Erweiterung. Durch das Ausfüllen des `author`-Feldes wird sichergestellt, dass die Erweiterung nicht versehentlich von anderen Erweiterungen überschrieben wird. Es wird daher dringend empfohlen, das `author`-Feld auszufüllen.
+- `title` und `description`: Der Titel und die Beschreibung der Erweiterung.
+- `icon`: Erweiterungssymbol, relativen Pfad angeben, z. B.: `icon.png`.
+- `version`: Erweiterungsversion, verwendet die Semver-Spezifikation. Bei der Aktualisierung der Erweiterung wird dieses Feld als Vergleich herangezogen. Stellen Sie daher sicher, dass die Versionsnummer der Spezifikation entspricht.
+- `homepage`: Erweiterungs-Startseite, z. B.: `https://gopeed.com`.
+- `repository`: Die Git-Repository-Adresse, zu der die Erweiterung gehört. Gopeed-Erweiterungen basieren auf `git`, um eine dezentrale Erweiterungsverwaltung zu realisieren. Wenn Ihre Erweiterung von Benutzern installiert und aktualisiert werden soll, müssen Sie den Erweiterungsquellcode in einem entfernten Git-Repository hosten und dieses Feld konfigurieren.
+
+  Zum Beispiel：
+
+  ```json
+  {
+    "url": "https://github.com/gopeed/gopeed-extension-demo"
+  }
+  ```
+
+  Wenn ein Git-Repository mehrere Erweiterungsprojekte enthält, können Sie ein Unterverzeichnis über das `directory`-Attribut angeben, zum Beispiel:
+
+  ```json
+  {
+    "url": "https://github.com/GopeedLab/gopeed-extension-samples",
+    "directory": "github-contributor-avatars-sample"
+  }
+  ```
+
+  Bei der Installation in Gopeed verwenden Sie `#` als Trennzeichen, z. B. `https://github.com/GopeedLab/gopeed-extension-samples#github-contributor-avatars-sample`.
+
+- `scripts`: `Achtung!` Dies ist die Konfiguration des Gopeed-Erweiterungsaktivierungsereignisses.
+
+  Das im Beispielprojekt konfigurierte `onResolve`-Ereignis wird beim Analysieren von Aufgaben ausgelöst. Das Feld `match.urls` dient zum Abgleich der URL, die beim Erstellen der Aufgabe verwendet wird. Bei erfolgreichem Abgleich wird die im Feld `entry` angegebene Skriptdatei ausgeführt.
+
+  > Die Matching-Regeln entsprechen den Matching-Regeln von Chrome-Erweiterungen, die Sie [hier](https://developer.chrome.com/docs/extensions/mv3/match_patterns/) einsehen können.
+
+- `settings`: Erweiterungseinstellungen. Durch die Konfigurationsdeklaration kann die entsprechende Einstellungsseite in Gopeed generiert werden, um benutzerdefinierte Einstellungen wie z. B. benutzerdefinierte `Cookie`, benutzerdefinierte `User-Agent` usw. anzubieten, zum Beispiel:
+
+  ```json
+  [
+    {
+      "name": "cookie",
+      "title": "Website Cookie",
+      "description": "Cookie can be obtained through browser developer tools",
+      "type": "string"
+    },
+    {
+      "name": "quality",
+      "title": "Default Quality",
+      "type": "number",
+      "value": "1080",
+      "options": [
+        {
+          "label": "1080P",
+          "value": "1080"
+        },
+        {
+          "label": "720P",
+          "value": "720"
+        },
+        {
+          "label": "480P",
+          "value": "480"
+        }
+      ]
+    }
+  ]
+  ```
+
+  - `name`: Name der Einstellung, erforderlich.
+  - `title`: Titel der Einstellung, erforderlich.
+  - `description`: Beschreibung der Einstellung, optional.
+  - `type`: Typ der Einstellung, mögliche Werte: `string`, `number`, `boolean`.
+  - `value`: Standardwert der Einstellung, optional.
+
+## Skripterstellung
+
+Im vorherigen Abschnitt haben wir gelernt, wie man das Manifest konfiguriert. Nun stellen wir vor, wie man das Erweiterungsskript schreibt.
+
+### Laufzeitumgebung
+
+Die Gopeed-Erweiterungsskript-Engine wird durch [goja](https://github.com/dop251/goja) implementiert, einen JavaScript-Interpreter, der in reinem Go geschrieben ist. Da goja jedoch nur eine reine JS-Laufzeitumgebung ist, werden die APIs von `browser` und `node.js` nicht unterstützt. Derzeit implementiert `Gopeed` die `XMLHttpRequest`- und `fetch`-APIs, was bedeutet, dass Sie diese beiden APIs oder darauf basierende Drittanbieter-Bibliotheken für Netzwerkanfragen verwenden können, wie z. B. `axios`, `superagent` usw.
+
+Eine weitere Sache, die beachtet werden sollte: goja unterstützt nativ die meisten `es6+`-Syntax, aber einige Syntaxformen werden nicht unterstützt, wie z. B. `async generator`. Das ist jedoch kein Problem — das über das Scaffolding erstellte Projekt wurde bereits mit `babel` konfiguriert, sodass Sie die neueste ES-Syntax verwenden können. Das Skript wird schließlich in `es5`-Syntax kompiliert.
+
+### Demo-Skript-Erklärung
+
+Wenn ein Ereignis ausgelöst wird, wird die im Feld `entry` angegebene Skriptdatei ausgeführt. Die Skriptdatei im Beispielprojekt sieht wie folgt aus:
+
+```js
+gopeed.events.onResolve((ctx) => {
+  ctx.res = {
+    name: "example",
+    files: [
+      {
+        name: "index.html",
+        req: {
+          url: "https://example.com",
+        },
+      },
+    ],
+  };
+});
+```
+
+Lassen Sie uns den Skriptinhalt erklären:
+
+- `gopeed.events.onResolve`: Registriert den `onResolve`-Ereignishandler, in dem die Erweiterungslogik enthalten ist.
+- `ctx`: Der Ereigniskontext, der Informationen über das aktuelle Ereignis enthält. Im `onResolve`-Ereignis enthält `ctx`:
+  - `req`: Anfrageinformationen, einschließlich der Ressourcen-URL, Header usw.
+  - `res`: Antwortinformationen. Das Skript muss die analysierte Dateiliste `ctx.res` zuweisen, und Gopeed wird basierend auf der zurückgegebenen Dateiliste herunterladen.
+
+Kurz gesagt: In der `onResolve`-Callback-Funktion müssen Sie die herunterzuladende Dateiliste basierend auf den Anfrageinformationen in `ctx.req` analysieren und diese `ctx.res` zuweisen.
+
+> Detaillierte Erweiterungs-Typdefinitionen und den zugehörigen Quellcode finden Sie im [offiziellen Gopeed JS-Repository](https://github.com/GopeedLab/gopeed-js).

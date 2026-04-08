@@ -1,0 +1,17 @@
+{
+  "root": true,
+  "title": "Dokumentation",
+  "pages": [
+    "index",
+    "install",
+    "---Entwicklung---",
+    "dev",
+    "dev-api",
+    "dev-extension",
+    "webhook",
+    "script",
+    "scheme",
+    "---Unterstützung---",
+    "donate"
+  ]
+}

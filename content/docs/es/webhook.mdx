@@ -1,0 +1,66 @@
+---
+title: Webhook
+description: Configura webhooks para enviar notificaciones automáticamente a una URL especificada cuando las descargas se completen o fallen.
+---
+
+Gopeed soporta la configuración de webhooks, enviando automáticamente solicitudes HTTP POST a una URL especificada cuando una tarea de descarga se completa o falla. Esta función se integra con servicios de notificación como Gotify, Bark, WeCom, DingTalk y Telegram Bot para mantenerte informado del estado de las descargas en tiempo real.
+
+## Cómo habilitarlo
+
+1. Abre el cliente de Gopeed
+2. Ve a **Configuración** → **Avanzado** → **Desarrollador**
+3. Busca la sección **Webhook** y haz clic para añadir una URL
+4. Introduce la dirección HTTP para recibir notificaciones y haz clic en confirmar
+
+## Formato de envío
+
+Los webhooks usan solicitudes HTTP POST con `Content-Type: application/json`. La estructura del cuerpo de la solicitud es la siguiente:
+
+```json
+{
+  "event": "DOWNLOAD_DONE",
+  "time": 1712000000000,
+  "payload": {
+    "task": {
+      "id": "task-uuid",
+      "protocol": "http",
+      "meta": {
+        "req": {
+          "url": "https://example.com/file.zip"
+        },
+        "opts": {
+          "name": "file.zip",
+          "path": "/downloads"
+        },
+        "res": {
+          "size": 104857600,
+          "files": [
+            { "name": "file.zip", "size": 104857600 }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+### Tipos de eventos
+
+| Evento | Descripción |
+| --- | --- |
+| `DOWNLOAD_DONE` | Tarea de descarga completada |
+| `DOWNLOAD_ERROR` | Tarea de descarga fallida |
+
+## Probar webhook
+
+Al añadir una URL de webhook, puedes hacer clic en el botón **Probar**. Gopeed enviará un evento `DOWNLOAD_DONE` simulado a la URL especificada. La prueba se considera exitosa solo cuando el servidor devuelve HTTP 200.
+
+## Soporte de múltiples URLs
+
+Puedes configurar múltiples URLs de webhook. Los eventos de descarga se enviarán a todas las direcciones configuradas simultáneamente, facilitando la integración con múltiples canales de notificación.
+
+## Casos de uso comunes
+
+- **Notificaciones push**: Integración con servicios de notificaciones autoalojados como Gotify, Bark o Pushover
+- **Mensajería instantánea**: Envío de notificaciones de descarga a través de webhooks de WeCom/DingTalk/Telegram Bot
+- **Automatización**: Activación de tareas posteriores como extracción, transcodificación o archivado

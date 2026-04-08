@@ -1,0 +1,90 @@
+---
+title: Scheme Protocol
+description: "Use the gopeed: scheme protocol to launch Gopeed from external apps to create download tasks or install extensions."
+---
+
+Gopeed registers the `gopeed:` custom protocol, allowing you to launch Gopeed directly from a browser, another app, or the command line to perform actions.
+
+## URI Format
+
+```
+gopeed:///create?params=<base64-encoded JSON>
+gopeed:///extension?params=<base64-encoded JSON>
+```
+
+- `<path>`: Action type, currently supports `/create` and `/extension`
+- `params`: Base64-encoded JSON parameters
+
+## Create Download Task
+
+Path: `/create`
+
+### Parameters
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `req.url` | string | Download URL (HTTP, magnet, ed2k, etc.) |
+
+The full parameter structure matches the request body of the create task API. See the [Create Task API docs](https://gopeed.com/docs/openapi#tag/tasks/POST/api/v1/tasks) for details.
+
+### Example
+
+Parameter JSON:
+
+```json
+{
+  "req": {
+    "url": "https://example.com/file.zip"
+  }
+}
+```
+
+Generated URI:
+
+<SchemeUriBlock uri="gopeed:///create?params=eyJyZXEiOnsidXJsIjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9maWxlLnppcCJ9fQ==" />
+
+## Install Extension
+
+Path: `/extension`
+
+### Parameters
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `url` | string | Extension Git repository URL |
+| `devMode` | boolean | Whether to install in development mode, defaults to `false` |
+
+### Example
+
+Parameter JSON:
+
+```json
+{
+  "url": "https://github.com/user/gopeed-extension-example",
+  "devMode": false
+}
+```
+
+Generated URI:
+
+<SchemeUriBlock uri="gopeed:///extension?params=eyJ1cmwiOiJodHRwczovL2dpdGh1Yi5jb20vdXNlci9nb3BlZWQtZXh0ZW5zaW9uLWV4YW1wbGUiLCJkZXZNb2RlIjpmYWxzZX0=" />
+
+## URI Builder
+
+Use the tool below to dynamically generate a complete `gopeed:` URI based on parameters:
+
+<SchemeUriBuilder />
+
+## Android Download Interception
+
+On Android, Gopeed registers a standard download handler Intent Filter. After installation, when you tap a download link in a browser or other app, the system will show an app chooser where you can select Gopeed to handle the download.
+
+Supported scenarios:
+
+- Choose Gopeed when a browser shows a download dialog
+- Choose Gopeed when sharing HTTP/HTTPS links from other apps
+- Set Gopeed as the default download handler in Android default app settings
+
+<Callout type="info">
+  After installing a new version, Android may need to rescan apps to recognize new Intent Filters. Try clearing the app cache, restarting the device, or clearing default app preferences in system settings.
+</Callout>

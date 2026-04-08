@@ -1,0 +1,66 @@
+---
+title: Webhook
+description: Configure webhooks to automatically push notifications to a specified URL when downloads complete or fail.
+---
+
+Gopeed supports webhook configuration, automatically sending HTTP POST requests to a specified URL when a download task completes or fails. This feature integrates with notification services like Gotify, Bark, WeCom, DingTalk, and Telegram Bot to keep you informed of download status in real time.
+
+## How to Enable
+
+1. Open the Gopeed client
+2. Go to **Settings** → **Advanced** → **Developer**
+3. Find the **Webhook** section and click to add a URL
+4. Enter the HTTP address for receiving notifications and click confirm
+
+## Push Format
+
+Webhooks use HTTP POST requests with `Content-Type: application/json`. The request body structure is as follows:
+
+```json
+{
+  "event": "DOWNLOAD_DONE",
+  "time": 1712000000000,
+  "payload": {
+    "task": {
+      "id": "task-uuid",
+      "protocol": "http",
+      "meta": {
+        "req": {
+          "url": "https://example.com/file.zip"
+        },
+        "opts": {
+          "name": "file.zip",
+          "path": "/downloads"
+        },
+        "res": {
+          "size": 104857600,
+          "files": [
+            { "name": "file.zip", "size": 104857600 }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+### Event Types
+
+| Event | Description |
+| --- | --- |
+| `DOWNLOAD_DONE` | Download task completed |
+| `DOWNLOAD_ERROR` | Download task failed |
+
+## Test Webhook
+
+When adding a Webhook URL, you can click the **Test** button. Gopeed will send a simulated `DOWNLOAD_DONE` event to the specified URL. The test is considered successful only when the server returns HTTP 200.
+
+## Multiple URL Support
+
+You can configure multiple Webhook URLs. Download events will be pushed to all configured addresses simultaneously, making it easy to integrate with multiple notification channels.
+
+## Common Use Cases
+
+- **Push Notifications**: Integrate with self-hosted push services like Gotify, Bark, or Pushover
+- **Instant Messaging**: Send download notifications via WeCom/DingTalk/Telegram Bot Webhooks
+- **Automation**: Trigger downstream tasks such as extraction, transcoding, or archiving

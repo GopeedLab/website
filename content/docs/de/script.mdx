@@ -1,0 +1,84 @@
+---
+title: Skriptausführung
+description: Konfigurieren Sie Hook-Skripte, die nach abgeschlossenen Downloads automatisch ausgeführt werden, um Dateiverschiebungen, Benachrichtigungen und andere Automatisierungen zu ermöglichen.
+---
+
+Gopeed unterstützt die automatische Ausführung angegebener Hook-Skripte, wenn eine Download-Aufgabe **erfolgreich abgeschlossen** wurde. Nutzen Sie diese Funktion, um Dateiverschiebungen zu automatisieren, Benachrichtigungen zu senden, Transcodierungen auszulösen und mehr.
+
+## Aktivierung
+
+1. Öffnen Sie den Gopeed-Client
+2. Gehen Sie zu **Einstellungen** -> **Erweitert** -> **Entwickler**
+3. Suchen Sie den Abschnitt **Skriptausführung** und aktivieren Sie den Schalter
+4. Fügen Sie den vollständigen Pfad zu Ihrer Skriptdatei hinzu
+
+## Unterstützte Skripttypen
+
+Gopeed wählt automatisch den Interpreter basierend auf der Dateierweiterung aus:
+
+| Erweiterung | Interpreter | Plattform |
+| --- | --- | --- |
+| `.sh` / `.bash` | Bash | macOS / Linux |
+| `.py` | Python 3 | Alle Plattformen |
+| `.js` | Node.js | Alle Plattformen |
+| `.bat` / `.cmd` | cmd.exe | Nur Windows |
+| `.ps1` | PowerShell | Alle Plattformen |
+| Keine Erweiterung | Direkte Ausführung (erfordert Shebang oder Ausführungsberechtigung) | macOS / Linux |
+
+## Umgebungsvariablen
+
+Skripte erhalten zur Ausführungszeit die folgenden Umgebungsvariablen:
+
+| Variable | Beschreibung | Beispiel |
+| --- | --- | --- |
+| `GOPEED_EVENT` | Ereignistyp | `DOWNLOAD_DONE` |
+| `GOPEED_TASK_ID` | Eindeutige Aufgaben-ID | `abc123-def456` |
+| `GOPEED_TASK_NAME` | Anzeigename der Aufgabe | `ubuntu-24.04.iso` |
+| `GOPEED_TASK_STATUS` | Aufgabenstatus | `done` |
+| `GOPEED_TASK_PATH` | Vollständiger Pfad zur heruntergeladenen Datei oder zum Ordner | `/downloads/ubuntu-24.04.iso` |
+
+`GOPEED_TASK_PATH` passt sich dem Aufgabentyp an:
+- **Einzeldatei-Aufgaben**: Verweist auf den Pfad der heruntergeladenen Datei
+- **Mehrfachdatei-Aufgaben**: Verweist auf den Pfad des heruntergeladenen Ordners
+
+## Beispielskripte
+
+### Dateien automatisch in ein bestimmtes Verzeichnis verschieben
+
+```bash
+#!/bin/bash
+# move_to_hdd.sh - Automatisches Verschieben von SSD zu HDD nach dem Download
+DEST="/data/hdd/downloads/"
+mkdir -p "$DEST"
+mv "$GOPEED_TASK_PATH" "$DEST"
+echo "Moved $GOPEED_TASK_NAME to $DEST"
+```
+
+### Benachrichtigung nach Download-Abschluss senden
+
+```python
+#!/usr/bin/env python3
+# notify.py - Benachrichtigung nach Abschluss des Downloads senden
+import os
+import urllib.request
+import json
+
+task_name = os.environ.get("GOPEED_TASK_NAME", "Unknown")
+task_path = os.environ.get("GOPEED_TASK_PATH", "")
+
+# Ersetzen Sie dies durch die URL Ihres Benachrichtigungsdienstes
+notify_url = "https://your-notify-service.com/api/send"
+data = json.dumps({
+    "title": "Download Complete",
+    "body": f"{task_name}\nPath: {task_path}"
+}).encode()
+
+req = urllib.request.Request(notify_url, data=data, headers={"Content-Type": "application/json"})
+urllib.request.urlopen(req)
+```
+
+## Hinweise
+
+- Skripte werden nur bei **erfolgreichen** Downloads ausgelöst; bei fehlgeschlagenen Downloads werden keine Skripte ausgeführt
+- Sie können mehrere Skriptpfade konfigurieren, die in der angegebenen Reihenfolge ausgeführt werden
+- Stellen Sie sicher, dass die Skriptdateien über die erforderlichen Ausführungsberechtigungen verfügen (verwenden Sie `chmod +x` auf macOS/Linux)

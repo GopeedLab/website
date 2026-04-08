@@ -1,5 +1,6 @@
 import type { Locale } from "@/lib/i18n";
 import { getTranslation } from "@/lib/i18n/translations";
+import { getVisibleFaqEntries } from "@/lib/keyword-pages";
 import { BASE_URL, canonicalUrl } from "@/lib/seo";
 
 /**
@@ -108,56 +109,17 @@ export function breadcrumbJsonLd(
 
 // ── FAQPage (for features section – helps win "People also ask" snippets) ─
 export function faqJsonLd(locale: Locale) {
-  const t = (key: string) => getTranslation(locale, key);
-
-  const faqs = [
-    {
-      q:
-        locale === "en"
-          ? "What download protocols does Gopeed support?"
-          : locale === "zh"
-            ? "Gopeed 支持哪些下载协议？"
-            : "Gopeed 支援哪些下載協定？",
-      a: t("features.protocol.desc"),
-    },
-    {
-      q:
-        locale === "en"
-          ? "What platforms does Gopeed run on?"
-          : locale === "zh"
-            ? "Gopeed 支持哪些平台？"
-            : "Gopeed 支援哪些平台？",
-      a: t("features.cross.desc"),
-    },
-    {
-      q:
-        locale === "en"
-          ? "Is Gopeed free and open source?"
-          : locale === "zh"
-            ? "Gopeed 是免费开源的吗？"
-            : "Gopeed 是免費開源的嗎？",
-      a: t("features.open.desc"),
-    },
-    {
-      q:
-        locale === "en"
-          ? "Does Gopeed support extensions?"
-          : locale === "zh"
-            ? "Gopeed 支持扩展功能吗？"
-            : "Gopeed 支援擴充功能嗎？",
-      a: t("features.extension.desc"),
-    },
-  ];
+  const entries = getVisibleFaqEntries(locale);
 
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
+    mainEntity: entries.map((entry) => ({
       "@type": "Question",
-      name: faq.q,
+      name: entry.question,
       acceptedAnswer: {
         "@type": "Answer",
-        text: faq.a,
+        text: entry.answer,
       },
     })),
   };

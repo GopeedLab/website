@@ -8,6 +8,9 @@
     "dev",
     "dev-api",
     "dev-extension",
+    "webhook",
+    "script",
+    "scheme",
     "---Support---",
     "donate"
   ]

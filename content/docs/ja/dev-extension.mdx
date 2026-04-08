@@ -1,0 +1,220 @@
+---
+title: 拡張機能開発
+description: Gopeed JavaScript 拡張機能の構築、ローカルデバッグ、拡張機能マニフェストとランタイムについて理解します。
+---
+
+Gopeed は `JavaScript` を使用した拡張機能開発に対応しています。拡張機能により、ウェブサイトからの動画や音楽のダウンロードなど、Gopeed の機能を強化できます。[公式サンプル](https://github.com/GopeedLab/gopeed-extension-samples/blob/main/README_zh-CN.md) で詳しく学ぶことができます。
+
+Gopeed の拡張機能は `git` をベースにした非中央集権型の拡張機能管理を実現しています。拡張機能のソースコードがリモート git リポジトリにホストされていれば、Gopeed を通じてインストールと更新が可能です。そのため、`github`、`gitee`、`gitlab`、その他の git ホスティングプラットフォームをすべて拡張機能リポジトリとして使用できます。
+
+## クイックスタート
+
+### スキャフォールディングの使用
+
+Gopeed はスキャフォールディングを提供しており、拡張機能開発プロジェクトのテンプレートを素早く作成できます：
+
+```sh
+npx create-gopeed-ext@latest
+```
+
+作成過程で、以下のプロンプトが表示されます：
+
+```sh
+√ Project name (gopeed-extension-demo) ...
+√ Choose a template » Webpack
+
+Success! Created gopeed-extension-demo at D:\code\study\js\gopeed-extension-demo
+Inside that directory, you can run several commands:
+
+  git init
+    Initialize git repository
+
+  npm install
+    Install dependencies
+
+  npm run dev
+    Compiles and hot-reloads for development.
+
+  npm run build
+    Compiles and minifies for production.
+
+We suggest that you begin by typing:
+
+  cd gopeed-extension-demo
+
+Happy coding!
+```
+
+### 手動セットアップ
+
+`node.js` の周辺ツールに慣れていない場合は、手動でプロジェクトを作成することもできます。ファイル構成は以下の通りです：
+
+```sh
+├── index.js
+├── manifest.json
+```
+
+## ローカルデバッグ
+
+プロジェクトを構築した後、ローカルデバッグを行う必要があります。ローカルの拡張機能プロジェクトを Gopeed にインストールしてデバッグできます。具体的な手順は以下の通りです：
+
+1. `Gopeed` の開発者モードを有効にします。拡張機能ページのインストールボタンを `5回連続` クリックして開発者モードを有効にします。
+
+![](/images/dev/extension/dev-mode.gif)
+
+2. ボタンをクリックしてディレクトリセレクターで拡張機能ディレクトリを選択し、インストールします。
+
+3. スキャフォールディングで `webpack` モードを使用している場合、`npm run dev` で自動コンパイルを開始できます。
+
+4. タスクを作成して拡張機能の動作を確認します。
+
+![](/images/dev/extension/demo.gif)
+
+スキャフォールディングで作成されたサンプル拡張機能は、`https://github.com/hello` リンクでタスクを作成する際に `example/index.html` ファイルを解析できることがわかります。
+
+> 注意：開発者モードはデスクトッププラットフォームでのみ有効です。
+
+## 開発の解説
+
+前のセクションで基本的な拡張機能を作成し、ローカルデバッグができるようになりましたが、内部で何が起こっているのでしょうか？
+
+まず、`manifest.json` ファイルを見てみましょう。これは拡張機能のマニフェストファイルで、拡張機能の情報を記述します。各拡張機能プロジェクトはルートディレクトリに `manifest.json` ファイルを含める必要があります。このセクションのサンプルファイルは以下の通りです：
+
+```json
+{
+  "name": "gopeed-extention-demo",
+  "author": "",
+  "title": "gopeed extention demo title",
+  "description": "gopeed extention demo description",
+  "icon": "",
+  "version": "1.0.0",
+  "homepage": "",
+  "repository": {
+    "url": ""
+  },
+  "scripts": [
+    {
+      "event": "onResolve",
+      "match": {
+        "urls": ["*://github.com/*"]
+      },
+      "entry": "dist/index.js"
+    }
+  ],
+  "settings": []
+}
+```
+
+次に、各フィールドの意味を一つずつ紹介します：
+
+- `name` と `author`：Gopeed は `<author>@<name>` を拡張機能の ID として使用します。`author` を入力することで、他の拡張機能によって上書きインストールされにくくなるため、`author` フィールドの入力を強くお勧めします。
+- `title` と `description`：拡張機能のタイトルと説明です。
+- `icon`：拡張機能のアイコン。相対パスで入力します。例：`icon.png`。
+- `version`：拡張機能のバージョン。semver 仕様を使用します。拡張機能の更新時はこのフィールドに基づいて比較されるため、バージョン番号が仕様に準拠していることを確認してください。
+- `homepage`：拡張機能のホームページ。例：`https://gopeed.com`。
+- `repository`：拡張機能が属する git リポジリアドレス。Gopeed の拡張機能は `git` をベースに非中央集権型の拡張機能管理を実現しています。そのため、ユーザーによるインストールと更新が必要な拡張機能は、ソースコードをリモート git リポジトリにホストし、このフィールドを設定する必要があります。
+
+  例：
+
+  ```json
+  {
+    "url": "https://github.com/gopeed/gopeed-extension-demo"
+  }
+  ```
+
+  git リポジトリに複数の拡張機能プロジェクトが含まれている場合、`directory` 属性でサブディレクトリを指定できます。例：
+
+  ```json
+  {
+    "url": "https://github.com/GopeedLab/gopeed-extension-samples",
+    "directory": "github-contributor-avatars-sample"
+  }
+  ```
+
+  Gopeed でのインストール時は、`#` で区切って指定する必要があります。例：`https://github.com/GopeedLab/gopeed-extension-samples#github-contributor-avatars-sample`。
+
+- `scripts`：`注意！` これは Gopeed 拡張機能の起動イベントの設定です。
+
+  サンプルプロジェクトで設定されている `onResolve` イベントは、タスクの解析時にトリガーされます。`match.urls` フィールドはタスク作成時の URL とのマッチングに使用されます。マッチが成功すると、`entry` フィールドで指定されたスクリプトファイルが実行されます。
+
+  > マッチングルールは Chrome 拡張機能のマッチングルールと同じです。詳細は[こちら](https://developer.chrome.com/docs/extensions/mv3/match_patterns/)を参照してください。
+
+- `settings`：拡張機能の設定。設定の宣言により、Gopeed に対応する設定ページを生成し、カスタム `Cookie`、カスタム `User-Agent` などのユーザー定義設定を提供できます。例：
+
+  ```json
+  [
+    {
+      "name": "cookie",
+      "title": "Website Cookie",
+      "description": "Cookie can be obtained through browser developer tools",
+      "type": "string"
+    },
+    {
+      "name": "quality",
+      "title": "Default Quality",
+      "type": "number",
+      "value": "1080",
+      "options": [
+        {
+          "label": "1080P",
+          "value": "1080"
+        },
+        {
+          "label": "720P",
+          "value": "720"
+        },
+        {
+          "label": "480P",
+          "value": "480"
+        }
+      ]
+    }
+  ]
+  ```
+
+  - `name`：設定項目名。必須。
+  - `title`：設定項目のタイトル。必須。
+  - `description`：設定項目の説明。省略可能。
+  - `type`：設定項目の型。選択可能な値：`string`、`number`、`boolean`。
+  - `value`：設定項目のデフォルト値。省略可能。
+
+## スクリプトの記述
+
+前のセクションでマニフェストの設定方法を学びました。ここでは拡張機能スクリプトの記述方法を紹介します。
+
+### ランタイム環境
+
+Gopeed 拡張機能のスクリプトエンジンは [goja](https://github.com/dop251/goja) で実装されています。これは純粋な Go で書かれた JavaScript インタプリタです。ただし、goja は純粋な JS ランタイムであるため、`browser` や `node.js` の API はサポートされていません。現在、`Gopeed` は `XMLHttpRequest` と `fetch` API を実装しているため、これらの API を直接使用したり、これらに基づくサードパーティライブラリ（`axios`、`superagent` など）を使用してネットワークリクエストを実装できます。
+
+もう一つ注意すべき点は、goja は `es6+` のほとんどの構文をネイティブでサポートしていますが、`async generator` などの一部の構文はサポートされていません。しかし、心配ありません。スキャフォールディングで作成されたプロジェクトでは `babel` が設定済みなので、最新の ES 構文を使用でき、スクリプトは最終的に `es5` 構文にコンパイルされます。
+
+### デモスクリプトの解説
+
+イベントがトリガーされると、`entry` フィールドで指定されたスクリプトファイルが実行されます。サンプルプロジェクトのスクリプトファイルは以下の通りです：
+
+```js
+gopeed.events.onResolve((ctx) => {
+  ctx.res = {
+    name: "example",
+    files: [
+      {
+        name: "index.html",
+        req: {
+          url: "https://example.com",
+        },
+      },
+    ],
+  };
+});
+```
+
+スクリプトの内容を説明します：
+
+- `gopeed.events.onResolve`：これは `onResolve` イベントハンドラーを登録します。拡張機能のロジックはここに記述します。
+- `ctx`：イベントコンテキスト。現在のイベントに関する情報を含みます。`onResolve` イベントでは、`ctx` は以下を含みます：
+  - `req`：リクエスト情報。リソース URL、ヘッダーなどを含みます。
+  - `res`：レスポンス情報。スクリプトは解析されたファイルリストを `ctx.res` に代入する必要があり、Gopeed は返されたファイルリストに従ってダウンロードを行います。
+
+つまり、`onResolve` コールバック関数内で、`ctx.req` のリクエスト情報に基づいてダウンロードするファイルリストを解析し、それを `ctx.res` に代入します。
+
+> 詳細な拡張機能の型定義と関連ソースコードについては、[公式 Gopeed JS リポジトリ](https://github.com/GopeedLab/gopeed-js) を参照してください。
