@@ -13,12 +13,6 @@ const sectionTitle: Record<Locale, string> = {
   en: "Download Manager FAQ",
   zh: "下载器常见问题",
   "zh-TW": "下載器常見問題",
-  ja: "ダウンロードマネージャー FAQ",
-  ko: "다운로드 매니저 FAQ",
-  es: "Preguntas frecuentes sobre el gestor de descargas",
-  pt: "Perguntas frequentes sobre o gerenciador de downloads",
-  fr: "FAQ du gestionnaire de téléchargement",
-  de: "Download-Manager FAQ",
   ru: "Часто задаваемые вопросы о менеджере загрузок",
 };
 
