@@ -17,7 +17,7 @@ type SortField = keyof typeof SORT_FIELDS;
 
 const MAX_LIMIT = 100;
 const DEFAULT_LIMIT = 20;
-const DEFAULT_SORT: SortField = "stars";
+const DEFAULT_SORT: SortField = "installs";
 
 /**
  * GET /api/extensions
@@ -25,7 +25,7 @@ const DEFAULT_SORT: SortField = "stars";
  * Query parameters:
  *   page    - Page number, 1-indexed (default: 1)
  *   limit   - Items per page, max 100 (default: 20)
- *   sort    - Sort field: "stars" | "installs" | "updated" (default: "stars")
+ *   sort    - Sort field: "stars" | "installs" | "updated" (default: "installs")
  *   order   - Sort direction: "asc" | "desc" (default: "desc")
  *   q       - Optional search query (matches title, name, description, author)
  *

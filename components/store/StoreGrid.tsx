@@ -15,7 +15,7 @@ interface StoreGridProps {
 export function StoreGrid({ extensions }: StoreGridProps) {
   const { t } = useLocale();
   const [search, setSearch] = useState("");
-  const [sortKey, setSortKey] = useState<SortKey>("stars");
+  const [sortKey, setSortKey] = useState<SortKey>("installs");
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
@@ -40,8 +40,8 @@ export function StoreGrid({ extensions }: StoreGridProps) {
   }, [extensions, search, sortKey]);
 
   const sortOptions: { key: SortKey; label: string }[] = [
-    { key: "stars", label: t("store.sort.stars") },
     { key: "installs", label: t("store.sort.installs") },
+    { key: "stars", label: t("store.sort.stars") },
     { key: "updated", label: t("store.sort.updated") },
   ];
 
