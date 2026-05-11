@@ -199,3 +199,89 @@ gopeed.events.onResolve((ctx) => {
 简而言之就是需要在`onResolve`回调函数中，根据`ctx.req`里的请求信息，解析出需要下载的文件列表赋值给`ctx.res`即可。
 
 > 关于`ctx`相关类型定义与扩展源码，可以参考[官方 Gopeed JS 仓库](https://github.com/GopeedLab/gopeed-js)。
+
+## 扩展存储
+
+Gopeed 提供了一套存储 API，以支持扩展持久化存储数据，例如`登录token`等等，示例：
+
+```js
+gopeed.events.onResolve((ctx) => {
+  // 获取 token，如果不存在则登录
+  const token = gopeed.storage.get("token");
+  if (!token) {
+    const token = await login();
+    gopeed.storage.set("token", token);
+  }
+
+  // 然后使用 token 做一些事情
+  // ...
+});
+```
+
+> 注：详细的 API 可以参考[文档](https://docs.gopeed.com/site/reference/interfaces/gopeed.Storage.html)。
+
+## 扩展调试
+
+在脚本中可以通过`gopeed.logger`对象进行日志输出，支持`debug`、`info`、`warn`、`error`三种级别，示例：
+
+```js
+gopeed.logger.debug("debug");
+gopeed.logger.info("info");
+gopeed.logger.warn("warn");
+gopeed.logger.error("error");
+```
+
+日志文件在 Gopeed 安装目录里的`logs`目录下，文件名称为`extension.log`，可以通过`tail -f extension.log`命令实时查看日志。
+
+> 注：debug 级别的日志仅在开发者模式安装的扩展中生效。
+
+## 扩展发布
+
+扩展开发完成后，如果是脚手架创建的`webpack`工程，需要编译一下：
+
+```sh
+npm run build
+```
+
+然后我们要创建一个`远程仓库`，例如在`github`上创建了一个`https://github.com/xxx/gopeed-extension-demo`仓库，然后对应的修改一下`manifest.json`中的`repository`字段：
+
+```json
+{
+  "repository": {
+    "url": "https://github.com/xxx/gopeed-extension-demo"
+  }
+}
+```
+
+> 正确的配置`repository`，可以让扩展获得远程更新的功能，如果扩展属于 git 仓库下的一个子目录，可以通过`directory`属性指定子目录，示例：
+>
+> ```json
+> {
+>   "repository": {
+>     "url": "https://github.com/xxx/gopeed-extension-demo",
+>     "directory": "path"
+>   }
+> }
+> ```
+
+这里还要记得配置好扩展的`author`和`name`字段，以降低和其它扩展重名的风险。
+
+然后将项目推送到远程仓库即可完成发布，为了让用户更方便的在`github`检索 Gopeed 扩展，建议项目名字统一以`gopeed-extension-`开头，例如`gopeed-extension-demo`，并且在`github`中为项目打上`gopeed-extension`标签。
+
+## 扩展安装
+
+发布到远端仓库之后，就可以在 Gopeed 中安装了，打开扩展页面，输入扩展的 HTTP 协议的`git clone`地址(可以省略掉后面的`.git`后缀)，点击`安装`按钮即可进行安装。
+
+> 注：如果扩展目录是一个子目录，需要在地址后面加上`#`，再加上子目录名称，例如`https://github.com/xxx/gopeed-extension-demo#path`。
+
+## 官方示例
+
+官方提供了两个具有代表性的示例扩展供参考，分别是：
+
+- [github-contributor-avatars-sample](https://github.com/GopeedLab/gopeed-extension-samples/tree/main/github-contributor-avatars-sample)
+
+  此扩展是依赖于`node.js`的项目，适用于复杂需求开发，通过`cheerio`库解析网页`DOM`，来获取需要下载的文件列表。
+
+- [github-release-sample](https://github.com/GopeedLab/gopeed-extension-samples/tree/main/github-release-sample)
+
+  此扩展是`纯js`项目，无任何依赖，适用于简单需求开发，通过`fetch`实现网络请求，来获取需要下载的文件列表。

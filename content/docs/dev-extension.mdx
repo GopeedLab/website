@@ -218,3 +218,89 @@ Let's explain the script content:
 In short, in the `onResolve` callback function, you need to parse the file list to download based on the request information in `ctx.req` and assign it to `ctx.res`.
 
 > For detailed extension typings and related source code, please refer to the [official Gopeed JS repository](https://github.com/GopeedLab/gopeed-js).
+
+## Extension Storage
+
+Gopeed provides a storage API to support persistent extension data, such as `login tokens`. Example:
+
+```js
+gopeed.events.onResolve((ctx) => {
+  // Get the token; if it does not exist, then log in
+  const token = gopeed.storage.get("token");
+  if (!token) {
+    const token = await login();
+    gopeed.storage.set("token", token);
+  }
+
+  // Then do something with the token
+  // ...
+});
+```
+
+> Note: For detailed API information, please refer to the [documentation](https://docs.gopeed.com/site/reference/interfaces/gopeed.Storage.html).
+
+## Extension Debugging
+
+You can use the `gopeed.logger` object in scripts to output logs. It supports `debug`, `info`, `warn`, and `error` levels. Example:
+
+```js
+gopeed.logger.debug("debug");
+gopeed.logger.info("info");
+gopeed.logger.warn("warn");
+gopeed.logger.error("error");
+```
+
+Log files are stored in the `logs` directory under the Gopeed installation path, with the file name `extension.log`. You can use `tail -f extension.log` to watch logs in real time.
+
+> Note: `debug` level logs only take effect for extensions installed in developer mode.
+
+## Extension Release
+
+After extension development is complete, if it was created with the scaffolding `webpack` project, you need to build it first:
+
+```sh
+npm run build
+```
+
+Then create a `remote repository`. For example, if you create a repository named `https://github.com/xxx/gopeed-extension-demo` on `github`, update the `repository` field in `manifest.json` accordingly:
+
+```json
+{
+  "repository": {
+    "url": "https://github.com/xxx/gopeed-extension-demo"
+  }
+}
+```
+
+> Correctly configuring `repository` enables remote updates for the extension. If the extension is a subdirectory under a git repository, you can use the `directory` attribute to specify the subdirectory, for example:
+>
+> ```json
+> {
+>   "repository": {
+>     "url": "https://github.com/xxx/gopeed-extension-demo",
+>     "directory": "path"
+>   }
+> }
+> ```
+
+Remember to set the extension's `author` and `name` fields properly to reduce the risk of name collisions with other extensions.
+
+Then push the project to the remote repository to complete the release. To make it easier for users to find Gopeed extensions on `github`, it is recommended to use the `gopeed-extension-` prefix for project names, such as `gopeed-extension-demo`, and to tag the project with `gopeed-extension` on `github`.
+
+## Extension Installation
+
+After publishing to a remote repository, you can install it in Gopeed. Open the extension page, enter the extension's `git clone` address using the HTTP protocol (you can omit the trailing `.git`), and click the `Install` button.
+
+> Note: If the extension lives in a subdirectory, append `#` to the address followed by the subdirectory name, for example `https://github.com/xxx/gopeed-extension-demo#path`.
+
+## Official Examples
+
+Gopeed provides two representative sample extensions for reference:
+
+- [github-contributor-avatars-sample](https://github.com/GopeedLab/gopeed-extension-samples/tree/main/github-contributor-avatars-sample)
+
+  This extension depends on `node.js` and is suitable for complex development needs. It uses the `cheerio` library to parse page `DOM` and collect the files to download.
+
+- [github-release-sample](https://github.com/GopeedLab/gopeed-extension-samples/tree/main/github-release-sample)
+
+  This extension is a `pure JS` project with no dependencies. It is suitable for simple development needs and uses `fetch` to make network requests and collect the files to download.

@@ -199,3 +199,89 @@ gopeed.events.onResolve((ctx) => {
 簡而言之就是需要在 `onResolve` 回呼函式中，根據 `ctx.req` 裡的請求資訊，解析出需要下載的檔案清單並賦值給 `ctx.res` 即可。
 
 > 關於 `ctx` 相關型別定義與擴充原始碼，可以參考[官方 Gopeed JS 存放庫](https://github.com/GopeedLab/gopeed-js)。
+
+## 擴充儲存
+
+Gopeed 提供了一套儲存 API，以支援擴充持久化儲存數據，例如 `登入 token` 等等，範例：
+
+```js
+gopeed.events.onResolve((ctx) => {
+  // 取得 token，如果不存在就先登入
+  const token = gopeed.storage.get("token");
+  if (!token) {
+    const token = await login();
+    gopeed.storage.set("token", token);
+  }
+
+  // 然後使用 token 做一些事情
+  // ...
+});
+```
+
+> 附註：詳細的 API 可以參考[文件](https://docs.gopeed.com/site/reference/interfaces/gopeed.Storage.html)。
+
+## 擴充調試
+
+在腳本中可以透過 `gopeed.logger` 物件進行日誌輸出，支援 `debug`、`info`、`warn`、`error` 三種級別，範例：
+
+```js
+gopeed.logger.debug("debug");
+gopeed.logger.info("info");
+gopeed.logger.warn("warn");
+gopeed.logger.error("error");
+```
+
+日誌檔案在 Gopeed 安裝目錄裡的 `logs` 目錄下，檔案名稱為 `extension.log`，可以透過 `tail -f extension.log` 指令即時查看日誌。
+
+> 注意：debug 等級的日誌僅在開發者模式安裝的擴充功能中生效。
+
+## 擴充功能發布
+
+擴充開發完成後，如果是由腳手架建立的 `webpack` 工程，需要編譯一下：
+
+```sh
+npm run build
+```
+
+然後我們要建立一個 `遠端倉庫`，例如在 `github` 上建立了一個 `https://github.com/xxx/gopeed-extension-demo` 倉庫，然後對應修改一下 `manifest.json` 中的 `repository` 欄位：
+
+```json
+{
+  "repository": {
+    "url": "https://github.com/xxx/gopeed-extension-demo"
+  }
+}
+```
+
+> 正確地設定 `repository`，可以讓擴充功能取得遠端更新的功能，如果擴充屬於 git 倉庫下的子目錄，可以透過 `directory` 屬性指定子目錄，範例：
+>
+> ```json
+> {
+>   "repository": {
+>     "url": "https://github.com/xxx/gopeed-extension-demo",
+>     "directory": "path"
+>   }
+> }
+> ```
+
+這裡也要記得配置好擴充的 `author` 和 `name` 欄位，以降低和其他擴充重名的風險。
+
+然後將專案推送到遠端倉庫即可完成發布，為了讓使用者更方便在 `github` 搜尋 Gopeed 擴充，建議專案名稱統一以 `gopeed-extension-` 開頭，例如 `gopeed-extension-demo`，並且在 `github` 中為專案打上 `gopeed-extension` 標籤。
+
+## 擴充安裝
+
+發佈到遠端倉庫之後，就可以在 Gopeed 中安裝了，打開擴充頁面，輸入擴充的 HTTP 協議 `git clone` 位址（可以省略掉後面的 `.git` 後綴），點擊 `安裝` 按鈕即可進行安裝。
+
+> 註：如果擴充目錄是子目錄，需要在位址後面加上 `#`，再加上子目錄名稱，例如 `https://github.com/xxx/gopeed-extension-demo#path`。
+
+## 官方範例
+
+官方提供了兩個具有代表性的範例擴充供參考，分別是：
+
+- [github-contributor-avatars-sample](https://github.com/GopeedLab/gopeed-extension-samples/tree/main/github-contributor-avatars-sample)
+
+  此擴充功能是依賴 `node.js` 的專案，適用於複雜需求開發，透過 `cheerio` 函式庫解析網頁 `DOM`，來取得需要下載的檔案清單。
+
+- [github-release-sample](https://github.com/GopeedLab/gopeed-extension-samples/tree/main/github-release-sample)
+
+  此擴充功能是 `純 js` 專案，無任何依賴，適用於簡單需求開發，透過 `fetch` 實現網路請求，來取得需要下載的檔案清單。
