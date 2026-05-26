@@ -7,14 +7,7 @@ import { canonicalUrl } from "@/lib/seo";
 import { source } from "@/lib/source";
 
 // Static pages that exist for every locale
-const STATIC_PATHS = [
-  "/",
-  "/store",
-  "/download-manager",
-  "/torrent-downloader",
-  "/magnet-link-downloader",
-  "/ed2k-downloader",
-];
+const STATIC_PATHS = ["/", "/store"];
 
 function parseTimestamp(value?: string) {
   if (!value) return null;
