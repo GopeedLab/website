@@ -3,7 +3,7 @@
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import type { Locale } from "@/lib/i18n";
-import { getVisibleFaqEntries } from "@/lib/keyword-pages";
+import { getFaqEntries } from "@/lib/jsonld";
 
 interface SeoFaqProps {
   locale: Locale;
@@ -17,7 +17,7 @@ const sectionTitle: Record<Locale, string> = {
 };
 
 export function SeoFaq({ locale }: SeoFaqProps) {
-  const entries = getVisibleFaqEntries(locale);
+  const entries = getFaqEntries(locale);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggle = (index: number) => {

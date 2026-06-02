@@ -330,22 +330,21 @@ async function syncExtension(
   const author = manifest.author?.trim() ?? "";
   const id = author ? `${author}@${manifest.name}` : manifest.name;
 
-  if (commitSha) {
-    // Check if we already have this commit cached
-    const existing = await db
-      .select({ commitSha: extensions.commitSha })
-      .from(extensions)
-      .where(eq(extensions.id, id))
-      .get();
+  // Only trigger a full update when the version number actually changes
+  const existing = await db
+    .select({ version: extensions.version })
+    .from(extensions)
+    .where(eq(extensions.id, id))
+    .get();
 
-    if (existing?.commitSha === commitSha) {
-      // No changes, update stars only
-      await db
-        .update(extensions)
-        .set({ stars: repo.stargazers_count })
-        .where(eq(extensions.id, id));
-      return "skipped";
-    }
+  const newVersion = manifest.version ?? "0.0.0";
+  if (existing?.version === newVersion) {
+    // Version unchanged, update stars only
+    await db
+      .update(extensions)
+      .set({ stars: repo.stargazers_count })
+      .where(eq(extensions.id, id));
+    return "skipped";
   }
 
   const iconUrl = resolveIconUrl(
