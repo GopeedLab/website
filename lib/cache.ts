@@ -6,10 +6,13 @@
 const GITHUB_API = "https://api.github.com";
 const CACHE_TTL = 1800; // 30 minutes in seconds
 
-interface GitHubRelease {
+export interface GitHubRelease {
   tag_name: string;
   name: string;
   body: string;
+  html_url: string;
+  draft: boolean;
+  prerelease: boolean;
   published_at: string;
   assets: Array<{
     name: string;
@@ -58,6 +61,16 @@ async function cachedFetch<T>(url: string): Promise<T> {
 export async function getLatestRelease(): Promise<GitHubRelease> {
   return cachedFetch<GitHubRelease>(
     `${GITHUB_API}/repos/GopeedLab/gopeed/releases/latest`,
+  );
+}
+
+/**
+ * Get published releases from GitHub, including prereleases.
+ */
+export async function getReleases(perPage = 10): Promise<GitHubRelease[]> {
+  const normalizedPerPage = Math.min(Math.max(Math.trunc(perPage), 1), 100);
+  return cachedFetch<GitHubRelease[]>(
+    `${GITHUB_API}/repos/GopeedLab/gopeed/releases?per_page=${normalizedPerPage}`,
   );
 }
 
