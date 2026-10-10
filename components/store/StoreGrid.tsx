@@ -2,14 +2,14 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useMemo, useState } from "react";
-import type { Extension } from "@/db/schema";
+import type { ExtensionSummary } from "@/db/schema";
 import { useLocale } from "@/lib/locale-context";
 import { ExtensionCard } from "./ExtensionCard";
 
 type SortKey = "installs" | "stars" | "updated";
 
 interface StoreGridProps {
-  extensions: Extension[];
+  extensions: ExtensionSummary[];
 }
 
 export function StoreGrid({ extensions }: StoreGridProps) {

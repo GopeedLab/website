@@ -1,15 +1,13 @@
-import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { desc } from "drizzle-orm";
 import type { Metadata } from "next";
 import { Footer } from "@/components/home/Footer";
 import { Navbar } from "@/components/home/Navbar";
 import { StoreGrid } from "@/components/store/StoreGrid";
-import { getDb } from "@/db/client";
-import { type Extension, extensions } from "@/db/schema";
+import type { ExtensionSummary } from "@/db/schema";
 import { getAppData } from "@/lib/data";
 import { i18n, type Locale, locales } from "@/lib/i18n";
 import { getTranslation } from "@/lib/i18n/translations";
 import { pageAlternates } from "@/lib/seo";
+import { getExtensionSummaries } from "@/lib/store/data";
 
 export async function generateMetadata({
   params,
@@ -46,21 +44,10 @@ export default async function StorePage({
 
   const appData = await getAppData();
 
-  let extensionList: Extension[] = [];
+  let extensionList: ExtensionSummary[] = [];
 
   try {
-    const ctx = await getCloudflareContext({ async: true });
-    // @ts-expect-error - CF env type
-    const d1 = ctx.env.DB as D1Database | undefined;
-
-    if (d1) {
-      const db = getDb(d1);
-      extensionList = await db
-        .select()
-        .from(extensions)
-        .orderBy(desc(extensions.installCount), desc(extensions.stars))
-        .all();
-    }
+    extensionList = await getExtensionSummaries();
   } catch (err) {
     console.error("Failed to connect to D1:", err);
   }

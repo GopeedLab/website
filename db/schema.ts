@@ -1,4 +1,4 @@
-import { integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 /**
  * Extensions table - stores parsed gopeed extension metadata
@@ -48,3 +48,34 @@ export const extensions = sqliteTable("extensions", {
 
 export type Extension = typeof extensions.$inferSelect;
 export type NewExtension = typeof extensions.$inferInsert;
+
+// Shared by the summary API and the website cards. Do not select README here.
+export const extensionSummaryColumns = {
+  id: extensions.id,
+  repoFullName: extensions.repoFullName,
+  repoUrl: extensions.repoUrl,
+  directory: extensions.directory,
+  name: extensions.name,
+  author: extensions.author,
+  title: extensions.title,
+  description: extensions.description,
+  icon: extensions.icon,
+  version: extensions.version,
+  installCount: extensions.installCount,
+  stars: extensions.stars,
+  updatedAt: extensions.updatedAt,
+};
+
+export type ExtensionSummary = Pick<
+  Extension,
+  keyof typeof extensionSummaryColumns
+>;
+
+export function toExtensionSummary(extension: Extension): ExtensionSummary {
+  return Object.fromEntries(
+    Object.keys(extensionSummaryColumns).map((key) => [
+      key,
+      extension[key as keyof ExtensionSummary],
+    ]),
+  ) as ExtensionSummary;
+}

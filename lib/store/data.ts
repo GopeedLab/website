@@ -1,34 +1,28 @@
-import { desc } from "drizzle-orm";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { desc, eq } from "drizzle-orm";
+import { cache } from "react";
 import { getDb } from "@/db/client";
-import type { Extension } from "@/db/schema";
-import { extensions } from "@/db/schema";
-import { syncExtensions } from "@/lib/store/fetcher";
+import { extensionSummaryColumns, extensions } from "@/db/schema";
 
-export type { Extension };
+async function storeDb() {
+  const ctx = await getCloudflareContext({ async: true });
+  // @ts-expect-error - CF env type
+  const d1 = ctx.env.DB as D1Database | undefined;
+  if (!d1) throw new Error("D1 database not available");
+  return getDb(d1);
+}
 
-/**
- * Fetch all extensions from the database, then trigger a background sync.
- * Returns the current DB data immediately for SSR.
- */
-export async function getExtensionsWithBackgroundSync(
-  d1: D1Database,
-  githubToken?: string,
-): Promise<Extension[]> {
-  const db = getDb(d1);
-
-  // Fetch current data from DB (fast path for SSR)
-  const rows = await db
-    .select()
+export async function getExtensionSummaries() {
+  const db = await storeDb();
+  return db
+    .select(extensionSummaryColumns)
     .from(extensions)
     .orderBy(desc(extensions.installCount), desc(extensions.stars))
     .all();
-
-  // Trigger background sync (fire and forget)
-  // In CF Workers, we use waitUntil via the execution context
-  // Here we just fire a non-blocking promise
-  syncExtensions(db, githubToken).catch((err) => {
-    console.error("Background extension sync error:", err);
-  });
-
-  return rows;
 }
+
+// Share the same read between generateMetadata and the page in one render.
+export const getStoreExtension = cache(async (id: string) => {
+  const db = await storeDb();
+  return db.select().from(extensions).where(eq(extensions.id, id)).get();
+});

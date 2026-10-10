@@ -74,7 +74,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     if (d1) {
       const db = getDb(d1);
-      const extensionList = await db.select().from(extensions).all();
+      const extensionList = await db
+        .select({ id: extensions.id, updatedAt: extensions.updatedAt })
+        .from(extensions)
+        .all();
 
       for (const ext of extensionList) {
         const extPath = `/store/${encodeURIComponent(ext.id)}`;

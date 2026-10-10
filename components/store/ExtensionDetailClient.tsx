@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { useState } from "react";
-import type { Extension } from "@/db/schema";
+import type { ExtensionSummary } from "@/db/schema";
 
 export interface ExtensionDetailTranslations {
   back: string;
@@ -23,7 +23,7 @@ export interface ExtensionDetailTranslations {
 }
 
 interface ExtensionDetailClientProps {
-  extension: Extension;
+  extension: ExtensionSummary;
   storeHref: string;
   translations: ExtensionDetailTranslations;
   readmeNode: ReactNode;

@@ -287,6 +287,7 @@ export function Navbar({ version = "", stars = "" }: NavbarProps) {
               <div className="relative w-7 h-7 md:w-8 md:h-8">
                 <div className="absolute inset-0 bg-primary-500 rounded-lg blur-[8px] opacity-40" />
                 <Image
+                  unoptimized
                   src="/images/logo.png"
                   fill
                   alt="Logo"

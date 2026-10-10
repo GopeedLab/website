@@ -2,7 +2,8 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { asc, desc, like, or, sql } from "drizzle-orm";
 import { type NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/db/client";
-import { extensions } from "@/db/schema";
+import { extensionSummaryColumns, extensions } from "@/db/schema";
+import { parseExtensionListParams } from "@/lib/store/list-params";
 
 // Note: No "edge" runtime here - drizzle-orm requires the SSR/Node.js bundling
 // path that opennextjs-cloudflare handles via the handler.
@@ -13,12 +14,6 @@ const SORT_FIELDS = {
   updated: extensions.updatedAt,
 } as const;
 
-type SortField = keyof typeof SORT_FIELDS;
-
-const MAX_LIMIT = 100;
-const DEFAULT_LIMIT = 20;
-const DEFAULT_SORT: SortField = "installs";
-
 /**
  * GET /api/extensions
  *
@@ -28,6 +23,7 @@ const DEFAULT_SORT: SortField = "installs";
  *   sort    - Sort field: "stars" | "installs" | "updated" (default: "installs")
  *   order   - Sort direction: "asc" | "desc" (default: "desc")
  *   q       - Optional search query (matches title, name, description, author)
+ *   view    - "summary" omits detail fields; omitted/other values keep the legacy full response
  *
  * Response:
  *   {
@@ -46,30 +42,10 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = request.nextUrl;
 
-    // --- Parse & validate params ---
-    const page = Math.max(
-      1,
-      Number.parseInt(searchParams.get("page") ?? "1", 10) || 1,
-    );
-    const limit = Math.min(
-      MAX_LIMIT,
-      Math.max(
-        1,
-        Number.parseInt(
-          searchParams.get("limit") ?? String(DEFAULT_LIMIT),
-          10,
-        ) || DEFAULT_LIMIT,
-      ),
-    );
+    const { page, limit, sort, order, q, view } =
+      parseExtensionListParams(searchParams);
     const offset = (page - 1) * limit;
-
-    const sortParam = (searchParams.get("sort") ?? DEFAULT_SORT) as SortField;
-    const sortField = SORT_FIELDS[sortParam] ?? SORT_FIELDS[DEFAULT_SORT];
-
-    const orderParam = searchParams.get("order") ?? "desc";
-    const orderFn = orderParam === "asc" ? asc : desc;
-
-    const q = searchParams.get("q")?.trim() ?? "";
+    const orderFn = order === "asc" ? asc : desc;
 
     // --- DB ---
     const ctx = await getCloudflareContext({ async: true });
@@ -106,25 +82,29 @@ export async function GET(request: NextRequest) {
     const totalPages = Math.ceil(total / limit);
 
     // Fetch paginated data
-    const data = await db
-      .select()
+    const selection =
+      view === "summary" ? db.select(extensionSummaryColumns) : db.select();
+    const data = await selection
       .from(extensions)
       .where(whereClause)
-      .orderBy(orderFn(sortField))
+      .orderBy(orderFn(SORT_FIELDS[sort]), asc(extensions.id))
       .limit(limit)
       .offset(offset);
 
-    return NextResponse.json({
-      data,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages,
-        hasNext: page < totalPages,
-        hasPrev: page > 1,
+    return NextResponse.json(
+      {
+        data,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages,
+          hasNext: page < totalPages,
+          hasPrev: page > 1,
+        },
       },
-    });
+      { headers: { "Cache-Control": "public, max-age=60, s-maxage=600" } },
+    );
   } catch (error) {
     console.error("GET /api/extensions error:", error);
     return NextResponse.json(

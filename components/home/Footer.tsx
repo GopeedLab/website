@@ -30,6 +30,7 @@ export function Footer() {
             <div className="mb-6 flex w-full flex-col items-center justify-center sm:mb-0 sm:w-3/12 sm:items-start">
               <div className="w-32 overflow-hidden rounded-lg shadow-lg">
                 <Image
+                  unoptimized
                   src="/images/wechat-qrcode.png"
                   alt="WeChat Official Account"
                   width={256}

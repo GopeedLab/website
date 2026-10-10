@@ -183,6 +183,7 @@ export function Hero({ version, releaseAssets }: HeroProps) {
                     className="inline-flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                   >
                     <Image
+                      unoptimized
                       src={browser.icon}
                       alt={browser.name}
                       width={20}
@@ -216,6 +217,7 @@ export function Hero({ version, releaseAssets }: HeroProps) {
                 {/* Combined Screenshot Preview */}
                 <div className="relative w-full h-full rounded-lg overflow-hidden">
                   <Image
+                    unoptimized
                     src="/images/screenshot.png"
                     alt={t("hero.previewAlt")}
                     fill
@@ -295,6 +297,7 @@ export function Hero({ version, releaseAssets }: HeroProps) {
                     className="inline-flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                   >
                     <Image
+                      unoptimized
                       src={browser.icon}
                       alt={browser.name}
                       width={20}

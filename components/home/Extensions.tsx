@@ -96,6 +96,7 @@ export function Extensions() {
 
                   <div className="relative h-48 z-10">
                     <Image
+                      unoptimized
                       src={example.image}
                       alt={example.title}
                       fill

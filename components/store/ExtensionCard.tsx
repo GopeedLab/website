@@ -4,12 +4,12 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import type { Extension } from "@/db/schema";
+import type { ExtensionSummary } from "@/db/schema";
 import { defaultLocale } from "@/lib/i18n";
 import { useLocale } from "@/lib/locale-context";
 
 interface ExtensionCardProps {
-  extension: Extension;
+  extension: ExtensionSummary;
   index: number;
 }
 

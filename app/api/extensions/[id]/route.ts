@@ -49,7 +49,9 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(extension);
+    return NextResponse.json(extension, {
+      headers: { "Cache-Control": "public, max-age=60, s-maxage=1800" },
+    });
   } catch (error) {
     console.error("GET /api/extensions/[id] error:", error);
     return NextResponse.json(

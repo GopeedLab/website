@@ -8,6 +8,7 @@ export function baseOptions(_locale: Locale = "en"): BaseLayoutProps {
       title: (
         <>
           <Image
+            unoptimized
             src="/images/logo.png"
             width={24}
             height={24}

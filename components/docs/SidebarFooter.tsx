@@ -31,6 +31,7 @@ export function SidebarFooter() {
             <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-fd-border p-4">
               <div className="w-32 overflow-hidden rounded-lg">
                 <Image
+                  unoptimized
                   src="/images/wechat-qrcode.png"
                   alt="WeChat Official Account"
                   width={256}

@@ -20,6 +20,14 @@ enabled = true
 binding = "WORKER_SELF_REFERENCE"
 service = "gopeed-website"
 
+[[durable_objects.bindings]]
+name = "NEXT_CACHE_DO_QUEUE"
+class_name = "DOQueueHandler"
+
+[[migrations]]
+tag = "extension-cache-v1"
+new_sqlite_classes = ["DOQueueHandler"]
+
 # R2 bucket for Next.js incremental cache (ISR/SSG + fetch cache)
 # Create via: wrangler r2 bucket create gopeed-website-cache
 [[r2_buckets]]

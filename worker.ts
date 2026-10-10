@@ -2,6 +2,7 @@
 // @ts-ignore OpenNext generates this module at build time.
 import handler from "./.open-next/worker.js";
 import { runScheduledExtensionSync } from "./lib/store/cron";
+import { withExtensionResponseCache } from "./lib/store/response-cache";
 
 interface WorkerEnv {
   DB: D1Database;
@@ -9,7 +10,14 @@ interface WorkerEnv {
 }
 
 export default {
-  fetch: handler.fetch,
+  async fetch(request, env, ctx) {
+    return withExtensionResponseCache(
+      request,
+      ctx,
+      () => handler.fetch(request, env, ctx),
+      (caches as CacheStorage & { default: Cache }).default,
+    );
+  },
   async scheduled(_event, env) {
     await runScheduledExtensionSync(env);
   },

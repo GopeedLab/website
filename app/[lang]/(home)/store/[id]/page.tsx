@@ -1,17 +1,21 @@
-import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Footer } from "@/components/home/Footer";
 import { Navbar } from "@/components/home/Navbar";
 import { ExtensionDetailClient } from "@/components/store/ExtensionDetailClient";
 import { ReadmeRenderer } from "@/components/store/ReadmeRenderer";
-import { getDb } from "@/db/client";
-import { type Extension, extensions } from "@/db/schema";
+import { toExtensionSummary } from "@/db/schema";
 import { getAppData } from "@/lib/data";
 import { i18n, type Locale, locales } from "@/lib/i18n";
 import { getTranslation } from "@/lib/i18n/translations";
 import { pageAlternates } from "@/lib/seo";
+import { getStoreExtension } from "@/lib/store/data";
+
+// Generate details on first request, then refresh in the background.
+export const revalidate = 600;
+export function generateStaticParams() {
+  return [];
+}
 
 export async function generateMetadata({
   params,
@@ -24,23 +28,7 @@ export async function generateMetadata({
     locales.includes(lang as Locale) ? lang : i18n.defaultLanguage
   ) as Locale;
 
-  let extension: Extension | undefined;
-
-  try {
-    const ctx = await getCloudflareContext({ async: true });
-    // @ts-expect-error - CF env type
-    const d1 = ctx.env.DB as D1Database | undefined;
-    if (d1) {
-      const db = getDb(d1);
-      extension = await db
-        .select()
-        .from(extensions)
-        .where(eq(extensions.id, id))
-        .get();
-    }
-  } catch {
-    // ignore
-  }
+  const extension = await getStoreExtension(id);
 
   if (!extension) {
     return { title: getTranslation(locale, "store.detail.notFound") };
@@ -78,24 +66,7 @@ export default async function ExtensionDetailPage({
 
   const appData = await getAppData();
 
-  let extension: Extension | undefined;
-
-  try {
-    const ctx = await getCloudflareContext({ async: true });
-    // @ts-expect-error - CF env type
-    const d1 = ctx.env.DB as D1Database | undefined;
-
-    if (d1) {
-      const db = getDb(d1);
-      extension = await db
-        .select()
-        .from(extensions)
-        .where(eq(extensions.id, id))
-        .get();
-    }
-  } catch (err) {
-    console.error("Failed to load extension:", err);
-  }
+  const extension = await getStoreExtension(id);
 
   if (!extension) {
     notFound();
@@ -128,7 +99,7 @@ export default async function ExtensionDetailPage({
     <main className="min-h-screen stable-vh overflow-x-clip bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100 relative">
       <Navbar version={appData.version} stars={appData.stars} />
       <ExtensionDetailClient
-        extension={extension}
+        extension={toExtensionSummary(extension)}
         storeHref={storeHref}
         translations={translations}
         readmeNode={readmeNode}
