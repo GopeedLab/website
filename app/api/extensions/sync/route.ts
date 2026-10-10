@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
         ? Math.floor(body.page)
         : 1;
     // Each repo costs ~3 subrequests (Contents API + Commits API + raw manifest).
-    // Cloudflare Workers limit: 50 subrequests per request.
+    // Keep HTTP batches small (also compatible with the Free plan's 50-subrequest limit).
     // 1 (GitHub search) + 10 repos × 3 = 31 — leaves headroom for multi-dir repos.
     // Hard cap at 10 to stay safely under the limit.
     const pageSize =

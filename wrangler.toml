@@ -1,11 +1,19 @@
 #:schema node_modules/wrangler/config-schema.json
 name = "gopeed-website"
-main = ".open-next/worker.js"
+main = "worker.ts"
 compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
 
 # Workers Paid Plan needed for static assets
 assets = { directory = ".open-next/assets", binding = "ASSETS" }
+
+# Extension discovery runs hourly, independently of GitHub repository activity.
+# Cloudflare Cron Triggers use UTC.
+[triggers]
+crons = ["0 * * * *"]
+
+[observability]
+enabled = true
 
 # Self reference for ISR revalidation
 [[services]]

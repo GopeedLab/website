@@ -25,6 +25,7 @@ interface GitHubRepo {
 
 interface GitHubSearchResult {
   total_count: number;
+  incomplete_results?: boolean;
   items: GitHubRepo[];
 }
 
@@ -58,20 +59,19 @@ function githubHeaders(token?: string): Record<string, string> {
 }
 
 async function fetchJSON<T>(url: string, token?: string): Promise<T | null> {
-  try {
-    const res = await fetch(url, { headers: githubHeaders(token) });
-    if (!res.ok) {
-      const body = await res.text().catch(() => "");
-      console.warn(
-        `[fetcher] HTTP ${res.status} ${res.statusText} — ${url}\n${body}`,
-      );
-      return null;
-    }
-    return (await res.json()) as T;
-  } catch (err) {
-    console.warn(`[fetcher] fetch error — ${url}`, err);
+  const res = await fetch(url, {
+    headers: githubHeaders(token),
+    signal: AbortSignal.timeout(30_000),
+  });
+  if (res.status === 404) {
+    await res.body?.cancel();
     return null;
   }
+  if (!res.ok) {
+    await res.body?.cancel();
+    throw new Error(`GitHub HTTP ${res.status} ${res.statusText} — ${url}`);
+  }
+  return (await res.json()) as T;
 }
 
 /**
@@ -103,15 +103,16 @@ async function fetchReadme(
 
   for (const filename of candidates) {
     const url = `${RAW_GITHUB}/${repoFullName}/${branch}/${base}${filename}`;
-    try {
-      const res = await fetch(url, {
-        headers: { "User-Agent": "Gopeed-Website/1.0" },
-      });
-      if (res.ok) {
-        return await res.text();
-      }
-    } catch {
-      // continue trying next variant
+    const res = await fetch(url, {
+      headers: { "User-Agent": "Gopeed-Website/1.0" },
+      signal: AbortSignal.timeout(30_000),
+    });
+    if (res.ok) {
+      return await res.text();
+    }
+    await res.body?.cancel();
+    if (res.status !== 404) {
+      throw new Error(`README HTTP ${res.status} ${res.statusText} — ${url}`);
     }
   }
   return null;
@@ -179,15 +180,19 @@ async function fetchManifest(
 ): Promise<ExtensionManifest | null> {
   const filePath = directory ? `${directory}/manifest.json` : "manifest.json";
   const url = `${RAW_GITHUB}/${repoFullName}/${branch}/${filePath}`;
-  try {
-    const res = await fetch(url, {
-      headers: { "User-Agent": "Gopeed-Website/1.0" },
-    });
-    if (!res.ok) return null;
-    return (await res.json()) as ExtensionManifest;
-  } catch {
+  const res = await fetch(url, {
+    headers: { "User-Agent": "Gopeed-Website/1.0" },
+    signal: AbortSignal.timeout(30_000),
+  });
+  if (res.status === 404) {
+    await res.body?.cancel();
     return null;
   }
+  if (!res.ok) {
+    await res.body?.cancel();
+    throw new Error(`Manifest HTTP ${res.status} ${res.statusText} — ${url}`);
+  }
+  return (await res.json()) as ExtensionManifest;
 }
 
 /**
@@ -220,7 +225,10 @@ async function searchGopeedExtensionRepos(
   while (true) {
     const url = `${GITHUB_API}/search/repositories?q=topic:gopeed-extension&sort=stars&order=desc&per_page=100&page=${page}`;
     const result = await fetchJSON<GitHubSearchResult>(url, token);
-    if (!result || result.items.length === 0) break;
+    if (!result || result.incomplete_results) {
+      throw new Error("GitHub extension search returned incomplete results");
+    }
+    if (result.items.length === 0) break;
     allRepos.push(...result.items);
     if (allRepos.length >= result.total_count || result.items.length < 100)
       break;
@@ -324,7 +332,7 @@ async function syncExtension(
     directory,
     token,
   );
-  if (!manifest || !manifest.name) return "ignored";
+  if (!manifest?.name) return "ignored";
 
   // Construct id from manifest: "author@name" if author present, otherwise just "name"
   const author = manifest.author?.trim() ?? "";
@@ -417,9 +425,8 @@ async function syncExtension(
  * Main sync function: searches GitHub, finds all gopeed extensions,
  * and upserts them into the database.
  *
- * Supports pagination to stay within Cloudflare Workers' 50-subrequest limit.
- * Each repo costs ~3 subrequests; a pageSize of 10 uses ~30, leaving headroom
- * for the initial GitHub search call.
+ * Supports pagination for the manual HTTP endpoint. The scheduled handler uses
+ * syncAllExtensions instead, searching once and processing the full snapshot.
  *
  * @param page     1-based page index of repos to process (default: 1)
  * @param pageSize number of repos to process per call (default: 10)
@@ -439,14 +446,26 @@ export async function syncExtensions(
   totalRepos: number;
   hasMore: boolean;
 }> {
-  const stats = { synced: 0, skipped: 0, ignored: 0, errors: 0 };
-
   const allRepos = await searchGopeedExtensionRepos(token);
   const totalRepos = allRepos.length;
 
   const start = (page - 1) * pageSize;
   const repos = allRepos.slice(start, start + pageSize);
   const hasMore = start + pageSize < totalRepos;
+
+  const stats = await syncRepos(db, repos, token);
+  return { ...stats, page, pageSize, totalRepos, hasMore };
+}
+
+/** Scan all discovered repos in one Workers Paid scheduled invocation. */
+export async function syncAllExtensions(db: Db, token: string) {
+  const repos = await searchGopeedExtensionRepos(token);
+  const stats = await syncRepos(db, repos, token);
+  return { ...stats, totalRepos: repos.length };
+}
+
+async function syncRepos(db: Db, repos: GitHubRepo[], token?: string) {
+  const stats = { synced: 0, skipped: 0, ignored: 0, errors: 0 };
 
   for (const repo of repos) {
     try {
@@ -472,5 +491,5 @@ export async function syncExtensions(
     }
   }
 
-  return { ...stats, page, pageSize, totalRepos, hasMore };
+  return stats;
 }
