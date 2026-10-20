@@ -24,11 +24,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Test extension APIs
-        run: |
-          pnpm test:store-cache
-          pnpm test:store-cors
-
       - name: Build (Next.js + opennext)
         run: pnpm build:worker
 

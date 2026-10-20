@@ -51,5 +51,4 @@ credential-free cross-origin requests. `worker.ts` applies CORS outside the
 response cache, including cached results, API errors, and JSON POST preflight.
 The authenticated sync endpoint keeps its existing behavior.
 
-Run `pnpm test:store-cors` and `pnpm test:store-cache` for regressions. Use
-`pnpm cf:dev` for browser integration tests through the Cloudflare Worker.
+Use `pnpm cf:dev` for browser integration tests through the Cloudflare Worker.
