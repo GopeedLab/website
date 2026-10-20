@@ -43,3 +43,13 @@ resources:
   features and API.
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 - [Fumadocs](https://fumadocs.dev) - learn about Fumadocs
+
+## Cross-origin extension store access
+
+The public extension list, detail, and install-report endpoints support
+credential-free cross-origin requests. `worker.ts` applies CORS outside the
+response cache, including cached results, API errors, and JSON POST preflight.
+The authenticated sync endpoint keeps its existing behavior.
+
+Run `pnpm test:store-cors` and `pnpm test:store-cache` for regressions. Use
+`pnpm cf:dev` for browser integration tests through the Cloudflare Worker.
