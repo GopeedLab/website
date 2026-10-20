@@ -44,9 +44,9 @@ resources:
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 - [Fumadocs](https://fumadocs.dev) - learn about Fumadocs
 
-## Cross-origin extension store access
+## Cross-origin public API access
 
-The public extension list, detail, and install-report endpoints support
+The public extension list, detail, install-report, and `/api/releases` endpoints support
 credential-free cross-origin requests. `worker.ts` applies CORS outside the
 response cache, including cached results, API errors, and JSON POST preflight.
 The authenticated sync endpoint keeps its existing behavior.
