@@ -93,8 +93,6 @@ export function Extensions({ locale }: { locale: Locale }) {
                 key={example.title}
                 href={`${storeUrl}/${encodeURIComponent(example.id)}`}
                 prefetch={false}
-                data-analytics="extension_detail_click"
-                data-extension-id={example.id}
                 className="relative group h-full block rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-500"
               >
                 {/* Hover Glow Effect */}

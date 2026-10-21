@@ -24,7 +24,7 @@ retry interval instead of a partial sitemap. Store listings read the current
 catalog at request time. Canonical URLs, internal links
 and sitemap entries consistently encode extension IDs (`author%40name`).
 
-## SEO rollout and measurement
+## SEO rollout and monitoring
 
 The current implementation covers language routing and metadata, redirects for
 legacy duplicated locale paths, sitemap freshness, crawlable homepage/store
@@ -33,30 +33,14 @@ cards link to the corresponding existing extension pages in each language.
 Platform-specific detail-page copy, tutorials and additional languages are a
 separate content project.
 
-The existing Firebase/GA4 property receives these additional intent events:
-
-| Event | Trigger | Parameters |
-| --- | --- | --- |
-| `client_download_click` | A client download is requested | `source` (`hero` or `downloads`), `file_name` |
-| `extension_detail_click` | A homepage or store extension link is clicked | `source` (`home` or `store`), `extension_id` |
-| `extension_install_click` | The store card's install button is clicked | `source` (`store`), `extension_id` |
-| `browser_extension_click` | A homepage browser extension link is clicked | `source` (`home`), `browser` |
-
-All events include `page_language` and `page_path`. They measure intent, not a
-completed file transfer or successful installation. Tracking is non-blocking and
-analytics failures do not interrupt downloads. Detail-page install events are
-not included in this pass. Register event parameters as GA4 custom dimensions
-when building reports; country and organic acquisition dimensions are supplied
-by GA4. Verify delivery in GA4 after deployment.
-
 After deployment:
 
 1. Check live canonical/hreflang, legacy redirects and sitemap completeness in
    Search Console. Inspect representative English/Chinese home, docs, store and
    extension URLs; monitor old duplicated-path 404s over subsequent crawls.
-2. Compare 28-day periods by landing page, country and non-brand query cluster.
-   Track organic visits alongside client download clicks, rather than treating
-   keyword impressions as market search volume or installs.
+2. Compare 28-day Search Console periods by landing page, country and non-brand
+   query cluster. Review clicks, impressions, click-through rate and average
+   position without treating impressions as market search volume or installs.
 3. Review mobile LCP/INP/CLS using field data. The smaller preloaded screenshot
    and immediately visible first-screen content address concrete loading delays;
    a passing field assessment still requires post-deployment measurements.

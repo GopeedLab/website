@@ -42,7 +42,7 @@ interface HeroProps {
 
 export function Hero({ version, releaseAssets }: HeroProps) {
   const { t } = useLocale();
-  const { isDownloading, triggerDownload } = useDownload("hero");
+  const { isDownloading, triggerDownload } = useDownload();
   const [platformInfo, setPlatformInfo] = useState<PlatformInfo>({
     platform: "unknown",
     arch: "unknown",
@@ -174,8 +174,6 @@ export function Hero({ version, releaseAssets }: HeroProps) {
                   <motion.a
                     key={browser.name}
                     href={browser.href}
-                    data-analytics="browser_extension_click"
-                    data-browser={browser.name}
                     target="_blank"
                     rel="noopener noreferrer"
                     whileHover={{ scale: 1.05 }}
@@ -277,8 +275,6 @@ export function Hero({ version, releaseAssets }: HeroProps) {
                   <motion.a
                     key={browser.name}
                     href={browser.href}
-                    data-analytics="browser_extension_click"
-                    data-browser={browser.name}
                     target="_blank"
                     rel="noopener noreferrer"
                     whileHover={{ scale: 1.05 }}

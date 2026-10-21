@@ -119,9 +119,6 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
           <Link
             href={detailHref}
             prefetch={false}
-            data-analytics="extension_detail_click"
-            data-extension-id={extension.id}
-            data-source="store"
             className="flex flex-col flex-1 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-500"
           >
             {/* Header */}
@@ -216,9 +213,6 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
               <motion.button
                 type="button"
                 onClick={handleInstall}
-                data-analytics="extension_install_click"
-                data-extension-id={extension.id}
-                data-source="store"
                 disabled={installing}
                 whileTap={{ scale: 0.98 }}
                 title={t("store.install") || "Install"}
