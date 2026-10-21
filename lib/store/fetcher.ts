@@ -266,7 +266,11 @@ async function syncExtension(
     .where(eq(extensions.id, id))
     .get();
   const newVersion = manifest.version ?? "0.0.0";
-  if (existing?.version === newVersion && existing.contentHash) {
+  if (
+    existing?.version === newVersion &&
+    existing.contentHash &&
+    (!options.ai || existing.commitSha)
+  ) {
     await db
       .update(extensions)
       .set({ stars: repo.stargazers_count })
@@ -306,10 +310,8 @@ async function syncExtension(
           directory,
           readmes,
         };
-        if ((await sourceContentHash(source)) !== existing.contentHash)
-          throw new Error(
-            `Saved source snapshot does not match the stored content hash for ${id}`,
-          );
+        // This immutable commit is the saved version. README discovery may expand
+        // as languages are added, without invalidating that version's translations.
         Object.assign(
           contentStats,
           await localizeExtension(db, options.ai, source, existing.contentHash),

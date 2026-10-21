@@ -1,21 +1,43 @@
-import type { Locale } from "@/lib/i18n/config";
+import { type Locale, locales } from "@/lib/i18n/config";
 import type { ReadmeSource } from "./content";
 
 export function readmeFilenameLocale(
   filename: string,
 ): Locale | null | undefined {
-  const match = /^readme(?:[._-]([a-z][a-z._-]*))?\.(?:md|markdown)$/i.exec(
+  const match = /^readme(?:[._-]([a-z][a-z0-9._-]*))?\.(?:md|markdown)$/i.exec(
     filename.split("/").at(-1) ?? filename,
   );
   if (!match) return undefined;
   if (!match[1]) return null;
   const tag = match[1].toLowerCase().replace(/[_.]/g, "-");
-  if (/^(en(?:-us|-gb)?|english)$/.test(tag)) return "en";
-  if (/^(zh-(?:cn|hans|sg)|cn|chs)$/.test(tag)) return "zh";
-  if (/^(zh-(?:tw|hant|hk|mo)|tw|cht)$/.test(tag)) return "zh-TW";
-  if (/^ru(?:-ru)?$/.test(tag)) return "ru";
-  // A generic zh filename does not identify Simplified vs Traditional Chinese.
-  return tag === "zh" || tag === "chinese" ? null : undefined;
+  // Generic Chinese filenames do not distinguish Simplified and Traditional.
+  if (tag === "zh" || tag === "chinese") return null;
+  const aliases: Record<string, string> = {
+    english: "en",
+    "zh-cn": "zh",
+    "zh-hans": "zh",
+    "zh-sg": "zh",
+    cn: "zh",
+    chs: "zh",
+    "zh-tw": "zh-TW",
+    "zh-hant": "zh-TW",
+    "zh-hk": "zh-TW",
+    "zh-mo": "zh-TW",
+    tw: "zh-TW",
+    cht: "zh-TW",
+  };
+  const configured = locales.find(
+    (locale) => locale.toLowerCase() === tag || locale === aliases[tag],
+  );
+  if (configured) return configured;
+  const language = tag.split("-")[0];
+  const sameLanguage = locales.filter(
+    (locale) => locale.split("-")[0] === language,
+  );
+  if (sameLanguage.length === 1 && language !== "zh") return sameLanguage[0];
+  // Collect language variants even before the website enables that language.
+  // Enabling another locale must not change the files included in the source hash.
+  return null;
 }
 
 export async function fetchReadmeSources(

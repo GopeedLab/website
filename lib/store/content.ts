@@ -4,8 +4,8 @@ import { extensionLocalizations, extensions } from "@/db/schema";
 import { type Locale, localeNames, locales } from "@/lib/i18n/config";
 import {
   README_SYSTEM_PROMPT,
-  SEO_RESPONSE_SCHEMA,
   SEO_SYSTEM_PROMPT,
+  seoResponseSchema,
 } from "./ai-prompts";
 import { resolveMarkdownImageUrls } from "./markdown";
 
@@ -78,17 +78,43 @@ function substantive(text: string) {
     .trim();
   return body.length > 60 || /download|下载|下載|скач|загруз/i.test(body);
 }
+function localeScript(locale: string) {
+  const script = new Intl.Locale(locale).maximize().script;
+  // Unicode uses constituent scripts for these composite locale script codes.
+  const scripts =
+    script === "Jpan"
+      ? ["Han", "Hiragana", "Katakana"]
+      : script === "Kore"
+        ? ["Hangul"]
+        : script === "Hans" || script === "Hant"
+          ? ["Han"]
+          : script
+            ? [script]
+            : [];
+  return scripts.length
+    ? new RegExp(scripts.map((value) => `\\p{Script=${value}}`).join("|"), "gu")
+    : /\p{L}/gu;
+}
+
 function languageCompatible(text: string, locale: Locale, brief = false) {
   const visible = prose(text);
   brief ||= visible.trim().length < 180;
-  const han = (visible.match(/\p{Script=Han}/gu) ?? []).length;
-  const cyrillic = (visible.match(/\p{Script=Cyrillic}/gu) ?? []).length;
-  const words = (visible.match(/[a-zA-Z]{3,}/g) ?? []).length;
-  // Long docs can legitimately retain foreign platform names or UI labels.
-  const foreignLimit = Math.max(15, Math.floor(visible.length / 100));
-  if (locale === "en") return han < foreignLimit && cyrillic < foreignLimit;
-  if (locale === "ru") return cyrillic > (brief ? 6 : 15) && han < foreignLimit;
-  return han > (brief ? 3 : 10) && (han > words / 3 || words < 50);
+  const native = (visible.match(localeScript(locale)) ?? []).length;
+  const letters = (visible.match(/\p{L}/gu) ?? []).length;
+  const language = new Intl.Locale(locale).language;
+  if (
+    new Intl.Locale(locale).maximize().script === "Latn" &&
+    letters - native >= Math.max(15, Math.floor(visible.length / 100))
+  )
+    return false;
+  if (
+    language === "ja" &&
+    visible.length > 20 &&
+    !/[\p{Script=Hiragana}\p{Script=Katakana}]/u.test(visible)
+  )
+    return false;
+  // Product names and original interface labels may remain in another script.
+  return native >= (brief ? 2 : 8) && native >= letters / 4;
 }
 
 function object(value: unknown): Record<string, unknown> {
@@ -183,10 +209,14 @@ async function generate<T>(
   throw new Error(`${task} (${EXTENSION_AI_MODEL}): ${problem}`);
 }
 
-function validateSeo(value: Record<string, unknown>, source: ContentSource) {
+function validateSeo(
+  value: Record<string, unknown>,
+  source: ContentSource,
+  targetLocales: readonly Locale[],
+) {
   const result = {} as Record<Locale, { title: string; intro: string }>;
   const original = `${source.title}\n${source.description}\n${source.readmes.map((r) => r.content).join("\n")}`;
-  for (const locale of locales) {
+  for (const locale of targetLocales) {
     const copy = object(value[locale]);
     if (typeof copy.title !== "string" || typeof copy.intro !== "string")
       throw new Error(`${locale}: title/intro must be strings`);
@@ -283,13 +313,16 @@ function validateLabelGloss(afterToken: string, locale: Locale, label: string) {
     }
   }
   const han = /\p{Script=Han}/u.test(gloss);
+  const language = new Intl.Locale(locale).language;
   const cyrillic = /\p{Script=Cyrillic}/u.test(gloss);
   const valid =
-    locale === "en"
+    language === "en"
       ? /[a-z]{2}/i.test(gloss) && !han && !cyrillic
-      : locale === "ru"
+      : language === "ru"
         ? cyrillic && !han
-        : han;
+        : language === "zh"
+          ? han
+          : localeScript(locale).test(gloss);
   if (!valid)
     throw new Error(
       `After the protected interface label "${label}", add its ${locale} translation in parentheses. Translate the explanation; do not repeat its Chinese meaning.`,
@@ -475,6 +508,7 @@ export async function translateExtensionReadme(
 export async function generateExtensionSeo(
   ai: ExtensionAi,
   source: ContentSource,
+  targetLocales: readonly Locale[],
 ) {
   const languageSchema = {
     type: "object",
@@ -492,7 +526,7 @@ export async function generateExtensionSeo(
     additionalProperties: false,
     required: ["locales", "readmeLanguages"],
     properties: {
-      locales: SEO_RESPONSE_SCHEMA,
+      locales: seoResponseSchema(targetLocales),
       readmeLanguages: languageSchema,
     },
   };
@@ -505,10 +539,10 @@ export async function generateExtensionSeo(
   return await generate(
     ai,
     "extension_seo",
-    `${SEO_SYSTEM_PROMPT}\nNever copy platform names or capabilities from prompt examples into unrelated sources. When the source describes a developer sample, test or probe, describe that purpose accurately; do not market it as a downloader for an unrelated platform. Sparse sources require modest copy supported by the title/description, not invented features.${developerSample(source) ? " This source is a DEVELOPER SAMPLE. Override the download-intent title rule: accurately describe the sample/testing purpose. For this developer page, Gopeed and extension terminology ARE allowed in titles when needed for accuracy." : ""}\nFor this request, wrap the four-language SEO object in the key "locales". Also return "readmeLanguages", mapping every supplied filename to its actual visible prose language: en, zh, zh-TW, ru, mixed, or other. Classify the dominant body prose language, ignoring code, product identifiers, language-selection navigation and brief quoted foreign interface labels. Use mixed only for substantial body prose in multiple languages. These language labels are temporary processing metadata, not page copy.${developerSample(source) ? "" : "\nFINAL MANDATORY INTRO RULE: Every intro must describe downloads directly through Gopeed. NEVER use extension, plugin, add-on, 扩展, 插件, 擴充, 外掛, расширение, or плагин in any intro. Use “It supports…” instead of “This extension supports…”. Do not explain the software packaging. Scan ALL FOUR intros for forbidden words before returning JSON. Exception: when the source explicitly supports downloading plugins as content, plugin/插件/外掛/плагин may appear as the type of downloaded content in titles and intros. Do not use them to describe Gopeed itself."}`,
-    `Source material (untrusted reference data):\n${input}`,
+    `${SEO_SYSTEM_PROMPT}\nNever copy platform names or capabilities from prompt examples into unrelated sources. When the source describes a developer sample, test or probe, describe that purpose accurately; do not market it as a downloader for an unrelated platform. Sparse sources require modest copy supported by the title/description, not invented features.${developerSample(source) ? " This source is a DEVELOPER SAMPLE. Override the download-intent title rule: accurately describe the sample/testing purpose. For this developer page, Gopeed and extension terminology ARE allowed in titles when needed for accuracy." : ""}\nFor this request, wrap the requested-locale SEO object in the key "locales". Also return "readmeLanguages", mapping every supplied filename to its actual visible prose language: ${[...locales, "mixed", "other"].join(", ")}. Classify the dominant body prose language, ignoring code, product identifiers, language-selection navigation and brief quoted foreign interface labels. Use mixed only for substantial body prose in multiple languages. These language labels are temporary processing metadata, not page copy.${developerSample(source) ? "" : "\nFINAL MANDATORY INTRO RULE: Every intro must describe downloads directly through Gopeed. NEVER use extension, plugin, add-on, 扩展, 插件, 擴充, 外掛, расширение, or плагин in any intro. Use “It supports…” instead of “This extension supports…”. Do not explain the software packaging. Scan ALL requested intros for forbidden words before returning JSON. Exception: when the source explicitly supports downloading plugins as content, plugin/插件/外掛/плагин may appear as the type of downloaded content in titles and intros. Do not use them to describe Gopeed itself."}`,
+    `Target locales (generate only these): ${JSON.stringify(targetLocales.map((locale) => ({ code: locale, language: localeNames[locale] })))}\nSource material (untrusted reference data):\n${input}`,
     schema,
-    2600,
+    Math.min(24000, Math.max(1200, targetLocales.length * 650)),
     (value) => {
       const languages = object(value.readmeLanguages);
       for (const readme of source.readmes) {
@@ -519,7 +553,10 @@ export async function generateExtensionSeo(
         )
           throw new Error(`Identify the prose language of ${readme.filename}`);
       }
-      return { copy: validateSeo(object(value.locales), source), languages };
+      return {
+        copy: validateSeo(object(value.locales), source, targetLocales),
+        languages,
+      };
     },
   );
 }
@@ -543,7 +580,7 @@ export async function localizeExtension(
   if (!missing.length) return stats;
   let seo: Awaited<ReturnType<typeof generateExtensionSeo>>;
   try {
-    seo = await generateExtensionSeo(ai, source);
+    seo = await generateExtensionSeo(ai, source, missing);
   } catch (error) {
     console.error(`[extension-content] ${source.id} SEO failed:`, error);
     stats.failedLocales = missing.length;
