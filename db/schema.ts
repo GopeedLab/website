@@ -1,4 +1,10 @@
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import {
+  integer,
+  primaryKey,
+  sqliteTable,
+  text,
+} from "drizzle-orm/sqlite-core";
+import { locales } from "@/lib/i18n/config";
 
 /**
  * Extensions table - stores parsed gopeed extension metadata
@@ -29,6 +35,7 @@ export const extensions = sqliteTable("extensions", {
 
   // README content (raw markdown, with relative image paths resolved to absolute URLs)
   readme: text("readme"),
+  contentHash: text("content_hash"),
 
   // Stats
   installCount: integer("install_count").notNull().default(0),
@@ -46,8 +53,46 @@ export const extensions = sqliteTable("extensions", {
     .$defaultFn(() => new Date()),
 });
 
+export const extensionLocalizations = sqliteTable(
+  "extension_localizations",
+  {
+    extensionId: text("extension_id")
+      .notNull()
+      .references(() => extensions.id, { onDelete: "cascade" }),
+    locale: text("locale", { enum: locales }).notNull(),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    readme: text("readme"),
+    sourceHash: text("source_hash").notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.extensionId, table.locale] })],
+);
+
 export type Extension = typeof extensions.$inferSelect;
 export type NewExtension = typeof extensions.$inferInsert;
+
+// Keep the download client's existing public API representation unchanged.
+export const extensionPublicColumns = {
+  id: extensions.id,
+  repoFullName: extensions.repoFullName,
+  repoUrl: extensions.repoUrl,
+  directory: extensions.directory,
+  commitSha: extensions.commitSha,
+  name: extensions.name,
+  author: extensions.author,
+  title: extensions.title,
+  description: extensions.description,
+  icon: extensions.icon,
+  version: extensions.version,
+  homepage: extensions.homepage,
+  readme: extensions.readme,
+  installCount: extensions.installCount,
+  stars: extensions.stars,
+  topics: extensions.topics,
+  createdAt: extensions.createdAt,
+  updatedAt: extensions.updatedAt,
+};
 
 // Shared by the summary API and the website cards. Do not select README here.
 export const extensionSummaryColumns = {

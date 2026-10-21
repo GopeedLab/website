@@ -30,8 +30,9 @@ The current implementation covers language routing and metadata, redirects for
 legacy duplicated locale paths, sitemap freshness, crawlable homepage/store
 links, shared image crawling and first-screen image loading. Homepage platform
 cards link to the corresponding existing extension pages in each language.
-Platform-specific detail-page copy, tutorials and additional languages are a
-separate content project.
+Extension detail-page copy and READMEs are localized in English, Simplified
+Chinese, Traditional Chinese and Russian. Additional languages and tutorials
+remain separate content work.
 
 After deployment:
 
@@ -44,8 +45,8 @@ After deployment:
 3. Review mobile LCP/INP/CLS using field data. The smaller preloaded screenshot
    and immediately visible first-screen content address concrete loading delays;
    a passing field assessment still requires post-deployment measurements.
-4. Discuss extension detail pages separately, then pilot a few complete platform
-   pages. Research English demand in India/US and native-language demand in
+4. Review the generated extension pages against their source capabilities.
+   Research English demand in India/US and native-language demand in
    Indonesia/Brazil, checking actual feature support and conversion before
    expanding languages. Add distinct tutorials for demonstrated user problems.
 5. Review content accuracy, broken links, index coverage, acquisition and relevant
@@ -89,3 +90,52 @@ response cache, including cached results, API errors, and JSON POST preflight.
 The authenticated sync endpoint keeps its existing behavior.
 
 Use `pnpm cf:dev` for browser integration tests through the Cloudflare Worker.
+
+## Extension content generation
+
+Apply `pnpm db:migrate` before deploying this version (and
+`pnpm db:migrate:dev` for local development). The existing `extensions` table
+retains upstream copy with one `content_hash` field. `extension_localizations`
+stores title, description, complete README, source hash and update time for each
+extension/locale. There is no stored source-language field.
+
+Run one `--remote --full` synchronization after deployment to reconcile any
+source updates written by the previous cron implementation during rollout.
+
+The hourly cron uses the `AI` binding with `@cf/google/gemma-4-26b-a4b-it` and
+requires the existing `GITHUB_TOKEN` Worker secret. It checks the manifest version
+first. On a version change, it hashes the title, description and all recognized
+README files from a single commit. Unchanged text reuses completed translations.
+Missing or failed languages are retried from the saved commit even without a
+new version. Failed validation does not replace valid rows; website rendering
+only uses rows whose source hash matches the current extension content.
+
+Author-provided locale READMEs take priority. The SEO request also identifies the
+README prose language in memory, so original-language READMEs are copied rather
+than translated. Code literals are protected during translation.
+Long READMEs are translated in paragraph sections, then checked as a complete
+document before saving; incomplete translations are not published. SEO copy is
+generated for all four languages from supported source capabilities. Titles,
+visible introductions, metadata and READMEs are read from D1; page requests never
+call AI. Public extension API fields continue to return the upstream copy.
+
+An operator can run the same pipeline locally against remote D1:
+
+```bash
+# Authenticate with account:read user:read ai:write d1:write permissions.
+pnpm exec wrangler login --scopes account:read user:read ai:write d1:write
+pnpm sync:extension-content --remote --full
+
+# Targeted retry; completed source hashes will not consume AI again.
+pnpm sync:extension-content --remote --repo monkeyWie/gopeed-extension-youtube
+
+# Local D1, with live Cloudflare AI.
+pnpm sync:extension-content --local --full
+```
+
+`--full` explicitly bypasses the version gate to refresh all source text. Without
+it, the normal version/content gates apply. The runner uses the Wrangler login
+and `gh auth`, or `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` and
+`GITHUB_TOKEN`. Set `LOCAL_DB_PATH` when multiple local D1 files exist. Reports
+with actual model-reported Neurons are saved under `.wrangler/extension-content/`.
+No user interaction or analytics data is sent to AI.

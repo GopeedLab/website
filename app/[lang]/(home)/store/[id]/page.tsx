@@ -8,7 +8,8 @@ import { toExtensionSummary } from "@/db/schema";
 import { getAppData } from "@/lib/data";
 import { i18n, type Locale, locales } from "@/lib/i18n";
 import { getTranslation } from "@/lib/i18n/translations";
-import { pageAlternates, pageSocialMetadata } from "@/lib/seo";
+import { breadcrumbJsonLd, jsonLdScriptContent } from "@/lib/jsonld";
+import { canonicalUrl, pageAlternates, pageSocialMetadata } from "@/lib/seo";
 import { getStoreExtension } from "@/lib/store/data";
 
 // Generate details on first request, then refresh in the background.
@@ -28,7 +29,7 @@ export async function generateMetadata({
     locales.includes(lang as Locale) ? lang : i18n.defaultLanguage
   ) as Locale;
 
-  const extension = await getStoreExtension(id);
+  const extension = await getStoreExtension(id, locale);
 
   if (!extension) {
     return { title: getTranslation(locale, "store.detail.notFound") };
@@ -38,7 +39,7 @@ export async function generateMetadata({
   const authorName = extension.author || extension.repoFullName.split("/")[0];
 
   return {
-    title: `${displayTitle} — ${getTranslation(locale, "store.title")}`,
+    title: displayTitle,
     description:
       extension.description ||
       `${displayTitle} by ${authorName} — Gopeed Extension`,
@@ -46,7 +47,7 @@ export async function generateMetadata({
     ...pageSocialMetadata(
       locale,
       `/store/${encodeURIComponent(id)}`,
-      `${displayTitle} — ${getTranslation(locale, "store.title")} | Gopeed`,
+      `${displayTitle} | Gopeed`,
       extension.description ||
         `${displayTitle} by ${authorName} — Gopeed Extension`,
       extension.icon || undefined,
@@ -67,7 +68,7 @@ export default async function ExtensionDetailPage({
 
   const appData = await getAppData();
 
-  const extension = await getStoreExtension(id);
+  const extension = await getStoreExtension(id, locale);
 
   if (!extension) {
     notFound();
@@ -98,6 +99,35 @@ export default async function ExtensionDetailPage({
 
   return (
     <main className="min-h-screen stable-vh overflow-x-clip bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100 relative">
+      <script type="application/ld+json">
+        {jsonLdScriptContent(
+          breadcrumbJsonLd(locale, [
+            { name: "Gopeed", path: "/" },
+            { name: tr("store.title"), path: "/store" },
+            { name: extension.title, path: `/store/${encodeURIComponent(id)}` },
+          ]),
+          {
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            name: extension.title,
+            description: extension.description,
+            inLanguage: locale,
+            url: canonicalUrl(locale, `/store/${encodeURIComponent(id)}`),
+            mainEntity: {
+              "@type": "SoftwareApplication",
+              name: extension.name,
+              softwareVersion: extension.version,
+              softwareRequirements: "Gopeed",
+              applicationCategory: "UtilitiesApplication",
+              author: {
+                "@type": "Person",
+                name: extension.author || extension.repoFullName.split("/")[0],
+              },
+              url: extension.repoUrl,
+            },
+          },
+        )}
+      </script>
       <Navbar version={appData.version} stars={appData.stars} />
       <ExtensionDetailClient
         extension={toExtensionSummary(extension)}
