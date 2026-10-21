@@ -16,20 +16,36 @@ if (
   !args.some((arg) => arg === "--remote" || arg === "--local")
 ) {
   console.log(
-    "Usage: pnpm sync:extension-content --remote|--local [--full] [--repo owner/name]\nAI always uses Cloudflare. --full refreshes source text even without a version bump.\nUses CLOUDFLARE_API_TOKEN or the current Wrangler login, and GITHUB_TOKEN or gh auth.",
+    "Usage: pnpm sync:extension-content --remote|--local [--full] [--regenerate] [--locales en,zh,zh-TW,ru] [--repo owner/name]\nAI always uses Cloudflare DeepSeek. --full refreshes source text even without a version bump. --regenerate also replaces completed localized content after validation; --locales limits this regeneration to selected languages.\nUses CLOUDFLARE_API_TOKEN or the current Wrangler login, and GITHUB_TOKEN or gh auth.",
   );
   process.exit(args.includes("--help") ? 0 : 1);
 }
 if (args.includes("--remote") && args.includes("--local"))
   throw new Error("Choose one database target");
 for (let index = 0; index < args.length; index++) {
-  if (args[index] === "--repo") {
+  if (args[index] === "--repo" || args[index] === "--locales") {
+    const option = args[index];
     if (!args[++index] || args[index].startsWith("--"))
-      throw new Error("--repo requires owner/name");
-  } else if (!["--remote", "--local", "--full"].includes(args[index]))
+      throw new Error(`${option} requires a value`);
+  } else if (
+    !["--remote", "--local", "--full", "--regenerate"].includes(args[index])
+  )
     throw new Error(`Unknown option: ${args[index]}`);
 }
 const remote = args.includes("--remote");
+const localesIndex = args.indexOf("--locales");
+const selectedLocales =
+  localesIndex >= 0 ? args[localesIndex + 1].split(",") : undefined;
+if (
+  selectedLocales &&
+  (!args.includes("--regenerate") ||
+    selectedLocales.some(
+      (locale) => !["en", "zh", "zh-TW", "ru"].includes(locale),
+    ))
+)
+  throw new Error(
+    "--locales requires --regenerate and a comma-separated subset of en,zh,zh-TW,ru",
+  );
 const repoIndex = args.indexOf("--repo");
 const repo = repoIndex >= 0 ? args[repoIndex + 1] : undefined;
 const config = readFileSync("wrangler.toml", "utf8");
@@ -77,6 +93,7 @@ async function cloudflare(
   path,
   body,
   timeout = path.startsWith("d1/") ? 30_000 : 300_000,
+  signal,
 ) {
   const attempts = path.startsWith("d1/") ? 4 : 1;
   for (let attempt = 0; attempt < attempts; attempt++) {
@@ -90,7 +107,9 @@ async function cloudflare(
             "Content-Type": "application/json",
           },
           body: JSON.stringify(body),
-          signal: AbortSignal.timeout(timeout),
+          signal: signal
+            ? AbortSignal.any([signal, AbortSignal.timeout(timeout)])
+            : AbortSignal.timeout(timeout),
         },
       );
       const data = await response.json();
@@ -199,18 +218,26 @@ await build({
 });
 const { getDb, syncAllExtensions } = await import(pathToFileURL(bundle).href);
 console.log(
-  `[extension-content] target=${remote ? "remote" : "local"} full=${args.includes("--full")} repo=${repo ?? "all"}`,
+  `[extension-content] target=${remote ? "remote" : "local"} full=${args.includes("--full")} regenerate=${args.includes("--regenerate")} repo=${repo ?? "all"}`,
 );
 const startedAt = new Date().toISOString();
 let requestNumber = 0;
 try {
   const stats = await syncAllExtensions(getDb(database), githubToken, {
     refreshContent: args.includes("--full"),
+    regenerateContent: args.includes("--regenerate")
+      ? (selectedLocales ?? true)
+      : false,
     repo,
     ai: {
-      async run(model, inputs) {
+      async run(model, inputs, options) {
         const number = ++requestNumber;
-        const result = await cloudflare(`ai/run/${model}`, inputs);
+        const result = await cloudflare(
+          `ai/run/${model}`,
+          inputs,
+          undefined,
+          options?.signal,
+        );
         await writeFile(
           join(
             outputDir,

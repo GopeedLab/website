@@ -9,7 +9,7 @@ import { eq } from "drizzle-orm";
 import type { Db } from "@/db/client";
 import type { NewExtension } from "@/db/schema";
 import { extensionLocalizations, extensions } from "@/db/schema";
-import { locales } from "@/lib/i18n/config";
+import { type Locale, locales } from "@/lib/i18n/config";
 import {
   type ContentSource,
   type ExtensionAi,
@@ -239,6 +239,8 @@ async function findExtensionDirectories(
 export interface ExtensionSyncOptions {
   ai?: ExtensionAi;
   refreshContent?: boolean;
+  /** Operator-only: regenerate completed locales without deleting valid rows. */
+  regenerateContent?: boolean | readonly Locale[];
   /** Optional repository filter for an operator's targeted retry. */
   repo?: string;
 }
@@ -272,7 +274,8 @@ async function syncExtension(
   if (
     existing?.version === newVersion &&
     existing.contentHash &&
-    !options.refreshContent
+    !options.refreshContent &&
+    !options.regenerateContent
   ) {
     await db
       .update(extensions)
@@ -387,7 +390,13 @@ async function syncExtension(
   if (options.ai)
     Object.assign(
       contentStats,
-      await localizeExtension(db, options.ai, source, hash),
+      await localizeExtension(
+        db,
+        options.ai,
+        source,
+        hash,
+        options.regenerateContent,
+      ),
     );
   return { status: "synced" as const, ...contentStats };
 }

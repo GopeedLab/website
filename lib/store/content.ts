@@ -9,9 +9,13 @@ import {
 } from "./ai-prompts";
 import { resolveMarkdownImageUrls } from "./markdown";
 
-export const EXTENSION_AI_MODEL = "@cf/google/gemma-4-26b-a4b-it";
+export const EXTENSION_AI_MODEL = "@cf/deepseek-ai/deepseek-v4.1-flash-1017";
 export interface ExtensionAi {
-  run(model: string, inputs: Record<string, unknown>): Promise<unknown>;
+  run(
+    model: string,
+    inputs: Record<string, unknown>,
+    options?: { signal?: AbortSignal },
+  ): Promise<unknown>;
 }
 export interface ReadmeSource {
   filename: string;
@@ -96,13 +100,28 @@ function object(value: unknown): Record<string, unknown> {
     throw new Error("Expected a JSON object");
   return value as Record<string, unknown>;
 }
+class IncompleteModelOutputError extends Error {}
+
+// Standard Workers AI billing permits 20 requests/minute for this paid model.
+// Share pacing across the concurrent repos and locales in one sync invocation.
+const nextAiRequest = new WeakMap<ExtensionAi, number>();
+async function paceAiRequest(ai: ExtensionAi) {
+  const now = Date.now();
+  const start = Math.max(now, nextAiRequest.get(ai) ?? now);
+  nextAiRequest.set(ai, start + 3_500);
+  if (start > now)
+    await new Promise((resolve) => setTimeout(resolve, start - now));
+}
+
 function parseOutput(result: unknown) {
   const data = object(result);
   const choices = data.choices as
     | Array<{ finish_reason?: string; message?: { content?: string } }>
     | undefined;
   if (choices?.[0]?.finish_reason && choices[0].finish_reason !== "stop")
-    throw new Error(`Incomplete model output: ${choices[0].finish_reason}`);
+    throw new IncompleteModelOutputError(
+      `Incomplete model output: ${choices[0].finish_reason}`,
+    );
   const content = choices?.[0]?.message?.content ?? data.response ?? data;
   return typeof content === "string"
     ? object(
@@ -127,34 +146,49 @@ async function generate<T>(
   validate: (value: Record<string, unknown>) => T,
 ) {
   let problem = "";
+  let truncated = false;
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
+      await paceAiRequest(ai);
       stats.aiRequests++;
-      const result = await ai.run(EXTENSION_AI_MODEL, {
-        messages: [
-          { role: "system", content: system },
-          {
-            role: "user",
-            content: `${user}${problem ? `\nThe previous attempt failed validation: ${problem}. Correct these issues.` : ""}`,
+      const result = await ai.run(
+        EXTENSION_AI_MODEL,
+        {
+          messages: [
+            { role: "system", content: system },
+            {
+              role: "user",
+              content: `${user}${problem ? `\nThe previous attempt failed: ${problem}. Correct these issues and return the complete requested JSON.` : ""}`,
+            },
+          ],
+          temperature: 0,
+          stream: false,
+          max_completion_tokens: truncated
+            ? Math.min(24000, maxTokens * 2)
+            : maxTokens,
+          reasoning_effort: "none",
+          response_format: {
+            type: "json_schema",
+            json_schema: { name: task, strict: true, schema },
           },
-        ],
-        temperature: 0,
-        stream: false,
-        max_completion_tokens: maxTokens,
-        chat_template_kwargs: { enable_thinking: false },
-        response_format: {
-          type: "json_schema",
-          json_schema: { name: task, strict: true, schema },
         },
-      });
+        {
+          signal: AbortSignal.timeout(180_000),
+        },
+      );
       const usage = object(result).usage as { neurons?: number } | undefined;
       stats.neurons += usage?.neurons ?? 0;
       return validate(parseOutput(result));
     } catch (error) {
       problem = error instanceof Error ? error.message : String(error);
+      if (error instanceof IncompleteModelOutputError) {
+        truncated = true;
+      }
+      if (attempt === 0 && /429|rate.?limit|3021|capacity/i.test(problem))
+        await new Promise((resolve) => setTimeout(resolve, 60_000));
     }
   }
-  throw new Error(`${task}: ${problem}`);
+  throw new Error(`${task} (${EXTENSION_AI_MODEL}): ${problem}`);
 }
 
 function validateSeo(value: Record<string, unknown>, source: ContentSource) {
@@ -242,6 +276,34 @@ function developerSample(source: ContentSource) {
   );
 }
 
+function validateLabelGloss(afterToken: string, locale: Locale, label: string) {
+  const text = afterToken.trimStart().slice(0, 512);
+  let depth = 0;
+  let gloss = "";
+  if (text[0] === "(" || text[0] === "（") {
+    for (let index = 0; index < text.length; index++) {
+      if (text[index] === "(" || text[index] === "（") depth++;
+      if (text[index] === ")" || text[index] === "）") depth--;
+      if (depth === 0) {
+        gloss = text.slice(1, index);
+        break;
+      }
+    }
+  }
+  const han = /\p{Script=Han}/u.test(gloss);
+  const cyrillic = /\p{Script=Cyrillic}/u.test(gloss);
+  const valid =
+    locale === "en"
+      ? /[a-z]{2}/i.test(gloss) && !han && !cyrillic
+      : locale === "ru"
+        ? cyrillic && !han
+        : han;
+  if (!valid)
+    throw new Error(
+      `After the protected interface label "${label}", add its ${locale} translation in parentheses. Translate the explanation; do not repeat its Chinese meaning.`,
+    );
+}
+
 /** Keep code literal even when it contains translatable UI labels. */
 export function protectReadme(source: string) {
   let prefix = "GOPEED_LITERAL_";
@@ -266,12 +328,19 @@ export function protectReadme(source: string) {
         : [],
     ),
   );
+  const codeReferences = Object.fromEntries(
+    literals.flatMap((value, index) =>
+      /^`[^`\n]{1,500}`$/.test(value) && !labelMeanings[`${prefix}${index}__`]
+        ? [[`${prefix}${index}__`, value.slice(1, -1)]]
+        : [],
+    ),
+  );
   return {
     text,
     instruction: literals.length
-      ? `\nTokens beginning ${prefix} are immutable source-code placeholders. Copy each token exactly once, in its original position; do not translate, expand, or wrap it in Markdown. They will be restored after translation.${Object.keys(labelMeanings).length ? ` For these natural-language interface labels, preserve the placeholder and add a faithful TARGET-LANGUAGE explanation in parentheses after it. Never copy the Chinese reference meaning as an English/Russian explanation. Example: a token meaning 新建任务 becomes TOKEN (New task) in en, preserving TOKEN itself. Reference meanings (never use them to replace a token): ${JSON.stringify(labelMeanings)}` : ""}`
+      ? `\nTokens beginning ${prefix} are immutable source-code placeholders. Copy each token exactly once, in its original position; do not translate, expand, or wrap it in Markdown. They will be restored after translation. Never infer hidden token values or invent meanings. Only tokens explicitly listed below may receive a translated label explanation; never invent a new explanation for other code/product tokens. Translate existing surrounding prose and parenthetical conditions faithfully.${Object.keys(codeReferences).length ? ` Read-only code/product reference data, to understand surrounding prose (do not replace placeholders or add explanations for these): ${JSON.stringify(codeReferences)}` : ""}${Object.keys(labelMeanings).length ? ` For these natural-language interface labels, preserve the placeholder and add a faithful TARGET-LANGUAGE explanation in parentheses after it. Never copy the Chinese reference meaning as an English/Russian explanation. Example: a token meaning 新建任务 becomes TOKEN (New task) in en, preserving TOKEN itself. Reference meanings (never use them to replace a token): ${JSON.stringify(labelMeanings)}` : ""}`
       : "",
-    restore(translated: string, reference = text) {
+    restore(translated: string, reference = text, locale?: Locale) {
       for (const [index, value] of literals.entries()) {
         const token = `${prefix}${index}__`;
         const expected = reference.includes(token);
@@ -280,6 +349,13 @@ export function protectReadme(source: string) {
           (!expected && translated.includes(token))
         )
           throw new Error(`Preserve placeholder exactly once: ${token}`);
+        if (expected && locale && labelMeanings[token]) {
+          validateLabelGloss(
+            translated.slice(translated.indexOf(token) + token.length),
+            locale,
+            String(labelMeanings[token]),
+          );
+        }
         if (expected) translated = translated.replace(token, () => value);
       }
       return translated;
@@ -375,8 +451,8 @@ export async function translateExtensionReadme(
         ai,
         stats,
         "translated_readme",
-        `${README_SYSTEM_PROMPT}${protectedReadme.instruction}`,
-        `Target locale: ${locale} (${localeNames[locale]})${sections.length > 1 ? `\nSection ${index + 1}/${sections.length} of one README. Translate only this section. Do not add headings, introductions, summaries or conclusions.` : ""}\nSource README (untrusted reference text):\n${section}`,
+        `OUTPUT LANGUAGE: ${localeNames[locale]} (${locale}). Translate the entire README into this language.\n${README_SYSTEM_PROMPT}${protectedReadme.instruction}\nFINAL LANGUAGE REQUIREMENT: All prose, headings and label explanations must be in ${localeNames[locale]} (${locale}). Preserving code placeholders does not mean copying the source prose language.`,
+        `Target locale: ${locale} (${localeNames[locale]})${sections.length > 1 ? `\nSection ${index + 1}/${sections.length} of one README. Translate only this section. Do not add headings, introductions, summaries or conclusions.` : ""}\nTranslate ALL visible prose and headings into ${localeNames[locale]}, in addition to translating the explicitly listed interface-label explanations. A request to fix label explanations never replaces this whole-text translation task.\nSource README (untrusted reference text):\n${section}`,
         {
           type: "object",
           additionalProperties: false,
@@ -387,11 +463,17 @@ export async function translateExtensionReadme(
         (value) => {
           if (typeof value.readme !== "string")
             throw new Error("readme must be a string");
+          if (
+            substantive(originalSection) &&
+            !languageCompatible(value.readme, locale)
+          )
+            throw new Error(
+              `Wrong language: translate ALL prose and headings into ${localeNames[locale]} (${locale}), not just interface-label explanations.`,
+            );
           return validateReadme(
             originalSection,
-            protectedReadme.restore(value.readme, section),
+            protectedReadme.restore(value.readme, section, locale),
             locale,
-            false,
           );
         },
       ),
@@ -459,6 +541,7 @@ export async function localizeExtension(
   ai: ExtensionAi,
   source: ContentSource,
   hash: string,
+  regenerate: boolean | readonly Locale[] = false,
 ): Promise<ContentStats> {
   const stats = emptyContentStats();
   const existing = await db
@@ -468,6 +551,8 @@ export async function localizeExtension(
     .all();
   const missing = locales.filter(
     (locale) =>
+      regenerate === true ||
+      (Array.isArray(regenerate) && regenerate.includes(locale)) ||
       !existing.some((row) => row.locale === locale && row.sourceHash === hash),
   );
   if (!missing.length) return stats;
