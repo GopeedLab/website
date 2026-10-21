@@ -15,18 +15,7 @@ yarn dev
 
 Open http://localhost:3000 with your browser to see the result.
 
-## SEO and language routing checks
-
-Run `pnpm test:seo` for URL generation and language-routing regression tests.
-Run `pnpm build && pnpm test:seo:http` to check the production HTML and HTTP
-redirects together. The HTTP tests start and stop their own local server, verify
-all four languages across the homepage, store, and docs, and compare the canonical
-and hreflang links with the sitemap. They also verify saved language preferences
-and switching back to English from a Chinese browser. The HTTP server uses an
-isolated, in-memory D1 database with two fixture extensions; it never writes to
-the development or production catalog. These tests render on-demand pages into
-the local `.next` cache, so rebuild before creating deployment artifacts. CI runs
-them after the Worker artifacts have already been built.
+## SEO URL and sitemap behavior
 
 The sitemap is generated at request time from the current D1 catalog. New
 extensions do not require a website rebuild to appear. Successful responses allow
