@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { Footer } from "@/components/home/Footer";
 import { Navbar } from "@/components/home/Navbar";
 import { StoreGrid } from "@/components/store/StoreGrid";
-import type { ExtensionSummary } from "@/db/schema";
 import { getAppData } from "@/lib/data";
 import { i18n, type Locale, locales } from "@/lib/i18n";
 import { getTranslation } from "@/lib/i18n/translations";
-import { pageAlternates } from "@/lib/seo";
+import { pageAlternates, pageSocialMetadata } from "@/lib/seo";
 import { getExtensionSummaries } from "@/lib/store/data";
 
 export async function generateMetadata({
@@ -25,10 +25,12 @@ export async function generateMetadata({
     description: t("store.subtitle"),
     keywords: t("seo.keywords.store"),
     alternates: pageAlternates(locale, "/store"),
-    openGraph: {
-      title: `${t("store.title")} | Gopeed`,
-      description: t("store.subtitle"),
-    },
+    ...pageSocialMetadata(
+      locale,
+      "/store",
+      `${t("store.title")} | Gopeed`,
+      t("store.subtitle"),
+    ),
   };
 }
 
@@ -42,15 +44,12 @@ export default async function StorePage({
     locales.includes(lang as Locale) ? lang : i18n.defaultLanguage
   ) as Locale;
 
+  // Keep D1 reads at request time while retaining the explicit GitHub fetch
+  // caches used by getAppData(). force-dynamic would disable those caches too.
+  await connection();
   const appData = await getAppData();
 
-  let extensionList: ExtensionSummary[] = [];
-
-  try {
-    extensionList = await getExtensionSummaries();
-  } catch (err) {
-    console.error("Failed to connect to D1:", err);
-  }
+  const extensionList = await getExtensionSummaries();
 
   const t = (key: string) => getTranslation(locale, key);
 

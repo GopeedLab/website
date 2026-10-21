@@ -3,7 +3,7 @@ import { defineI18n } from "fumadocs-core/i18n";
 // Unified i18n configuration for both homepage and docs
 export const i18n = defineI18n({
   defaultLanguage: "en",
-  // Auto detect user's language
+  // Unprefixed entry URLs detect the user's preferred language.
   languages: ["en", "zh", "zh-TW", "ru"],
   hideLocale: "default-locale",
   // Use directory-based i18n structure (content/docs/zh/...)

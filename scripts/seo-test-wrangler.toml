@@ -1,0 +1,8 @@
+name = "gopeed-seo-tests"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "seo-fixtures"
+database_id = "00000000-0000-4000-8000-000000000000"

@@ -24,8 +24,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Check SEO routing and types
+        run: pnpm test:seo && pnpm types:check
+
       - name: Build (Next.js + opennext)
         run: pnpm build:worker
+
+      - name: Check production SEO HTML and redirects
+        run: pnpm test:seo:http
 
       - name: Deploy to Cloudflare Workers
         run: pnpm cf:deploy

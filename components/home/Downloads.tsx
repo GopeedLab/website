@@ -57,7 +57,7 @@ interface DownloadsProps {
 
 export function Downloads({ version, releaseAssets }: DownloadsProps) {
   const { t } = useLocale();
-  const { isDownloading, triggerDownload } = useDownload();
+  const { isDownloading, triggerDownload } = useDownload("downloads");
 
   // 使用 useMemo 缓存平台数据，避免每次渲染都重新构建
   const platforms: Platform[] = useMemo(

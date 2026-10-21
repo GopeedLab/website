@@ -15,7 +15,7 @@ export function localePrefix(locale: Locale | string): string {
  * Builds the canonical URL for a page.
  *
  * @param locale  - page locale
- * @param path    - path WITHOUT locale prefix, must start with "/" (e.g. "/docs/dev-api")
+ * @param path    - page path, optionally including a locale prefix (as returned by Fumadocs).
  *                  Use "" or "/" for the root/home page.
  */
 export function canonicalUrl(
@@ -23,18 +23,22 @@ export function canonicalUrl(
   path: string = "/",
 ): string {
   const prefix = localePrefix(locale);
-  // Normalise path: ensure leading slash, strip trailing slash (except root)
-  const normPath = path === "" ? "/" : path.startsWith("/") ? path : `/${path}`;
+  const segments = path.split("/").filter(Boolean);
+  // Fumadocs page URLs already include their locale. Remove it before applying
+  // the target locale so canonicals, hreflang, sitemaps and breadcrumbs agree.
+  if (locales.some((locale) => locale === segments[0])) segments.shift();
+  const normPath = segments.length > 0 ? `/${segments.join("/")}` : "/";
   const full = `${BASE_URL}${prefix}${normPath === "/" ? "" : normPath}`;
-  // Always end root with trailing slash for consistency; others without.
-  return normPath === "/" ? `${full}/` : full;
+  // Next.js redirects /zh/ to /zh with trailingSlash disabled. Use the final
+  // URL for localized home pages too; only the bare domain needs a root slash.
+  return normPath === "/" && !prefix ? `${full}/` : full;
 }
 
 /**
  * Builds the `alternates.languages` map expected by Next.js Metadata.
  * Includes x-default pointing to the default locale URL.
  *
- * @param path - path WITHOUT locale prefix (e.g. "/store", "/docs/dev-api")
+ * @param path - page path, optionally including its current locale prefix
  */
 export function hreflangAlternates(path: string = "/"): Record<string, string> {
   const map: Record<string, string> = {};
@@ -57,5 +61,38 @@ export function pageAlternates(
   return {
     canonical: canonicalUrl(locale, path),
     languages: hreflangAlternates(path),
+  };
+}
+
+/** Next.js replaces nested metadata blocks, so every page supplies both in full. */
+export function pageSocialMetadata(
+  locale: Locale,
+  path: string,
+  title: string,
+  description: string,
+  image: string = `${BASE_URL}/images/screenshot.png`,
+): Pick<Metadata, "openGraph" | "twitter"> {
+  const openGraphLocale: Record<Locale, string> = {
+    en: "en_US",
+    zh: "zh_CN",
+    "zh-TW": "zh_TW",
+    ru: "ru_RU",
+  };
+  return {
+    openGraph: {
+      type: "website",
+      siteName: "Gopeed",
+      title,
+      description,
+      url: canonicalUrl(locale, path),
+      locale: openGraphLocale[locale],
+      images: [{ url: image, alt: title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+    },
   };
 }

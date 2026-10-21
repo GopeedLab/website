@@ -42,7 +42,7 @@ interface HeroProps {
 
 export function Hero({ version, releaseAssets }: HeroProps) {
   const { t } = useLocale();
-  const { isDownloading, triggerDownload } = useDownload();
+  const { isDownloading, triggerDownload } = useDownload("hero");
   const [platformInfo, setPlatformInfo] = useState<PlatformInfo>({
     platform: "unknown",
     arch: "unknown",
@@ -105,9 +105,7 @@ export function Hero({ version, releaseAssets }: HeroProps) {
           <div className="flex flex-col lg:grid lg:grid-cols-2 gap-3 lg:gap-12 xl:gap-16 items-stretch">
             {/* Text Content - Order 1 */}
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
+              initial={false}
               className="text-center lg:text-left space-y-4 lg:space-y-6 flex flex-col justify-center order-1"
             >
               <div className="space-y-4">
@@ -176,6 +174,8 @@ export function Hero({ version, releaseAssets }: HeroProps) {
                   <motion.a
                     key={browser.name}
                     href={browser.href}
+                    data-analytics="browser_extension_click"
+                    data-browser={browser.name}
                     target="_blank"
                     rel="noopener noreferrer"
                     whileHover={{ scale: 1.05 }}
@@ -199,39 +199,26 @@ export function Hero({ version, releaseAssets }: HeroProps) {
             </motion.div>
 
             {/* Preview Image - Order 2 */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="relative w-full lg:pl-6 xl:pl-8 lg:scale-[1.2] origin-center order-2"
-            >
-              <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{
-                  duration: 6,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="relative w-full aspect-[4/3]"
-              >
+            <div className="relative w-full lg:pl-6 xl:pl-8 lg:scale-[1.2] origin-center order-2">
+              <div className="relative w-full aspect-[4/3]">
                 {/* Combined Screenshot Preview */}
                 <div className="relative w-full h-full rounded-lg overflow-hidden">
                   <Image
                     unoptimized
-                    src="/images/screenshot.png"
+                    src="/images/screenshot.webp"
                     alt={t("hero.previewAlt")}
                     fill
+                    preload
+                    sizes="(min-width: 1024px) 50vw, 100vw"
                     className="object-contain"
                   />
                 </div>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
 
             {/* Buttons and Extensions - Order 3, shown only on mobile */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
+              initial={false}
               className="lg:hidden text-center space-y-4 order-3"
             >
               <div className="flex flex-col sm:flex-row justify-center gap-4">
@@ -290,6 +277,8 @@ export function Hero({ version, releaseAssets }: HeroProps) {
                   <motion.a
                     key={browser.name}
                     href={browser.href}
+                    data-analytics="browser_extension_click"
+                    data-browser={browser.name}
                     target="_blank"
                     rel="noopener noreferrer"
                     whileHover={{ scale: 1.05 }}

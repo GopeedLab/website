@@ -4,20 +4,18 @@ import Image from "next/image";
 import { useLocale } from "@/lib/locale-context";
 
 export function Footer() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
+  const docsUrl = locale === "en" ? "/docs" : `/${locale}/docs`;
+  const storeUrl = locale === "en" ? "/store" : `/${locale}/store`;
 
   const footerLinks = [
     {
       name: t("footer.docs"),
-      href: "/docs",
+      href: docsUrl,
     },
     {
-      name: t("footer.privacy"),
-      href: "/privacy",
-    },
-    {
-      name: t("footer.terms"),
-      href: "/terms",
+      name: t("store.title"),
+      href: storeUrl,
     },
   ];
 
@@ -45,7 +43,7 @@ export function Footer() {
             {/* Center: Navigation Links and Social Icons */}
             <div className="flex w-full justify-center space-x-12 text-gray-600 dark:text-gray-300 sm:w-6/12 md:justify-start">
               <ul className="list-inside list-disc space-y-8">
-                {footerLinks.slice(0, 2).map((item) => (
+                {footerLinks.map((item) => (
                   <li key={item.name}>
                     <a
                       href={item.href}
@@ -106,7 +104,7 @@ export function Footer() {
                 </li>
                 <li>
                   <a
-                    href="/docs/donate"
+                    href={`${docsUrl}/donate`}
                     className="flex items-center space-x-3 transition hover:text-primary-600 dark:hover:text-primary-400"
                   >
                     <svg

@@ -1,19 +1,24 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import { trackWebsiteEvent } from "@/lib/analytics";
 import { getOptimizedDownloadUrl } from "@/lib/release-assets";
 
 /**
  * Hook for handling file downloads with optimized URLs
  * Uses anchor tag approach instead of window.open for better UX
  */
-export function useDownload() {
+export function useDownload(source: "hero" | "downloads") {
   const [isDownloading, setIsDownloading] = useState(false);
   const linkRef = useRef<HTMLAnchorElement>(null);
 
   const triggerDownload = useCallback(
     async (url: string, filename?: string) => {
       setIsDownloading(true);
+      trackWebsiteEvent("client_download_click", {
+        source,
+        file_name: url.split("/").at(-1)?.split("?")[0] ?? filename ?? "",
+      });
       try {
         const optimizedUrl = await getOptimizedDownloadUrl(url);
 
@@ -53,7 +58,7 @@ export function useDownload() {
         setIsDownloading(false);
       }
     },
-    [],
+    [source],
   );
 
   return {

@@ -1,29 +1,51 @@
-"use client";
-
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
-import { motion } from "framer-motion";
 import Image from "next/image";
-import { useLocale } from "@/lib/locale-context";
+import Link from "next/link";
+import type { Locale } from "@/lib/i18n";
+import { getTranslation } from "@/lib/i18n/translations";
+import { localePrefix } from "@/lib/seo";
 
-export function Extensions() {
-  const { t, locale } = useLocale();
-  const storeUrl = locale === "en" ? "/store" : `/${locale}/store`;
+export function Extensions({ locale }: { locale: Locale }) {
+  const t = (key: string) => getTranslation(locale, key);
+  const storeUrl = `${localePrefix(locale)}/store`;
+  const docsUrl = `${localePrefix(locale)}/docs`;
 
   const examples = [
     {
       title: t("extensions.youtube.title"),
       description: t("extensions.youtube.desc"),
       image: "/images/youtube-extension.svg",
+      id: "monkeyWie@youtube",
     },
     {
       title: t("extensions.huggingface.title"),
       description: t("extensions.huggingface.desc"),
       image: "/images/huggingface-extension.svg",
+      id: "zayn@gopeed-extention-huggingface",
     },
     {
       title: t("extensions.cloud.title"),
       description: t("extensions.cloud.desc"),
       image: "/images/cloud-extension.svg",
+      id: "Locon213@gopeed-extension-mediafire",
+    },
+    {
+      title: t("extensions.tiktok.title"),
+      description: t("extensions.tiktok.desc"),
+      image: "/images/tiktok-extension.svg",
+      id: "Locon213@tiktok-downloader",
+    },
+    {
+      title: t("extensions.instagram.title"),
+      description: t("extensions.instagram.desc"),
+      image: "/images/instagram-extension.svg",
+      id: "muzzii255@gopeed-extension-instagram",
+    },
+    {
+      title: t("extensions.github.title"),
+      description: t("extensions.github.desc"),
+      image: "/images/github-extension.svg",
+      id: "holyguacamoleCoder@gopeed-extension-github",
     },
   ];
 
@@ -36,7 +58,7 @@ export function Extensions() {
     {
       title: t("extensions.devDocs"),
       description: t("extensions.devDocsDesc"),
-      href: "/docs/dev-extension",
+      href: `${docsUrl}/dev-extension`,
     },
   ];
 
@@ -55,31 +77,25 @@ export function Extensions() {
 
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-16 relative">
         <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-16"
-          >
+          <div className="text-center mb-16">
             <h2 className="text-3xl section-heading mb-4">
               {t("extensions.title")}
             </h2>
             <p className="text-gray-600 dark:text-gray-400">
               {t("extensions.subtitle")}
             </p>
-          </motion.div>
+          </div>
 
           {/* Extension Examples */}
           <div className="grid lg:grid-cols-3 gap-8 mb-16">
-            {examples.map((example, index) => (
-              <motion.div
+            {examples.map((example) => (
+              <Link
                 key={example.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="relative group h-full"
+                href={`${storeUrl}/${encodeURIComponent(example.id)}`}
+                prefetch={false}
+                data-analytics="extension_detail_click"
+                data-extension-id={example.id}
+                className="relative group h-full block rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-500"
               >
                 {/* Hover Glow Effect */}
                 <div className="absolute -inset-0.5 bg-linear-to-br from-primary-500/30 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-500" />
@@ -100,6 +116,7 @@ export function Extensions() {
                       src={example.image}
                       alt={example.title}
                       fill
+                      sizes="(min-width: 1024px) 33vw, 100vw"
                       className="object-cover"
                     />
                   </div>
@@ -112,14 +129,14 @@ export function Extensions() {
                     </p>
                   </div>
                 </div>
-              </motion.div>
+              </Link>
             ))}
           </div>
 
           {/* Links Section */}
           <div className="grid md:grid-cols-2 gap-8">
-            {links.map((link, index) => (
-              <motion.a
+            {links.map((link) => (
+              <a
                 key={link.title}
                 href={link.href}
                 target={link.href.startsWith("http") ? "_blank" : undefined}
@@ -128,10 +145,6 @@ export function Extensions() {
                     ? "noopener noreferrer"
                     : undefined
                 }
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="relative group h-full block"
               >
                 {/* Hover Glow Effect */}
@@ -159,7 +172,7 @@ export function Extensions() {
                     </p>
                   </div>
                 </div>
-              </motion.a>
+              </a>
             ))}
           </div>
         </div>

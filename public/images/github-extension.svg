@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-labelledby="title">
+  <title id="title">GitHub repository download illustration</title>
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#020617;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e293b;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:0.9" />
+    </linearGradient>
+    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a9d9a4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#79c476;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="15" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="10" stdDeviation="15" flood-color="#000000" flood-opacity="0.5" />
+    </filter>
+
+
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#334155" stroke-width="1" opacity="0.3"/></pattern>
+  </defs>
+  <rect width="800" height="450" fill="url(#bgGrad)"/>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <circle cx="150" cy="100" r="120" fill="#8b5cf6" opacity="0.1" filter="url(#glow)"/>
+  <circle cx="650" cy="350" r="150" fill="#79c476" opacity="0.1" filter="url(#glow)"/>
+  <g transform="translate(100,60)" filter="url(#shadow)">
+    <rect width="600" height="330" rx="16" fill="url(#cardGrad)" stroke="#334155"/>
+    <path d="M0 16A16 16 0 0 1 16 0h568a16 16 0 0 1 16 16v24H0Z" fill="#0f172a" opacity="0.8"/>
+    <circle cx="24" cy="20" r="6" fill="#ef4444"/><circle cx="44" cy="20" r="6" fill="#eab308"/><circle cx="64" cy="20" r="6" fill="#22c55e"/>
+    <rect x="100" y="12" width="400" height="16" rx="8" fill="#1e293b"/>
+    <svg x="30" y="62" stroke="currentColor" fill="currentColor" stroke-width="0" role="img" viewBox="0 0 24 24" color="#f8fafc" style="color:#f8fafc" height="40" width="40" xmlns="http://www.w3.org/2000/svg"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg><text x="88" y="82" font-family="system-ui, -apple-system, sans-serif" font-size="21" font-weight="650" fill="#f8fafc">GopeedLab / gopeed</text><text x="88" y="103" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#94a3b8">Repository files &amp; releases</text>
+  <rect x="472" y="66" width="98" height="28" rx="7" fill="#1e293b" stroke="#475569"/><text x="502" y="85" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="500" fill="#cbd5e1">main</text>
+  <path d="M487 75v10m0-5h7v-5" fill="none" stroke="#94a3b8" stroke-width="1.5"/><circle cx="487" cy="75" r="2" fill="#94a3b8"/><circle cx="494" cy="75" r="2" fill="#94a3b8"/>
+  <g transform="translate(30,126)"><rect width="540" height="44" rx="8" fill="#0f172a" fill-opacity="0.6" stroke="#334155" stroke-opacity="1"/><g transform="translate(15,11)"><path d="M0 3a2 2 0 0 1 2-2h7l3 3h9a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2Z" fill="#60a5fa"/></g><text x="54" y="28" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="500" fill="#e2e8f0">src/</text><text x="412" y="28" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#94a3b8">Directory</text></g><g transform="translate(30,180)"><rect width="540" height="44" rx="8" fill="#0f172a" fill-opacity="0.6" stroke="#334155" stroke-opacity="1"/><g transform="translate(15,11)"><path d="M3 1h11l7 7v13H3Z" fill="#94a3b8"/><path d="M14 1v7h7" fill="#cbd5e1"/><path d="M7 13h10M7 17h7" stroke="#334155" stroke-width="1.5"/></g><text x="54" y="28" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="500" fill="#e2e8f0">README.md</text><text x="412" y="28" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#94a3b8">4.2 KB</text></g><g transform="translate(30,234)"><rect width="540" height="44" rx="8" fill="#0f172a" fill-opacity="0.6" stroke="#79c476" stroke-opacity="0.45"/><g transform="translate(15,11)"><path d="M3 1h11l7 7v13H3Z" fill="#94a3b8"/><path d="M14 1v7h7" fill="#cbd5e1"/><path d="M7 13h10M7 17h7" stroke="#334155" stroke-width="1.5"/></g><text x="54" y="28" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="500" fill="#e2e8f0">release.zip</text><text x="412" y="28" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#94a3b8">128 MB</text></g><rect x="30" y="300" width="478" height="5" rx="2.5" fill="#334155"/><rect x="30" y="300" width="324" height="5" rx="2.5" fill="url(#primaryGrad)"/><g transform="translate(540,287)"><rect width="30" height="30" rx="8" fill="#79c476" fill-opacity="0.15"/><path d="M15 7v11m-4-4 4 4 4-4M8 21h14" fill="none" stroke="#a9d9a4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+  </g>
+</svg>
