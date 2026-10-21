@@ -1,7 +1,7 @@
 // biome-ignore lint/suspicious/noTsIgnore: The module is absent before build and present afterwards.
 // @ts-ignore OpenNext generates this module at build time.
 import handler from "./.open-next/worker.js";
-import { withExtensionCors } from "./lib/store/cors";
+import { withPublicApiCors } from "./lib/api-cors";
 import { runScheduledExtensionSync } from "./lib/store/cron";
 import { withExtensionResponseCache } from "./lib/store/response-cache";
 
@@ -12,7 +12,7 @@ interface WorkerEnv {
 
 export default {
   async fetch(request, env, ctx) {
-    return withExtensionCors(request, () =>
+    return withPublicApiCors(request, () =>
       withExtensionResponseCache(
         request,
         ctx,

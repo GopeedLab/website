@@ -1,5 +1,6 @@
-function publicExtensionMethods(pathname: string): string | undefined {
+function publicApiMethods(pathname: string): string | undefined {
   if (pathname === "/api/extensions/install") return "POST, OPTIONS";
+  if (pathname === "/api/releases") return "GET, OPTIONS";
   if (pathname === "/api/extensions") return "GET, OPTIONS";
   if (
     /^\/api\/extensions\/[^/]+$/.test(pathname) &&
@@ -12,7 +13,7 @@ function publicExtensionMethods(pathname: string): string | undefined {
 
 // Apply outside the response cache so existing cache hits and errors also carry
 // CORS headers. These public endpoints do not use browser credentials.
-export async function withExtensionCors(
+export async function withPublicApiCors(
   request: Request,
   fetchResponse: () => Promise<Response>,
 ): Promise<Response> {
@@ -22,7 +23,7 @@ export async function withExtensionCors(
   } catch {
     return fetchResponse();
   }
-  const methods = publicExtensionMethods(pathname);
+  const methods = publicApiMethods(pathname);
   if (!methods) return fetchResponse();
 
   const headers = {
