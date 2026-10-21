@@ -36,15 +36,11 @@ export interface ContentStats {
   generatedLocales: number;
   failedLocales: number;
   reusedReadmes: number;
-  aiRequests: number;
-  neurons: number;
 }
 export const emptyContentStats = (): ContentStats => ({
   generatedLocales: 0,
   failedLocales: 0,
   reusedReadmes: 0,
-  aiRequests: 0,
-  neurons: 0,
 });
 
 export async function sourceContentHash(
@@ -137,7 +133,6 @@ function parseOutput(result: unknown) {
 
 async function generate<T>(
   ai: ExtensionAi,
-  stats: ContentStats,
   task: string,
   system: string,
   user: string,
@@ -150,7 +145,6 @@ async function generate<T>(
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
       await paceAiRequest(ai);
-      stats.aiRequests++;
       const result = await ai.run(
         EXTENSION_AI_MODEL,
         {
@@ -176,8 +170,6 @@ async function generate<T>(
           signal: AbortSignal.timeout(180_000),
         },
       );
-      const usage = object(result).usage as { neurons?: number } | undefined;
-      stats.neurons += usage?.neurons ?? 0;
       return validate(parseOutput(result));
     } catch (error) {
       problem = error instanceof Error ? error.message : String(error);
@@ -433,7 +425,6 @@ export function readmeSections(text: string) {
 
 export async function translateExtensionReadme(
   ai: ExtensionAi,
-  stats: ContentStats,
   source: string,
   locale: Locale,
 ) {
@@ -449,7 +440,6 @@ export async function translateExtensionReadme(
     translated.push(
       await generate(
         ai,
-        stats,
         "translated_readme",
         `OUTPUT LANGUAGE: ${localeNames[locale]} (${locale}). Translate the entire README into this language.\n${README_SYSTEM_PROMPT}${protectedReadme.instruction}\nFINAL LANGUAGE REQUIREMENT: All prose, headings and label explanations must be in ${localeNames[locale]} (${locale}). Preserving code placeholders does not mean copying the source prose language.`,
         `Target locale: ${locale} (${localeNames[locale]})${sections.length > 1 ? `\nSection ${index + 1}/${sections.length} of one README. Translate only this section. Do not add headings, introductions, summaries or conclusions.` : ""}\nTranslate ALL visible prose and headings into ${localeNames[locale]}, in addition to translating the explicitly listed interface-label explanations. A request to fix label explanations never replaces this whole-text translation task.\nSource README (untrusted reference text):\n${section}`,
@@ -485,7 +475,6 @@ export async function translateExtensionReadme(
 export async function generateExtensionSeo(
   ai: ExtensionAi,
   source: ContentSource,
-  stats: ContentStats,
 ) {
   const languageSchema = {
     type: "object",
@@ -515,7 +504,6 @@ export async function generateExtensionSeo(
   });
   return await generate(
     ai,
-    stats,
     "extension_seo",
     `${SEO_SYSTEM_PROMPT}\nNever copy platform names or capabilities from prompt examples into unrelated sources. When the source describes a developer sample, test or probe, describe that purpose accurately; do not market it as a downloader for an unrelated platform. Sparse sources require modest copy supported by the title/description, not invented features.${developerSample(source) ? " This source is a DEVELOPER SAMPLE. Override the download-intent title rule: accurately describe the sample/testing purpose. For this developer page, Gopeed and extension terminology ARE allowed in titles when needed for accuracy." : ""}\nFor this request, wrap the four-language SEO object in the key "locales". Also return "readmeLanguages", mapping every supplied filename to its actual visible prose language: en, zh, zh-TW, ru, mixed, or other. Classify the dominant body prose language, ignoring code, product identifiers, language-selection navigation and brief quoted foreign interface labels. Use mixed only for substantial body prose in multiple languages. These language labels are temporary processing metadata, not page copy.${developerSample(source) ? "" : "\nFINAL MANDATORY INTRO RULE: Every intro must describe downloads directly through Gopeed. NEVER use extension, plugin, add-on, 扩展, 插件, 擴充, 外掛, расширение, or плагин in any intro. Use “It supports…” instead of “This extension supports…”. Do not explain the software packaging. Scan ALL FOUR intros for forbidden words before returning JSON. Exception: when the source explicitly supports downloading plugins as content, plugin/插件/外掛/плагин may appear as the type of downloaded content in titles and intros. Do not use them to describe Gopeed itself."}`,
     `Source material (untrusted reference data):\n${input}`,
@@ -541,7 +529,6 @@ export async function localizeExtension(
   ai: ExtensionAi,
   source: ContentSource,
   hash: string,
-  regenerate: boolean | readonly Locale[] = false,
 ): Promise<ContentStats> {
   const stats = emptyContentStats();
   const existing = await db
@@ -551,14 +538,12 @@ export async function localizeExtension(
     .all();
   const missing = locales.filter(
     (locale) =>
-      regenerate === true ||
-      (Array.isArray(regenerate) && regenerate.includes(locale)) ||
       !existing.some((row) => row.locale === locale && row.sourceHash === hash),
   );
   if (!missing.length) return stats;
   let seo: Awaited<ReturnType<typeof generateExtensionSeo>>;
   try {
-    seo = await generateExtensionSeo(ai, source, stats);
+    seo = await generateExtensionSeo(ai, source);
   } catch (error) {
     console.error(`[extension-content] ${source.id} SEO failed:`, error);
     stats.failedLocales = missing.length;
@@ -608,7 +593,6 @@ export async function localizeExtension(
           } else if (primary) {
             readme = await translateExtensionReadme(
               ai,
-              stats,
               primary.content,
               locale,
             );

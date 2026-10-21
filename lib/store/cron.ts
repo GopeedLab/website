@@ -13,7 +13,7 @@ export async function runScheduledExtensionSync(env: {
     );
   }
 
-  console.log("[extension-cron] starting full sync");
+  console.log("[extension-cron] starting extension sync");
   const stats = await syncAllExtensions(getDb(env.DB), env.GITHUB_TOKEN, {
     ai: env.AI,
   });

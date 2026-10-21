@@ -9,7 +9,7 @@ import { eq } from "drizzle-orm";
 import type { Db } from "@/db/client";
 import type { NewExtension } from "@/db/schema";
 import { extensionLocalizations, extensions } from "@/db/schema";
-import { type Locale, locales } from "@/lib/i18n/config";
+import { locales } from "@/lib/i18n/config";
 import {
   type ContentSource,
   type ExtensionAi,
@@ -238,11 +238,6 @@ async function findExtensionDirectories(
 
 export interface ExtensionSyncOptions {
   ai?: ExtensionAi;
-  refreshContent?: boolean;
-  /** Operator-only: regenerate completed locales without deleting valid rows. */
-  regenerateContent?: boolean | readonly Locale[];
-  /** Optional repository filter for an operator's targeted retry. */
-  repo?: string;
 }
 
 async function syncExtension(
@@ -271,12 +266,7 @@ async function syncExtension(
     .where(eq(extensions.id, id))
     .get();
   const newVersion = manifest.version ?? "0.0.0";
-  if (
-    existing?.version === newVersion &&
-    existing.contentHash &&
-    !options.refreshContent &&
-    !options.regenerateContent
-  ) {
+  if (existing?.version === newVersion && existing.contentHash) {
     await db
       .update(extensions)
       .set({ stars: repo.stargazers_count })
@@ -318,7 +308,7 @@ async function syncExtension(
         };
         if ((await sourceContentHash(source)) !== existing.contentHash)
           throw new Error(
-            `Saved source snapshot does not match ${id}; run a full content refresh`,
+            `Saved source snapshot does not match the stored content hash for ${id}`,
           );
         Object.assign(
           contentStats,
@@ -390,13 +380,7 @@ async function syncExtension(
   if (options.ai)
     Object.assign(
       contentStats,
-      await localizeExtension(
-        db,
-        options.ai,
-        source,
-        hash,
-        options.regenerateContent,
-      ),
+      await localizeExtension(db, options.ai, source, hash),
     );
   return { status: "synced" as const, ...contentStats };
 }
@@ -444,14 +428,7 @@ export async function syncAllExtensions(
   token: string,
   options: ExtensionSyncOptions = {},
 ) {
-  const discovered = await searchGopeedExtensionRepos(token);
-  const repos = options.repo
-    ? discovered.filter(
-        (repo) => repo.full_name.toLowerCase() === options.repo?.toLowerCase(),
-      )
-    : discovered;
-  if (options.repo && !repos.length)
-    throw new Error(`Extension repository not found: ${options.repo}`);
+  const repos = await searchGopeedExtensionRepos(token);
   const stats = await syncRepos(db, repos, token, options);
   return { ...stats, totalRepos: repos.length };
 }

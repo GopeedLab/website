@@ -93,68 +93,29 @@ Use `pnpm cf:dev` for browser integration tests through the Cloudflare Worker.
 
 ## Extension content generation
 
-Apply `pnpm db:migrate` before deploying this version (and
-`pnpm db:migrate:dev` for local development). The existing `extensions` table
-retains upstream copy with one `content_hash` field. `extension_localizations`
-stores title, description, complete README, source hash and update time for each
-extension/locale. There is no stored source-language field.
+Apply `pnpm db:migrate` before deployment and `pnpm db:migrate:dev` for local
+D1 development. Extension source content stays in `extensions`;
+`extension_localizations` stores the title, description and complete README for
+each language, together with its source hash and update time.
 
-Run one `--remote --full` synchronization after deployment to reconcile any
-source updates written by the previous cron implementation during rollout.
+The hourly cron requires the existing `GITHUB_TOKEN` Worker secret and the `AI`
+binding. SEO copy and translations use
+`@cf/deepseek-ai/deepseek-v4.1-flash-1017` through `env.AI.run()` with reasoning
+disabled. No Cloudflare API token secret is needed for inference.
 
-The hourly cron uses the `AI` binding with `@cf/deepseek-ai/deepseek-v4.1-flash-1017` and
-requires the existing `GITHUB_TOKEN` Worker secret. It checks the manifest version
-first. On a version change, it hashes the title, description and all recognized
-README files from a single commit. Unchanged text reuses completed translations.
-Missing or failed languages are retried from the saved commit even without a
-new version. Failed validation does not replace valid rows; website rendering
-only uses rows whose source hash matches the current extension content.
+The cron checks the manifest version first. On a version change, it hashes the
+title, description and recognized README files from one commit. Only changed or
+missing content triggers generation. Missing languages are retried against the
+saved source snapshot even without another version change. Author-provided
+translations and original-language READMEs are reused.
 
-Production inference calls `env.AI.run()` directly; it does not require a
-Cloudflare API token secret. SEO copy and README translations both use DeepSeek
-with reasoning disabled. A failed request or validation gets one retry; truncated
-output gets a larger output budget on retry. Each request has a 180-second
-deadline; failed output is never manually rewritten or saved.
-Concurrent generation requests are paced below the model's standard 20/minute
-limit; rate-limit/capacity errors wait one minute before the final retry.
+Translation preserves code, URLs and Markdown structure. Chinese interface
+labels retain their original text with a model-generated translated explanation.
+Long READMEs are translated in sections and validated as a complete document.
+Requests are paced below 20/minute, have a 180-second deadline and get one retry;
+rate-limit or capacity errors wait one minute before retrying.
 
-Author-provided locale READMEs take priority. The SEO request also identifies the
-README prose language in memory, so original-language READMEs are copied rather
-than translated. Code literals are protected during translation.
-Chinese interface labels retain their exact original text; the CF model adds
-the target-language explanation, which is validated before saving. Variable
-names, commands and URLs are never translated.
-Long READMEs are translated in paragraph sections, then checked as a complete
-document before saving; incomplete translations are not published. SEO copy is
-generated for all four languages from supported source capabilities. Titles,
-visible introductions, metadata and READMEs are read from D1; page requests never
-call AI. Public extension API fields continue to return the upstream copy.
-
-An operator can run the same pipeline locally against remote D1:
-
-```bash
-# Authenticate with account:read user:read ai:write d1:write permissions.
-pnpm exec wrangler login --scopes account:read user:read ai:write d1:write
-pnpm sync:extension-content --remote --full
-
-# Regenerate every locale with the configured model, preserving valid rows on failure.
-pnpm sync:extension-content --remote --full --regenerate
-
-# Targeted retry; completed source hashes will not consume AI again.
-pnpm sync:extension-content --remote --repo monkeyWie/gopeed-extension-youtube
-
-# Retry selected languages from a forced regeneration without regenerating successful ones.
-pnpm sync:extension-content --remote --regenerate --locales en,ru --repo monkeyWie/gopeed-extension-baiduwp
-
-# Local D1, with live Cloudflare AI.
-pnpm sync:extension-content --local --full
-```
-
-`--full` explicitly bypasses the version gate to refresh all source text.
-`--regenerate` also bypasses the completed-localization check for an intentional
-model/prompt refresh. Normal cron runs never enable this flag. Without these
-flags, the normal version/content gates apply. The runner uses the Wrangler login
-and `gh auth`, or `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` and
-`GITHUB_TOKEN`. Set `LOCAL_DB_PATH` when multiple local D1 files exist. Reports
-with actual model-reported Neurons are saved under `.wrangler/extension-content/`.
-No user interaction or analytics data is sent to AI.
+Failed generation never overwrites valid content. Pages use translations only
+when their source hash matches the current extension. Otherwise, titles,
+descriptions and READMEs fall back to the upstream source. Page requests never
+call AI. The public extension API continues to return upstream content.

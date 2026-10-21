@@ -19,7 +19,6 @@
     "db:migrate": "wrangler d1 migrations apply --remote gopeed",
     "db:studio:dev": "cross-env LOCAL_DB_PATH=$(find .wrangler/state/v3/d1/miniflare-D1DatabaseObject -type f -name '*.sqlite' -print0 | xargs -0 ls -t | head -1) drizzle-kit studio",
     "sync:extensions": "node scripts/sync-extensions.mjs",
-    "sync:extension-content": "node scripts/sync-extension-content.mjs",
     "test:store-cache": "esbuild lib/store/response-cache.test.ts --bundle --platform=node --format=cjs --outfile=.wrangler/tests/store-cache.cjs && node --test .wrangler/tests/store-cache.cjs"
   },
   "dependencies": {
