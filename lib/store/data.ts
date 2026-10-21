@@ -1,5 +1,5 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { cache } from "react";
 import { getDb } from "@/db/client";
 import {
@@ -17,23 +17,11 @@ async function storeDb() {
   return getDb(d1);
 }
 
-export async function getExtensionSummaries(locale: Locale) {
+export async function getExtensionSummaries() {
   const db = await storeDb();
   return db
-    .select({
-      ...extensionSummaryColumns,
-      title: sql<string>`coalesce(${extensionLocalizations.title}, ${extensions.title})`,
-      description: sql<string>`coalesce(${extensionLocalizations.description}, ${extensions.description})`,
-    })
+    .select(extensionSummaryColumns)
     .from(extensions)
-    .leftJoin(
-      extensionLocalizations,
-      and(
-        eq(extensionLocalizations.extensionId, extensions.id),
-        eq(extensionLocalizations.locale, locale),
-        eq(extensionLocalizations.sourceHash, extensions.contentHash),
-      ),
-    )
     .orderBy(desc(extensions.installCount), desc(extensions.stars))
     .all();
 }
@@ -58,12 +46,11 @@ export const getStoreExtension = cache(async (id: string, locale: Locale) => {
       ),
     )
     .get();
-  return localized
-    ? {
-        ...extension,
-        title: localized.title,
-        description: localized.description,
-        readme: localized.readme,
-      }
-    : extension;
+  return {
+    ...extension,
+    // Keep the author's metadata separate from generated landing-page copy.
+    seoTitle: localized?.title ?? null,
+    seoDescription: localized?.description ?? null,
+    readme: localized ? localized.readme : extension.readme,
+  };
 });

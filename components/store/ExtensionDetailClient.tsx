@@ -24,6 +24,8 @@ export interface ExtensionDetailTranslations {
 
 interface ExtensionDetailClientProps {
   extension: ExtensionSummary;
+  seoTitle: string | null;
+  seoDescription: string | null;
   storeHref: string;
   translations: ExtensionDetailTranslations;
   readmeNode: ReactNode;
@@ -40,6 +42,8 @@ function buildGopeedInstallUrl(
 
 export function ExtensionDetailClient({
   extension,
+  seoTitle,
+  seoDescription,
   storeHref,
   translations: t,
   readmeNode,
@@ -427,9 +431,31 @@ export function ExtensionDetailClient({
           <div className="h-px w-full bg-linear-to-r from-transparent via-gray-200 dark:via-white/10 to-transparent mb-12" />
 
           <div className="bg-white dark:bg-[#111111] rounded-[32px] border border-gray-100 dark:border-white/5 p-6 sm:p-10 lg:p-12 shadow-sm [&_pre]:px-4 [&_pre]:py-3">
+            {(seoTitle || seoDescription) && (
+              <section
+                className={
+                  readmeNode
+                    ? "mb-8 border-b border-gray-100 dark:border-white/10 pb-8 sm:mb-10 sm:pb-10"
+                    : ""
+                }
+              >
+                {seoTitle && (
+                  <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100 leading-snug tracking-tight">
+                    {seoTitle}
+                  </h2>
+                )}
+                {seoDescription && (
+                  <p
+                    className={`${seoTitle ? "mt-4 " : ""}text-[15px] sm:text-[17px] text-gray-600 dark:text-gray-400 leading-relaxed max-w-3xl`}
+                  >
+                    {seoDescription}
+                  </p>
+                )}
+              </section>
+            )}
             {readmeNode ? (
               readmeNode
-            ) : (
+            ) : !seoTitle && !seoDescription ? (
               <div className="flex flex-col items-center justify-center py-20 text-center">
                 <div className="w-16 h-16 mb-5 rounded-2xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 flex items-center justify-center">
                   <svg
@@ -454,7 +480,7 @@ export function ExtensionDetailClient({
                   {t.noReadme}
                 </p>
               </div>
-            )}
+            ) : null}
           </div>
         </motion.div>
       </div>
