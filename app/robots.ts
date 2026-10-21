@@ -7,14 +7,8 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        // Prevent indexing of internal API routes, OG image generator, and LLM endpoints
-        disallow: ["/api/", "/og/"],
-      },
-      {
-        // Google-specific: allow maximum crawling for rich results
-        userAgent: "Googlebot",
-        allow: "/",
-        disallow: ["/api/", "/og/"],
+        // API responses also carry X-Robots-Tag. Keep shared images crawlable.
+        disallow: ["/api/"],
       },
     ],
     sitemap: `${BASE_URL}/sitemap.xml`,

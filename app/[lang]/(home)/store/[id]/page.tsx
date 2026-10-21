@@ -8,7 +8,7 @@ import { toExtensionSummary } from "@/db/schema";
 import { getAppData } from "@/lib/data";
 import { i18n, type Locale, locales } from "@/lib/i18n";
 import { getTranslation } from "@/lib/i18n/translations";
-import { pageAlternates } from "@/lib/seo";
+import { pageAlternates, pageSocialMetadata } from "@/lib/seo";
 import { getStoreExtension } from "@/lib/store/data";
 
 // Generate details on first request, then refresh in the background.
@@ -43,13 +43,14 @@ export async function generateMetadata({
       extension.description ||
       `${displayTitle} by ${authorName} — Gopeed Extension`,
     alternates: pageAlternates(locale, `/store/${encodeURIComponent(id)}`),
-    openGraph: {
-      title: `${displayTitle} — ${getTranslation(locale, "store.title")} | Gopeed`,
-      description:
-        extension.description ||
+    ...pageSocialMetadata(
+      locale,
+      `/store/${encodeURIComponent(id)}`,
+      `${displayTitle} — ${getTranslation(locale, "store.title")} | Gopeed`,
+      extension.description ||
         `${displayTitle} by ${authorName} — Gopeed Extension`,
-      ...(extension.icon ? { images: [{ url: extension.icon }] } : {}),
-    },
+      extension.icon || undefined,
+    ),
   };
 }
 

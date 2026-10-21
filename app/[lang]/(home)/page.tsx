@@ -16,7 +16,7 @@ import {
   jsonLdScriptContent,
   softwareApplicationJsonLd,
 } from "@/lib/jsonld";
-import { pageAlternates } from "@/lib/seo";
+import { pageAlternates, pageSocialMetadata } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -36,10 +36,7 @@ export async function generateMetadata({
     description: t("site.description"),
     keywords: t("seo.keywords.en"),
     alternates: pageAlternates(locale, "/"),
-    openGraph: {
-      title: t("site.title"),
-      description: t("site.description"),
-    },
+    ...pageSocialMetadata(locale, "/", t("site.title"), t("site.description")),
   };
 }
 
@@ -81,7 +78,7 @@ export default async function HomePage({
       <Navbar version={appData.version} stars={appData.stars} />
       <Hero version={appData.version} releaseAssets={appData.releaseAssets} />
       <Features />
-      <Extensions />
+      <Extensions locale={locale} />
       <SeoFaq locale={locale} />
       <Downloads
         version={appData.version}

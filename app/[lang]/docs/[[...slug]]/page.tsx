@@ -10,8 +10,8 @@ import { notFound } from "next/navigation";
 import { i18n, type Locale } from "@/lib/i18n";
 import { getTranslation } from "@/lib/i18n/translations";
 import { breadcrumbJsonLd, jsonLdScriptContent } from "@/lib/jsonld";
-import { pageAlternates } from "@/lib/seo";
-import { getPageImage, source } from "@/lib/source";
+import { pageAlternates, pageSocialMetadata } from "@/lib/seo";
+import { source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
 interface PageProps {
@@ -31,7 +31,7 @@ export default async function Page(props: PageProps) {
   const MDX = page.data.body;
   const docsLabel = getTranslation(locale, "nav.docs");
   const breadcrumbItems =
-    page.url === "/docs"
+    page.slugs.length === 0
       ? [
           { name: "Gopeed", path: "/" },
           { name: docsLabel, path: "/docs" },
@@ -78,12 +78,18 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
   const page = source.getPage(params.slug, locale);
   if (!page) notFound();
 
+  const description =
+    page.data.description || getTranslation(locale, "site.description");
+
   return {
     title: page.data.title,
-    description: page.data.description,
+    description,
     alternates: pageAlternates(locale, page.url),
-    openGraph: {
-      images: getPageImage(page).url,
-    },
+    ...pageSocialMetadata(
+      locale,
+      page.url,
+      `${page.data.title} | Gopeed`,
+      description,
+    ),
   };
 }

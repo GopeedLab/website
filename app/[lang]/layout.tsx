@@ -14,7 +14,7 @@ import {
   webSiteJsonLd,
 } from "@/lib/jsonld";
 import { LocaleProvider } from "@/lib/locale-context";
-import { BASE_URL, pageAlternates } from "@/lib/seo";
+import { BASE_URL, pageAlternates, pageSocialMetadata } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -39,29 +39,7 @@ export async function generateMetadata({
       icon: "/images/logo.png",
     },
     alternates: pageAlternates(locale, "/"),
-    openGraph: {
-      type: "website",
-      siteName: t("site.name"),
-      title: t("site.title"),
-      description: t("site.description"),
-      url: BASE_URL,
-      images: [
-        {
-          url: `${BASE_URL}/images/screenshot.png`,
-          width: 1200,
-          height: 900,
-          alt: "Gopeed Download Manager",
-        },
-      ],
-      locale:
-        locale === "zh" ? "zh_CN" : locale === "zh-TW" ? "zh_TW" : "en_US",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: t("site.title"),
-      description: t("site.description"),
-      images: [`${BASE_URL}/images/screenshot.png`],
-    },
+    ...pageSocialMetadata(locale, "/", t("site.title"), t("site.description")),
     robots: {
       index: true,
       follow: true,
@@ -72,9 +50,6 @@ export async function generateMetadata({
         "max-image-preview": "large",
         "max-snippet": -1,
       },
-    },
-    other: {
-      "google-site-verification": "",
     },
   };
 }

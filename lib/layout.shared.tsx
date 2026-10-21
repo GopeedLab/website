@@ -1,8 +1,9 @@
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
 import Image from "next/image";
 import type { Locale } from "@/lib/i18n";
+import { localePrefix } from "@/lib/seo";
 
-export function baseOptions(_locale: Locale = "en"): BaseLayoutProps {
+export function baseOptions(locale: Locale = "en"): BaseLayoutProps {
   return {
     nav: {
       title: (
@@ -18,8 +19,7 @@ export function baseOptions(_locale: Locale = "en"): BaseLayoutProps {
           <span className="font-semibold">Gopeed</span>
         </>
       ),
-      // Always link to root - middleware will redirect to user's preferred locale
-      url: "/",
+      url: localePrefix(locale) || "/",
     },
   };
 }

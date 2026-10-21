@@ -6,8 +6,8 @@ import { BASE_URL, canonicalUrl } from "@/lib/seo";
  * JSON-LD structured data generators for SEO.
  *
  * These produce Schema.org objects that Google, Bing and other search engines
- * use to display rich results (software info cards, breadcrumbs, sitelinks
- * search box, etc.).
+ * use to understand the product, site and page hierarchy. Eligibility for
+ * search features depends on the search engine and the type of site.
  */
 
 // ── SoftwareApplication ────────────────────────────────────────────────────
@@ -29,7 +29,7 @@ export function softwareApplicationJsonLd(locale: Locale, version?: string) {
       price: "0",
       priceCurrency: "USD",
     },
-    downloadUrl: `${BASE_URL}/#downloads`,
+    downloadUrl: `${canonicalUrl(locale, "/")}#downloads`,
     screenshot: `${BASE_URL}/images/screenshot.png`,
     image: `${BASE_URL}/images/logo.png`,
     author: {
@@ -53,7 +53,7 @@ export function softwareApplicationJsonLd(locale: Locale, version?: string) {
   };
 }
 
-// ── WebSite (enables Sitelinks Search Box in Google) ───────────────────────
+// ── WebSite ──────────────────────────────────────────────────────────────
 export function webSiteJsonLd(locale: Locale) {
   const t = (key: string) => getTranslation(locale, key);
   return {
@@ -84,7 +84,7 @@ export function organizationJsonLd() {
     name: "Gopeed",
     url: BASE_URL,
     logo: `${BASE_URL}/images/logo.png`,
-    sameAs: ["https://github.com/GoproxySS/gopeed"],
+    sameAs: ["https://github.com/GopeedLab/gopeed"],
   };
 }
 
@@ -106,7 +106,7 @@ export function breadcrumbJsonLd(
   };
 }
 
-// ── FAQPage (for features section – helps win "People also ask" snippets) ─
+// ── FAQPage (matches the visible homepage questions and answers) ──────────
 type FaqEntry = { question: string; answer: string };
 
 const faqEntries: Record<Locale, FaqEntry[]> = {
@@ -267,8 +267,8 @@ export function getFaqEntries(locale: Locale): FaqEntry[] {
 export function jsonLdScriptContent(
   ...objects: Record<string, unknown>[]
 ): string {
-  if (objects.length === 1) {
-    return JSON.stringify(objects[0]);
-  }
-  return JSON.stringify(objects);
+  return JSON.stringify(objects.length === 1 ? objects[0] : objects).replace(
+    /</g,
+    "\\u003c",
+  );
 }

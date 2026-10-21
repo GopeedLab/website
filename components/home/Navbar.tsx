@@ -120,6 +120,7 @@ export function Navbar({ version = "", stars = "" }: NavbarProps) {
 
   const docsUrl = locale === "en" ? "/docs" : `/${locale}/docs`;
   const storeUrl = locale === "en" ? "/store" : `/${locale}/store`;
+  const homeUrl = locale === "en" ? "/" : `/${locale}`;
 
   // Unified navigation data - used by both desktop and mobile
   const navLinks: NavLinkItem[] = [
@@ -160,7 +161,7 @@ export function Navbar({ version = "", stars = "" }: NavbarProps) {
           {
             type: "icon-button" as const,
             key: "version",
-            href: "#downloads",
+            href: `${homeUrl}#downloads`,
             icon: <TagIcon className="h-5 w-5" />,
             label: version,
             external: false,
@@ -283,7 +284,10 @@ export function Navbar({ version = "", stars = "" }: NavbarProps) {
           {/* Left: Logo + Navigation Links */}
           <div className="flex items-center gap-2 md:gap-8 z-10">
             {/* Logo */}
-            <a href="/" className="flex items-center space-x-2 md:space-x-3">
+            <a
+              href={locale === "en" ? "/" : `/${locale}`}
+              className="flex items-center space-x-2 md:space-x-3"
+            >
               <div className="relative w-7 h-7 md:w-8 md:h-8">
                 <div className="absolute inset-0 bg-primary-500 rounded-lg blur-[8px] opacity-40" />
                 <Image

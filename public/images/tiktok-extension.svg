@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-labelledby="title">
+  <title id="title">TikTok video download illustration</title>
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#020617;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e293b;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:0.9" />
+    </linearGradient>
+    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a9d9a4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#79c476;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="15" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="10" stdDeviation="15" flood-color="#000000" flood-opacity="0.5" />
+    </filter>
+
+    <linearGradient id="clipGrad" x2="1" y2="1"><stop stop-color="#164e63"/><stop offset="1" stop-color="#1e1b4b"/></linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#334155" stroke-width="1" opacity="0.3"/></pattern>
+  </defs>
+  <rect width="800" height="450" fill="url(#bgGrad)"/>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <circle cx="150" cy="100" r="120" fill="#25f4ee" opacity="0.1" filter="url(#glow)"/>
+  <circle cx="650" cy="350" r="150" fill="#79c476" opacity="0.1" filter="url(#glow)"/>
+  <g transform="translate(100,60)" filter="url(#shadow)">
+    <rect width="600" height="330" rx="16" fill="url(#cardGrad)" stroke="#334155"/>
+    <path d="M0 16A16 16 0 0 1 16 0h568a16 16 0 0 1 16 16v24H0Z" fill="#0f172a" opacity="0.8"/>
+    <circle cx="24" cy="20" r="6" fill="#ef4444"/><circle cx="44" cy="20" r="6" fill="#eab308"/><circle cx="64" cy="20" r="6" fill="#22c55e"/>
+    <rect x="100" y="12" width="400" height="16" rx="8" fill="#1e293b"/>
+    <svg x="30" y="62" stroke="currentColor" fill="currentColor" stroke-width="0" role="img" viewBox="0 0 24 24" color="#f8fafc" style="color:#f8fafc" height="32" width="32" xmlns="http://www.w3.org/2000/svg"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"></path></svg><text x="78" y="85" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="650" fill="#f8fafc">TikTok videos</text>
+  <rect x="477" y="65" width="93" height="26" rx="13" fill="#25f4ee" fill-opacity="0.08" stroke="#25f4ee" stroke-opacity="0.2"/><text x="496" y="83" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600" fill="#67e8f9">MP4</text>
+  <g transform="translate(30,112)">
+  <rect width="168" height="164" rx="10" fill="#0b1220" stroke="#334155" stroke-opacity="1"/>
+  <rect x="36" y="65" width="10" height="30" rx="5" fill="#25f4ee" opacity="0.2"/><rect x="56" y="53" width="10" height="54" rx="5" fill="#25f4ee" opacity="0.28"/><rect x="76" y="41" width="10" height="78" rx="5" fill="#25f4ee" opacity="0.36"/><rect x="96" y="65" width="10" height="30" rx="5" fill="#25f4ee" opacity="0.44"/><rect x="116" y="53" width="10" height="54" rx="5" fill="#25f4ee" opacity="0.52"/>
+  <rect x="14" y="143" width="140" height="3" rx="1.5" fill="#334155"/><rect x="14" y="143" width="58" height="3" rx="1.5" fill="#64748b"/>
+</g><g transform="translate(216,112)">
+  <rect width="168" height="164" rx="10" fill="url(#clipGrad)" stroke="#25f4ee" stroke-opacity="0.6"/>
+  <svg x="57" y="45" stroke="currentColor" fill="currentColor" stroke-width="0" role="img" viewBox="0 0 24 24" color="#fe2c55" style="color:#fe2c55" height="56" width="56" xmlns="http://www.w3.org/2000/svg"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"></path></svg><svg x="53" y="42" stroke="currentColor" fill="currentColor" stroke-width="0" role="img" viewBox="0 0 24 24" color="#25f4ee" style="color:#25f4ee" height="56" width="56" xmlns="http://www.w3.org/2000/svg"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"></path></svg><svg x="55" y="43" stroke="currentColor" fill="currentColor" stroke-width="0" role="img" viewBox="0 0 24 24" color="#f8fafc" style="color:#f8fafc" height="56" width="56" xmlns="http://www.w3.org/2000/svg"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"></path></svg>
+  <rect x="14" y="143" width="140" height="3" rx="1.5" fill="#334155"/><rect x="14" y="143" width="84" height="3" rx="1.5" fill="#25f4ee"/>
+</g><g transform="translate(402,112)">
+  <rect width="168" height="164" rx="10" fill="#0b1220" stroke="#334155" stroke-opacity="1"/>
+  <rect x="36" y="65" width="10" height="30" rx="5" fill="#fe2c55" opacity="0.2"/><rect x="56" y="53" width="10" height="54" rx="5" fill="#fe2c55" opacity="0.28"/><rect x="76" y="41" width="10" height="78" rx="5" fill="#fe2c55" opacity="0.36"/><rect x="96" y="65" width="10" height="30" rx="5" fill="#fe2c55" opacity="0.44"/><rect x="116" y="53" width="10" height="54" rx="5" fill="#fe2c55" opacity="0.52"/>
+  <rect x="14" y="143" width="140" height="3" rx="1.5" fill="#334155"/><rect x="14" y="143" width="110" height="3" rx="1.5" fill="#64748b"/>
+</g><text x="30" y="307" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="500" fill="#e2e8f0">video-01.mp4</text><rect x="174" y="297" width="320" height="5" rx="2.5" fill="#334155"/><rect x="174" y="297" width="218" height="5" rx="2.5" fill="url(#primaryGrad)"/><g transform="translate(540,287)"><rect width="30" height="30" rx="8" fill="#79c476" fill-opacity="0.15"/><path d="M15 7v11m-4-4 4 4 4-4M8 21h14" fill="none" stroke="#a9d9a4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+  </g>
+</svg>

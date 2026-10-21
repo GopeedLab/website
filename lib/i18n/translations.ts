@@ -66,13 +66,22 @@ const translations: Record<Locale, Record<string, string>> = {
       "Extend Gopeed's download capabilities through the JavaScript extension system",
     "extensions.youtube.title": "YouTube Video Download",
     "extensions.youtube.desc":
-      "Download YouTube videos and playlists in various qualities and formats, including 4K and 1080p.",
+      "Download YouTube videos, playlists and Shorts with the YouTube extension.",
     "extensions.huggingface.title": "HuggingFace Model Download",
     "extensions.huggingface.desc":
-      "Download AI model files from HuggingFace with resume support and automatic file verification.",
-    "extensions.cloud.title": "Cloud Storage Download",
+      "Download model and dataset files from Hugging Face repositories.",
+    "extensions.cloud.title": "MediaFire File Download",
     "extensions.cloud.desc":
-      "Download files from various cloud storage services, bypass speed limits, and batch download with ease.",
+      "Resolve MediaFire file links and manage downloads in Gopeed.",
+    "extensions.tiktok.title": "TikTok Video Download",
+    "extensions.tiktok.desc":
+      "Add TikTok video downloading to Gopeed with a community extension.",
+    "extensions.instagram.title": "Instagram Reels Download",
+    "extensions.instagram.desc":
+      "Download Instagram Reels using the Instagram extension for Gopeed.",
+    "extensions.github.title": "GitHub Repository Download",
+    "extensions.github.desc":
+      "Download repository directories, release assets and Git LFS files.",
     "extensions.store": "Extension Store",
     "extensions.storeDesc":
       "Browse and install community-contributed download extensions",
@@ -221,13 +230,20 @@ const translations: Record<Locale, Record<string, string>> = {
       "使用 JavaScript 编写扩展，轻松扩展 Gopeed 的下载能力",
     "extensions.youtube.title": "YouTube 视频下载",
     "extensions.youtube.desc":
-      "下载 YouTube 视频和播放列表，支持 4K、1080p 等多种清晰度和格式。",
+      "通过 YouTube 扩展下载视频、播放列表和 Shorts 短视频。",
     "extensions.huggingface.title": "HuggingFace 模型下载",
     "extensions.huggingface.desc":
-      "从 HuggingFace 下载 AI 模型文件，支持断点续传和自动验证文件完整性。",
-    "extensions.cloud.title": "网盘文件下载",
+      "下载 Hugging Face 仓库中的 AI 模型和数据集文件。",
+    "extensions.cloud.title": "MediaFire 文件下载",
     "extensions.cloud.desc":
-      "支持各类网盘文件下载，突破速度限制，批量下载更便捷。",
+      "解析 MediaFire 文件链接，在 Gopeed 中管理下载任务。",
+    "extensions.tiktok.title": "TikTok 视频下载",
+    "extensions.tiktok.desc":
+      "通过社区扩展为 Gopeed 添加 TikTok 视频下载能力。",
+    "extensions.instagram.title": "Instagram Reels 下载",
+    "extensions.instagram.desc": "安装 Instagram 扩展，下载 Reels 短视频。",
+    "extensions.github.title": "GitHub 仓库下载",
+    "extensions.github.desc": "下载仓库目录、Release 附件和 Git LFS 大文件。",
     "extensions.store": "扩展商店",
     "extensions.storeDesc": "浏览和安装社区贡献的各类下载扩展",
     "extensions.devDocs": "开发文档",
@@ -373,13 +389,21 @@ const translations: Record<Locale, Record<string, string>> = {
       "使用 JavaScript 編寫擴充功能，輕鬆擴展 Gopeed 的下載能力",
     "extensions.youtube.title": "YouTube 影片下載",
     "extensions.youtube.desc":
-      "下載 YouTube 影片和播放清單，支援 4K、1080p 等多種解析度和格式。",
+      "透過 YouTube 擴充功能下載影片、播放清單和 Shorts 短片。",
     "extensions.huggingface.title": "HuggingFace 模型下載",
     "extensions.huggingface.desc":
-      "從 HuggingFace 下載 AI 模型檔案，支援斷點續傳和自動驗證檔案完整性。",
-    "extensions.cloud.title": "網盤檔案下載",
+      "下載 Hugging Face 儲存庫中的 AI 模型和資料集檔案。",
+    "extensions.cloud.title": "MediaFire 檔案下載",
     "extensions.cloud.desc":
-      "支援各類網盤檔案下載，突破速度限制，批次下載更便捷。",
+      "解析 MediaFire 檔案連結，在 Gopeed 中管理下載任務。",
+    "extensions.tiktok.title": "TikTok 影片下載",
+    "extensions.tiktok.desc":
+      "透過社群擴充功能為 Gopeed 加入 TikTok 影片下載能力。",
+    "extensions.instagram.title": "Instagram Reels 下載",
+    "extensions.instagram.desc": "安裝 Instagram 擴充功能，下載 Reels 短片。",
+    "extensions.github.title": "GitHub 儲存庫下載",
+    "extensions.github.desc":
+      "下載儲存庫目錄、Release 附件和 Git LFS 大型檔案。",
     "extensions.store": "擴充商店",
     "extensions.storeDesc": "瀏覽和安裝社群貢獻的各類下載擴充功能",
     "extensions.devDocs": "開發文件",
@@ -529,13 +553,22 @@ const translations: Record<Locale, Record<string, string>> = {
       "Расширяйте возможности загрузки Gopeed с помощью системы расширений на JavaScript",
     "extensions.youtube.title": "Загрузка видео с YouTube",
     "extensions.youtube.desc":
-      "Скачивайте видео и плейлисты с YouTube в различных качествах и форматах, включая 4K и 1080p.",
+      "Скачивайте видео, плейлисты и Shorts с помощью расширения YouTube.",
     "extensions.huggingface.title": "Загрузка моделей HuggingFace",
     "extensions.huggingface.desc":
-      "Скачивайте файлы ИИ-моделей с HuggingFace с поддержкой возобновления и автоматической проверки файлов.",
-    "extensions.cloud.title": "Загрузка из облачных хранилищ",
+      "Скачивайте модели ИИ и наборы данных из репозиториев Hugging Face.",
+    "extensions.cloud.title": "Загрузка файлов MediaFire",
     "extensions.cloud.desc":
-      "Скачивайте файлы из различных облачных хранилищ, обходите ограничения скорости и легко загружайте пакеты файлов.",
+      "Открывайте ссылки MediaFire и управляйте загрузками в Gopeed.",
+    "extensions.tiktok.title": "Загрузка видео TikTok",
+    "extensions.tiktok.desc":
+      "Добавьте загрузку видео TikTok с помощью расширения сообщества.",
+    "extensions.instagram.title": "Загрузка Instagram Reels",
+    "extensions.instagram.desc":
+      "Скачивайте Reels с помощью расширения Instagram для Gopeed.",
+    "extensions.github.title": "Загрузка репозиториев GitHub",
+    "extensions.github.desc":
+      "Скачивайте каталоги репозиториев, файлы релизов и Git LFS.",
     "extensions.store": "Магазин расширений",
     "extensions.storeDesc":
       "Просматривайте и устанавливайте расширения для загрузок от сообщества",

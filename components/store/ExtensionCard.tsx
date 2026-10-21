@@ -31,8 +31,8 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
 
   const detailHref =
     locale === defaultLocale
-      ? `/store/${extension.id}`
-      : `/${locale}/store/${extension.id}`;
+      ? `/store/${encodeURIComponent(extension.id)}`
+      : `/${locale}/store/${encodeURIComponent(extension.id)}`;
 
   const installUrl = extension.directory
     ? `${extension.repoUrl}#${extension.directory}`
@@ -96,7 +96,7 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={false}
       animate={{ opacity: 1, y: 0 }}
       transition={{
         duration: 0.5,
@@ -109,72 +109,72 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
       <div className="absolute -inset-0.5 bg-linear-to-br from-primary-500/30 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-500" />
 
       <div className="relative h-full flex flex-col bg-white dark:bg-[#111111] rounded-2xl border border-gray-100 dark:border-white/5 group-hover:border-primary-500/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:hover:shadow-[0_8px_30px_rgb(0,0,0,0.2)] transition-all duration-500 overflow-hidden p-6">
-        {/* Card-level link overlay (covers non-interactive areas) */}
-        <Link
-          href={detailHref}
-          className="absolute inset-0 z-10"
-          aria-label={displayTitle}
-        />
         {/* Top Highlight Line */}
         <div className="absolute top-0 left-0 right-0 h-[1px] bg-linear-to-r from-transparent via-primary-500/0 to-transparent group-hover:via-primary-500/50 transition-all duration-500 z-20" />
 
         {/* Inner Decorative Gradient */}
         <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-primary-500/10 rounded-full blur-3xl group-hover:bg-primary-500/20 transition-colors duration-500 z-0 pointer-events-none" />
 
-        <div className="relative z-20 flex flex-col h-full pointer-events-none">
-          {/* Header */}
-          <div className="flex items-start gap-4 mb-5">
-            <div className="shrink-0 w-12 h-12 flex items-center justify-center">
-              {extension.icon && !iconError ? (
-                <Image
-                  src={extension.icon}
-                  alt={displayTitle}
-                  width={48}
-                  height={48}
-                  className="w-full h-full object-contain"
-                  onError={() => setIconError(true)}
-                />
-              ) : (
-                <div className="w-full h-full rounded-[14px] bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 flex items-center justify-center">
-                  <svg
-                    className="w-5 h-5 text-gray-400 dark:text-gray-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z"
-                    />
-                  </svg>
-                </div>
-              )}
+        <div className="relative z-20 flex flex-col h-full">
+          <Link
+            href={detailHref}
+            prefetch={false}
+            className="flex flex-col flex-1 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-500"
+          >
+            {/* Header */}
+            <div className="flex items-start gap-4 mb-5">
+              <div className="shrink-0 w-12 h-12 flex items-center justify-center">
+                {extension.icon && !iconError ? (
+                  <Image
+                    src={extension.icon}
+                    alt={displayTitle}
+                    width={48}
+                    height={48}
+                    className="w-full h-full object-contain"
+                    onError={() => setIconError(true)}
+                  />
+                ) : (
+                  <div className="w-full h-full rounded-[14px] bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 flex items-center justify-center">
+                    <svg
+                      className="w-5 h-5 text-gray-400 dark:text-gray-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex-1 min-w-0 pt-0.5">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 truncate text-[15px] leading-snug group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
+                  {displayTitle}
+                </h3>
+                <p className="text-[13px] text-gray-500 dark:text-gray-400 mt-0.5 truncate font-medium">
+                  {authorName}
+                </p>
+              </div>
+
+              <span className="shrink-0 self-start mt-1 px-2 py-1 rounded-md text-[11px] font-mono font-medium bg-gray-50 dark:bg-white/5 text-gray-600 dark:text-gray-400 border border-transparent group-hover:border-primary-500/20 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
+                {extension.version}
+              </span>
             </div>
 
-            <div className="flex-1 min-w-0 pt-0.5">
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100 truncate text-[15px] leading-snug group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
-                {displayTitle}
-              </h3>
-              <p className="text-[13px] text-gray-500 dark:text-gray-400 mt-0.5 truncate font-medium">
-                {authorName}
-              </p>
-            </div>
-
-            <span className="shrink-0 self-start mt-1 px-2 py-1 rounded-md text-[11px] font-mono font-medium bg-gray-50 dark:bg-white/5 text-gray-600 dark:text-gray-400 border border-transparent group-hover:border-primary-500/20 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
-              {extension.version}
-            </span>
-          </div>
-
-          {/* Description */}
-          <p className="text-[14px] text-gray-600 dark:text-gray-400 flex-1 line-clamp-2 mb-6 leading-relaxed">
-            {extension.description || "—"}
-          </p>
+            {/* Description */}
+            <p className="text-[14px] text-gray-600 dark:text-gray-400 flex-1 line-clamp-2 mb-6 leading-relaxed">
+              {extension.description || "—"}
+            </p>
+          </Link>
 
           {/* Footer: Stats & Actions */}
-          <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 dark:border-white/5 group-hover:border-primary-500/20 transition-colors duration-300 pointer-events-auto">
+          <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 dark:border-white/5 group-hover:border-primary-500/20 transition-colors duration-300">
             {/* Stats */}
             <div className="flex items-center gap-4 text-[13px] font-medium text-gray-500 dark:text-gray-400">
               <span className="flex items-center gap-1.5 group-hover:text-primary-600/70 dark:group-hover:text-primary-400/70 transition-colors duration-300">
