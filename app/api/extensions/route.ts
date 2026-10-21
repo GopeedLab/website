@@ -2,7 +2,11 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { asc, desc, like, or, sql } from "drizzle-orm";
 import { type NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/db/client";
-import { extensionSummaryColumns, extensions } from "@/db/schema";
+import {
+  extensionPublicColumns,
+  extensionSummaryColumns,
+  extensions,
+} from "@/db/schema";
 import { parseExtensionListParams } from "@/lib/store/list-params";
 
 // Note: No "edge" runtime here - drizzle-orm requires the SSR/Node.js bundling
@@ -83,7 +87,9 @@ export async function GET(request: NextRequest) {
 
     // Fetch paginated data
     const selection =
-      view === "summary" ? db.select(extensionSummaryColumns) : db.select();
+      view === "summary"
+        ? db.select(extensionSummaryColumns)
+        : db.select(extensionPublicColumns);
     const data = await selection
       .from(extensions)
       .where(whereClause)

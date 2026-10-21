@@ -15,6 +15,9 @@ crons = ["0 * * * *"]
 [observability]
 enabled = true
 
+[ai]
+binding = "AI"
+
 # Self reference for ISR revalidation
 [[services]]
 binding = "WORKER_SELF_REFERENCE"

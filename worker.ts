@@ -2,12 +2,14 @@
 // @ts-ignore OpenNext generates this module at build time.
 import handler from "./.open-next/worker.js";
 import { withPublicApiCors } from "./lib/api-cors";
+import type { ExtensionAi } from "./lib/store/content";
 import { runScheduledExtensionSync } from "./lib/store/cron";
 import { withExtensionResponseCache } from "./lib/store/response-cache";
 
 interface WorkerEnv {
   DB: D1Database;
   GITHUB_TOKEN?: string;
+  AI: ExtensionAi;
 }
 
 export default {

@@ -1,29 +1,20 @@
 import { defineI18n } from "fumadocs-core/i18n";
+import { defaultLocale, locales } from "./i18n/config";
 
-// Unified i18n configuration for both homepage and docs
+export type { Locale } from "./i18n/config";
+export {
+  defaultLocale,
+  localeFlags,
+  localeNames,
+  locales,
+} from "./i18n/config";
+
+// Homepage, docs and extension generation share one language configuration.
 export const i18n = defineI18n({
-  defaultLanguage: "en",
+  defaultLanguage: defaultLocale,
   // Unprefixed entry URLs detect the user's preferred language.
-  languages: ["en", "zh", "zh-TW", "ru"],
+  languages: [...locales],
   hideLocale: "default-locale",
   // Use directory-based i18n structure (content/docs/zh/...)
   parser: "dir",
 });
-
-export const locales = i18n.languages;
-export type Locale = (typeof locales)[number];
-export const defaultLocale = i18n.defaultLanguage;
-
-export const localeNames: Record<Locale, string> = {
-  en: "English",
-  zh: "中文",
-  "zh-TW": "繁體中文",
-  ru: "Русский",
-};
-
-export const localeFlags: Record<Locale, string> = {
-  en: "🇺🇸",
-  zh: "🇨🇳",
-  "zh-TW": "🇹🇼",
-  ru: "🇷🇺",
-};

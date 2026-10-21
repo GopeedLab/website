@@ -8,7 +8,17 @@
 import { eq } from "drizzle-orm";
 import type { Db } from "@/db/client";
 import type { NewExtension } from "@/db/schema";
-import { extensions } from "@/db/schema";
+import { extensionLocalizations, extensions } from "@/db/schema";
+import { locales } from "@/lib/i18n/config";
+import {
+  type ContentSource,
+  type ExtensionAi,
+  emptyContentStats,
+  localizeExtension,
+  sourceContentHash,
+} from "./content";
+import { resolveMarkdownImageUrls } from "./markdown";
+import { fetchReadmeSources } from "./readme-sources";
 
 const GITHUB_API = "https://api.github.com";
 const RAW_GITHUB = "https://raw.githubusercontent.com";
@@ -86,87 +96,6 @@ async function getLatestCommitSha(
   const url = `${GITHUB_API}/repos/${repoFullName}/commits?path=${encodeURIComponent(path)}&per_page=1&sha=${branch}`;
   const commits = await fetchJSON<GitHubCommit[]>(url, token);
   return commits?.[0]?.sha ?? null;
-}
-
-/**
- * Fetch README content from a repo directory, trying common filename variants.
- * Returns the raw markdown text, or null if not found.
- */
-async function fetchReadme(
-  repoFullName: string,
-  branch: string,
-  directory: string | null,
-  _token?: string,
-): Promise<string | null> {
-  const candidates = ["README.md", "readme.md", "Readme.md", "README.MD"];
-  const base = directory ? `${directory}/` : "";
-
-  for (const filename of candidates) {
-    const url = `${RAW_GITHUB}/${repoFullName}/${branch}/${base}${filename}`;
-    const res = await fetch(url, {
-      headers: { "User-Agent": "Gopeed-Website/1.0" },
-      signal: AbortSignal.timeout(30_000),
-    });
-    if (res.ok) {
-      return await res.text();
-    }
-    await res.body?.cancel();
-    if (res.status !== 404) {
-      throw new Error(`README HTTP ${res.status} ${res.statusText} — ${url}`);
-    }
-  }
-  return null;
-}
-
-/**
- * Resolve relative image URLs in a markdown string to absolute raw GitHub URLs.
- * Handles both markdown image syntax ![alt](src) and HTML <img src="..."> tags.
- */
-function resolveMarkdownImageUrls(
-  markdown: string,
-  repoFullName: string,
-  branch: string,
-  directory: string | null,
-): string {
-  const base = directory ? `${directory}/` : "";
-  const rawBase = `${RAW_GITHUB}/${repoFullName}/${branch}/${base}`;
-
-  // Replace markdown image syntax: ![alt](relative/path)
-  let resolved = markdown.replace(
-    /!\[([^\]]*)\]\(([^)]+)\)/g,
-    (match, alt, src) => {
-      const trimmed = src.trim();
-      if (
-        trimmed.startsWith("http://") ||
-        trimmed.startsWith("https://") ||
-        trimmed.startsWith("data:")
-      ) {
-        return match;
-      }
-      // Remove leading ./ if present
-      const cleanSrc = trimmed.replace(/^\.\//, "");
-      return `![${alt}](${rawBase}${cleanSrc})`;
-    },
-  );
-
-  // Replace HTML img tags: <img src="relative/path" ...>
-  resolved = resolved.replace(
-    /(<img\s[^>]*src=)(["'])([^"']+)\2/gi,
-    (match, prefix, quote, src) => {
-      const trimmed = src.trim();
-      if (
-        trimmed.startsWith("http://") ||
-        trimmed.startsWith("https://") ||
-        trimmed.startsWith("data:")
-      ) {
-        return match;
-      }
-      const cleanSrc = trimmed.replace(/^\.\//, "");
-      return `${prefix}${quote}${rawBase}${cleanSrc}${quote}`;
-    },
-  );
-
-  return resolved;
 }
 
 /**
@@ -307,118 +236,155 @@ async function findExtensionDirectories(
   return results;
 }
 
-/**
- * Sync a single extension (repo + optional directory) into the DB.
- * Returns "skipped" if commit SHA unchanged, "synced" if upserted, "ignored" if manifest invalid.
- */
+export interface ExtensionSyncOptions {
+  ai?: ExtensionAi;
+}
+
 async function syncExtension(
   db: Db,
   repo: GitHubRepo,
   directory: string | null,
-  token?: string,
-): Promise<"synced" | "skipped" | "ignored"> {
-  // Get latest commit SHA for the manifest path
+  token: string | undefined,
+  options: ExtensionSyncOptions,
+) {
+  const contentStats = emptyContentStats();
+  // Pin manifest and all README files to the same repository snapshot.
   const commitSha = await getLatestCommitSha(
     repo.full_name,
     repo.default_branch,
-    directory ? `${directory}/manifest.json` : "manifest.json",
+    "",
     token,
   );
-
-  // Fetch and parse manifest first — we need author+name to build the id
-  const manifest = await fetchManifest(
-    repo.full_name,
-    repo.default_branch,
-    directory,
-    token,
-  );
-  if (!manifest?.name) return "ignored";
-
-  // Construct id from manifest: "author@name" if author present, otherwise just "name"
+  const ref = commitSha ?? repo.default_branch;
+  const manifest = await fetchManifest(repo.full_name, ref, directory, token);
+  if (!manifest?.name) return { status: "ignored" as const, ...contentStats };
   const author = manifest.author?.trim() ?? "";
   const id = author ? `${author}@${manifest.name}` : manifest.name;
-
-  // Only trigger a full update when the version number actually changes
   const existing = await db
-    .select({ version: extensions.version })
+    .select()
     .from(extensions)
     .where(eq(extensions.id, id))
     .get();
-
   const newVersion = manifest.version ?? "0.0.0";
-  if (existing?.version === newVersion) {
-    // Version unchanged, update stars only
+  if (
+    existing?.version === newVersion &&
+    existing.contentHash &&
+    (!options.ai || existing.commitSha)
+  ) {
     await db
       .update(extensions)
       .set({ stars: repo.stargazers_count })
       .where(eq(extensions.id, id));
-    return "skipped";
+    if (options.ai) {
+      const rows = await db
+        .select({
+          locale: extensionLocalizations.locale,
+          hash: extensionLocalizations.sourceHash,
+        })
+        .from(extensionLocalizations)
+        .where(eq(extensionLocalizations.extensionId, id))
+        .all();
+      if (
+        locales.some(
+          (locale) =>
+            !rows.some(
+              (row) =>
+                row.locale === locale && row.hash === existing.contentHash,
+            ),
+        )
+      ) {
+        // Retry the saved version, not README edits made without a version bump.
+        const readmes = await fetchReadmeSources(
+          repo.full_name,
+          existing.commitSha ?? ref,
+          directory,
+          token,
+        );
+        const source: ContentSource = {
+          id,
+          name: existing.name,
+          title: existing.title,
+          description: existing.description,
+          repoFullName: repo.full_name,
+          branch: repo.default_branch,
+          directory,
+          readmes,
+        };
+        // This immutable commit is the saved version. README discovery may expand
+        // as languages are added, without invalidating that version's translations.
+        Object.assign(
+          contentStats,
+          await localizeExtension(db, options.ai, source, existing.contentHash),
+        );
+      }
+    }
+    return { status: "skipped" as const, ...contentStats };
   }
 
-  const iconUrl = resolveIconUrl(
-    manifest.icon,
+  const readmes = await fetchReadmeSources(
     repo.full_name,
-    repo.default_branch,
-    directory,
-  );
-
-  // Fetch README and resolve relative image paths
-  const rawReadme = await fetchReadme(
-    repo.full_name,
-    repo.default_branch,
+    ref,
     directory,
     token,
   );
-  const readme = rawReadme
-    ? resolveMarkdownImageUrls(
-        rawReadme,
-        repo.full_name,
-        repo.default_branch,
-        directory,
-      )
-    : null;
-
+  const source: ContentSource = {
+    id,
+    name: manifest.name,
+    title: manifest.title || manifest.name,
+    description: manifest.description ?? repo.description ?? "",
+    repoFullName: repo.full_name,
+    branch: repo.default_branch,
+    directory,
+    readmes,
+  };
+  const hash = await sourceContentHash(source);
+  const primary =
+    readmes.find((r) => /^readme\.(md|markdown)$/i.test(r.filename)) ??
+    readmes[0];
   const data: NewExtension = {
     id,
     repoFullName: repo.full_name,
     repoUrl: repo.html_url,
-    directory: directory ?? undefined,
-    commitSha: commitSha ?? undefined,
+    directory,
+    commitSha,
     name: manifest.name,
-    author: author,
-    title: manifest.title || manifest.name,
-    description: manifest.description ?? repo.description ?? "",
-    icon: iconUrl ?? undefined,
-    version: manifest.version ?? "0.0.0",
+    author,
+    title: source.title,
+    description: source.description,
+    icon: resolveIconUrl(
+      manifest.icon,
+      repo.full_name,
+      repo.default_branch,
+      directory,
+    ),
+    version: newVersion,
     homepage: manifest.homepage ?? repo.html_url,
-    readme: readme ?? undefined,
+    readme: primary
+      ? resolveMarkdownImageUrls(
+          primary.content,
+          repo.full_name,
+          repo.default_branch,
+          directory,
+        )
+      : null,
+    contentHash: hash,
     stars: repo.stargazers_count,
     topics: JSON.stringify(repo.topics ?? []),
-    updatedAt: new Date(),
+    updatedAt:
+      existing?.version === newVersion && existing.contentHash === hash
+        ? existing.updatedAt
+        : new Date(),
   };
-
   await db
     .insert(extensions)
     .values(data)
-    .onConflictDoUpdate({
-      target: extensions.id,
-      set: {
-        commitSha: data.commitSha,
-        name: data.name,
-        author: data.author,
-        title: data.title,
-        description: data.description,
-        icon: data.icon,
-        version: data.version,
-        homepage: data.homepage,
-        readme: data.readme,
-        stars: data.stars,
-        topics: data.topics,
-        updatedAt: data.updatedAt,
-      },
-    });
-
-  return "synced";
+    .onConflictDoUpdate({ target: extensions.id, set: data });
+  if (options.ai)
+    Object.assign(
+      contentStats,
+      await localizeExtension(db, options.ai, source, hash),
+    );
+  return { status: "synced" as const, ...contentStats };
 }
 
 /**
@@ -436,6 +402,7 @@ export async function syncExtensions(
   token?: string,
   page = 1,
   pageSize = 10,
+  options: ExtensionSyncOptions = {},
 ): Promise<{
   synced: number;
   skipped: number;
@@ -453,43 +420,74 @@ export async function syncExtensions(
   const repos = allRepos.slice(start, start + pageSize);
   const hasMore = start + pageSize < totalRepos;
 
-  const stats = await syncRepos(db, repos, token);
+  const stats = await syncRepos(db, repos, token, options);
   return { ...stats, page, pageSize, totalRepos, hasMore };
 }
 
 /** Scan all discovered repos in one Workers Paid scheduled invocation. */
-export async function syncAllExtensions(db: Db, token: string) {
+export async function syncAllExtensions(
+  db: Db,
+  token: string,
+  options: ExtensionSyncOptions = {},
+) {
   const repos = await searchGopeedExtensionRepos(token);
-  const stats = await syncRepos(db, repos, token);
+  const stats = await syncRepos(db, repos, token, options);
   return { ...stats, totalRepos: repos.length };
 }
 
-async function syncRepos(db: Db, repos: GitHubRepo[], token?: string) {
-  const stats = { synced: 0, skipped: 0, ignored: 0, errors: 0 };
+async function syncRepos(
+  db: Db,
+  repos: GitHubRepo[],
+  token: string | undefined,
+  options: ExtensionSyncOptions,
+) {
+  const stats = {
+    synced: 0,
+    skipped: 0,
+    ignored: 0,
+    errors: 0,
+    ...emptyContentStats(),
+  };
 
-  for (const repo of repos) {
-    try {
-      const dirs = await findExtensionDirectories(repo, token);
-
-      for (const dir of dirs) {
+  let cursor = 0;
+  await Promise.all(
+    Array.from({ length: 2 }, async () => {
+      while (cursor < repos.length) {
+        const repo = repos[cursor++];
         try {
-          const result = await syncExtension(db, repo, dir, token);
-          if (result === "synced") stats.synced++;
-          else if (result === "skipped") stats.skipped++;
-          else stats.ignored++;
+          const dirs = await findExtensionDirectories(repo, token);
+
+          for (const dir of dirs) {
+            try {
+              const result = await syncExtension(db, repo, dir, token, options);
+              if (result.status === "synced") stats.synced++;
+              else if (result.status === "skipped") stats.skipped++;
+              else stats.ignored++;
+              for (const key of Object.keys(emptyContentStats()) as Array<
+                keyof ReturnType<typeof emptyContentStats>
+              >)
+                stats[key] += result[key];
+              console.log(
+                "[extension-sync]",
+                repo.full_name,
+                dir ?? "",
+                JSON.stringify(result),
+              );
+            } catch (err) {
+              console.error(
+                `Error syncing ${repo.full_name}${dir ? `#${dir}` : ""}:`,
+                err,
+              );
+              stats.errors++;
+            }
+          }
         } catch (err) {
-          console.error(
-            `Error syncing ${repo.full_name}${dir ? `#${dir}` : ""}:`,
-            err,
-          );
+          console.error(`Error processing repo ${repo.full_name}:`, err);
           stats.errors++;
         }
       }
-    } catch (err) {
-      console.error(`Error processing repo ${repo.full_name}:`, err);
-      stats.errors++;
-    }
-  }
+    }),
+  );
 
   return stats;
 }

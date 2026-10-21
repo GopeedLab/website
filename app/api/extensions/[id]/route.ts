@@ -2,7 +2,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { eq } from "drizzle-orm";
 import { type NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/db/client";
-import { extensions } from "@/db/schema";
+import { extensionPublicColumns, extensions } from "@/db/schema";
 
 /**
  * GET /api/extensions/[id]
@@ -37,7 +37,7 @@ export async function GET(
     const db = getDb(d1);
 
     const extension = await db
-      .select()
+      .select(extensionPublicColumns)
       .from(extensions)
       .where(eq(extensions.id, id))
       .get();

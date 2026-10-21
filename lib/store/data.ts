@@ -1,8 +1,13 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { cache } from "react";
 import { getDb } from "@/db/client";
-import { extensionSummaryColumns, extensions } from "@/db/schema";
+import {
+  extensionLocalizations,
+  extensionSummaryColumns,
+  extensions,
+} from "@/db/schema";
+import type { Locale } from "@/lib/i18n/config";
 
 async function storeDb() {
   const ctx = await getCloudflareContext({ async: true });
@@ -12,17 +17,53 @@ async function storeDb() {
   return getDb(d1);
 }
 
-export async function getExtensionSummaries() {
+export async function getExtensionSummaries(locale: Locale) {
   const db = await storeDb();
   return db
-    .select(extensionSummaryColumns)
+    .select({
+      ...extensionSummaryColumns,
+      title: sql<string>`coalesce(${extensionLocalizations.title}, ${extensions.title})`,
+      description: sql<string>`coalesce(${extensionLocalizations.description}, ${extensions.description})`,
+    })
     .from(extensions)
+    .leftJoin(
+      extensionLocalizations,
+      and(
+        eq(extensionLocalizations.extensionId, extensions.id),
+        eq(extensionLocalizations.locale, locale),
+        eq(extensionLocalizations.sourceHash, extensions.contentHash),
+      ),
+    )
     .orderBy(desc(extensions.installCount), desc(extensions.stars))
     .all();
 }
 
 // Share the same read between generateMetadata and the page in one render.
-export const getStoreExtension = cache(async (id: string) => {
+export const getStoreExtension = cache(async (id: string, locale: Locale) => {
   const db = await storeDb();
-  return db.select().from(extensions).where(eq(extensions.id, id)).get();
+  const extension = await db
+    .select()
+    .from(extensions)
+    .where(eq(extensions.id, id))
+    .get();
+  if (!extension) return undefined;
+  const localized = await db
+    .select()
+    .from(extensionLocalizations)
+    .where(
+      and(
+        eq(extensionLocalizations.extensionId, id),
+        eq(extensionLocalizations.locale, locale),
+        eq(extensionLocalizations.sourceHash, extension.contentHash ?? ""),
+      ),
+    )
+    .get();
+  return localized
+    ? {
+        ...extension,
+        title: localized.title,
+        description: localized.description,
+        readme: localized.readme,
+      }
+    : extension;
 });

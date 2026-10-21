@@ -30,8 +30,9 @@ The current implementation covers language routing and metadata, redirects for
 legacy duplicated locale paths, sitemap freshness, crawlable homepage/store
 links, shared image crawling and first-screen image loading. Homepage platform
 cards link to the corresponding existing extension pages in each language.
-Platform-specific detail-page copy, tutorials and additional languages are a
-separate content project.
+Extension detail-page copy and READMEs are localized in English, Simplified
+Chinese, Traditional Chinese and Russian. Additional languages and tutorials
+remain separate content work.
 
 After deployment:
 
@@ -44,8 +45,8 @@ After deployment:
 3. Review mobile LCP/INP/CLS using field data. The smaller preloaded screenshot
    and immediately visible first-screen content address concrete loading delays;
    a passing field assessment still requires post-deployment measurements.
-4. Discuss extension detail pages separately, then pilot a few complete platform
-   pages. Research English demand in India/US and native-language demand in
+4. Review the generated extension pages against their source capabilities.
+   Research English demand in India/US and native-language demand in
    Indonesia/Brazil, checking actual feature support and conversion before
    expanding languages. Add distinct tutorials for demonstrated user problems.
 5. Review content accuracy, broken links, index coverage, acquisition and relevant
@@ -89,3 +90,38 @@ response cache, including cached results, API errors, and JSON POST preflight.
 The authenticated sync endpoint keeps its existing behavior.
 
 Use `pnpm cf:dev` for browser integration tests through the Cloudflare Worker.
+
+## Extension content generation
+
+Apply `pnpm db:migrate` before deployment and `pnpm db:migrate:dev` for local
+D1 development. Extension source content stays in `extensions`;
+`extension_localizations` stores the title, description and complete README for
+each language, together with its source hash and update time.
+
+The hourly cron requires the existing `GITHUB_TOKEN` Worker secret and the `AI`
+binding. SEO copy and translations use
+`@cf/deepseek-ai/deepseek-v4.1-flash-1017` through `env.AI.run()` with reasoning
+disabled. No Cloudflare API token secret is needed for inference.
+
+The cron checks the manifest version first. On a version change, it hashes the
+title, description and recognized README files from one commit. Only changed or
+missing content triggers generation. Missing languages are retried against the
+saved source snapshot even without another version change. Author-provided
+translations and original-language READMEs are reused.
+
+`lib/i18n/config.ts` is shared by website routing, extension generation, response
+schemas and missing-language checks. Adding a website
+language makes the next cron fill only its missing content, even if extension
+versions stay unchanged. Database locale values are not restricted to a fixed
+list. Until generation succeeds, the new language's pages show upstream content.
+
+Translation preserves code, URLs and Markdown structure. Chinese interface
+labels retain their original text with a model-generated translated explanation.
+Long READMEs are translated in sections and validated as a complete document.
+Requests are paced below 20/minute, have a 180-second deadline and get one retry;
+rate-limit or capacity errors wait one minute before retrying.
+
+Failed generation never overwrites valid content. Pages use translations only
+when their source hash matches the current extension. Otherwise, titles,
+descriptions and READMEs fall back to the upstream source. Page requests never
+call AI. The public extension API continues to return upstream content.
