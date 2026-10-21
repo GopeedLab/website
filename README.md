@@ -109,8 +109,8 @@ missing content triggers generation. Missing languages are retried against the
 saved source snapshot even without another version change. Author-provided
 translations and original-language READMEs are reused.
 
-The website's `locales` configuration is the single language list for extension
-generation, response schemas and missing-language checks. Adding a website
+`lib/i18n/config.ts` is shared by website routing, extension generation, response
+schemas and missing-language checks. Adding a website
 language makes the next cron fill only its missing content, even if extension
 versions stay unchanged. Database locale values are not restricted to a fixed
 list. Until generation succeeds, the new language's pages show upstream content.
