@@ -280,6 +280,8 @@ async function syncExtension(
         .select({
           locale: extensionLocalizations.locale,
           hash: extensionLocalizations.sourceHash,
+          title: extensionLocalizations.title,
+          description: extensionLocalizations.description,
         })
         .from(extensionLocalizations)
         .where(eq(extensionLocalizations.extensionId, id))
@@ -289,7 +291,10 @@ async function syncExtension(
           (locale) =>
             !rows.some(
               (row) =>
-                row.locale === locale && row.hash === existing.contentHash,
+                row.locale === locale &&
+                row.hash === existing.contentHash &&
+                row.title !== null &&
+                row.description !== null,
             ),
         )
       ) {

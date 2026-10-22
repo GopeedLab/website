@@ -60,8 +60,11 @@ export const extensionLocalizations = sqliteTable(
       .notNull()
       .references(() => extensions.id, { onDelete: "cascade" }),
     locale: text("locale", { enum: locales }).notNull(),
-    title: text("title").notNull(),
-    description: text("description").notNull(),
+    // Null until a faithful manifest translation has been generated.
+    title: text("title"),
+    description: text("description"),
+    seoTitle: text("seo_title").notNull(),
+    seoDescription: text("seo_description").notNull(),
     readme: text("readme"),
     sourceHash: text("source_hash").notNull(),
     updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),

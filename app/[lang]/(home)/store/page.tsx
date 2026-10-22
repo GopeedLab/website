@@ -49,7 +49,7 @@ export default async function StorePage({
   await connection();
   const appData = await getAppData();
 
-  const extensionList = await getExtensionSummaries();
+  const extensionList = await getExtensionSummaries(locale);
 
   const t = (key: string) => getTranslation(locale, key);
 
