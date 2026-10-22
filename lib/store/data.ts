@@ -58,12 +58,13 @@ export const getStoreExtension = cache(async (id: string, locale: Locale) => {
       ),
     )
     .get();
-  return localized
-    ? {
-        ...extension,
-        title: localized.title,
-        description: localized.description,
-        readme: localized.readme,
-      }
-    : extension;
+  return {
+    ...extension,
+    // Keep the author's metadata separate from generated landing-page copy.
+    title: localized?.title ?? extension.title,
+    description: localized?.description ?? extension.description,
+    seoTitle: localized?.seoTitle ?? null,
+    seoDescription: localized?.seoDescription ?? null,
+    readme: localized ? localized.readme : extension.readme,
+  };
 });

@@ -1,8 +1,9 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import type { Db } from "@/db/client";
 import { extensionLocalizations, extensions } from "@/db/schema";
 import { type Locale, localeNames, locales } from "@/lib/i18n/config";
 import {
+  METADATA_SYSTEM_PROMPT,
   README_SYSTEM_PROMPT,
   SEO_SYSTEM_PROMPT,
   seoResponseSchema,
@@ -505,6 +506,117 @@ export async function translateExtensionReadme(
   return validateReadme(source, translated.join("\n\n"), locale);
 }
 
+export async function translateExtensionMetadata(
+  ai: ExtensionAi,
+  source: Pick<ContentSource, "name" | "title" | "description">,
+  targetLocales: readonly Locale[],
+) {
+  const fields = ["title", "description"] as const;
+  const languages = [...locales, "other", "und"];
+  const translatedFields = {
+    type: "object",
+    additionalProperties: false,
+    required: [...fields],
+    properties: Object.fromEntries(
+      fields.map((field) => [field, { type: ["string", "null"] }]),
+    ),
+  };
+  return generate(
+    ai,
+    "extension_metadata_translation",
+    METADATA_SYSTEM_PROMPT,
+    JSON.stringify({
+      targetLocales: targetLocales.map((locale) => ({
+        code: locale,
+        language: localeNames[locale],
+      })),
+      sourceLanguageCodes: languages,
+      source: {
+        name: source.name,
+        title: source.title,
+        description: source.description,
+      },
+    }),
+    {
+      type: "object",
+      additionalProperties: false,
+      required: ["titleLanguage", "descriptionLanguage", "locales"],
+      properties: {
+        titleLanguage: { type: "string", enum: languages },
+        descriptionLanguage: { type: "string", enum: languages },
+        locales: {
+          type: "object",
+          additionalProperties: false,
+          required: [...targetLocales],
+          properties: Object.fromEntries(
+            targetLocales.map((locale) => [locale, translatedFields]),
+          ),
+        },
+      },
+    },
+    Math.min(
+      24000,
+      Math.max(
+        1600,
+        targetLocales.length *
+          Math.max(500, (source.title.length + source.description.length) * 2),
+      ),
+    ),
+    (value) => {
+      for (const field of fields) {
+        if (!languages.includes(String(value[`${field}Language`])))
+          throw new Error(`Identify the original ${field} language`);
+      }
+      const copy = object(value.locales);
+      const result = {} as Record<
+        Locale,
+        { title: string; description: string }
+      >;
+      for (const locale of targetLocales) {
+        const translated = object(copy[locale]);
+        result[locale] = { title: "", description: "" };
+        for (const field of fields) {
+          const original = source[field];
+          if (
+            !original ||
+            value[`${field}Language`] === "und" ||
+            value[`${field}Language`] === locale
+          ) {
+            // Classification is ephemeral. Reuse the original instead of asking
+            // the model to rewrite same-language prose or product identifiers.
+            result[locale][field] = original;
+            continue;
+          }
+          const text = translated[field];
+          if (typeof text !== "string" || !text.trim())
+            throw new Error(
+              `${locale}: faithfully translate the original ${field}`,
+            );
+          validateReadme(original, text, locale, false);
+          for (const match of original.matchAll(
+            /\d+(?:\.\d+)*(?:[a-zA-Z%]+)?/g,
+          )) {
+            if (!text.includes(match[0]))
+              throw new Error(
+                `${locale}: preserve ${field} number ${match[0]}`,
+              );
+          }
+          for (const match of original.matchAll(/https?:\/\/[^\s<>)]+/g)) {
+            if (!text.includes(match[0]))
+              throw new Error(`${locale}: preserve ${field} URL ${match[0]}`);
+          }
+          if (original.length > 40 && !languageCompatible(text, locale, true))
+            throw new Error(
+              `${locale}: translate all ${field} prose into ${localeNames[locale]}`,
+            );
+          result[locale][field] = text.trim();
+        }
+      }
+      return result;
+    },
+  );
+}
+
 export async function generateExtensionSeo(
   ai: ExtensionAi,
   source: ContentSource,
@@ -575,14 +687,32 @@ export async function localizeExtension(
     .all();
   const missing = locales.filter(
     (locale) =>
-      !existing.some((row) => row.locale === locale && row.sourceHash === hash),
+      !existing.some(
+        (row) =>
+          row.locale === locale &&
+          row.sourceHash === hash &&
+          row.title !== null &&
+          row.description !== null,
+      ),
   );
   if (!missing.length) return stats;
-  let seo: Awaited<ReturnType<typeof generateExtensionSeo>>;
+  const currentRows = new Map(
+    existing
+      .filter((row) => row.sourceHash === hash)
+      .map((row) => [row.locale, row]),
+  );
+  const missingContent = missing.filter((locale) => !currentRows.has(locale));
+  let metadata: Awaited<ReturnType<typeof translateExtensionMetadata>>;
+  let seo: Awaited<ReturnType<typeof generateExtensionSeo>> | undefined;
   try {
-    seo = await generateExtensionSeo(ai, source, missing);
+    metadata = await translateExtensionMetadata(ai, source, missing);
+    if (missingContent.length)
+      seo = await generateExtensionSeo(ai, source, missingContent);
   } catch (error) {
-    console.error(`[extension-content] ${source.id} SEO failed:`, error);
+    console.error(
+      `[extension-content] ${source.id} localization failed:`,
+      error,
+    );
     stats.failedLocales = missing.length;
     return stats;
   }
@@ -600,6 +730,34 @@ export async function localizeExtension(
     await Promise.all(
       missing.slice(index, index + 2).map(async (locale) => {
         try {
+          if (currentRows.has(locale)) {
+            const current = await db
+              .select({ hash: extensions.contentHash })
+              .from(extensions)
+              .where(eq(extensions.id, source.id))
+              .get();
+            if (current?.hash !== hash)
+              throw new Error("Upstream changed during metadata translation");
+            await db
+              .update(extensionLocalizations)
+              .set({
+                title: metadata[locale].title,
+                description: metadata[locale].description,
+                updatedAt: new Date(),
+              })
+              .where(
+                and(
+                  eq(extensionLocalizations.extensionId, source.id),
+                  eq(extensionLocalizations.locale, locale),
+                  eq(extensionLocalizations.sourceHash, hash),
+                ),
+              );
+            stats.generatedLocales++;
+            return;
+          }
+          const generated = seo;
+          if (!generated)
+            throw new Error("Missing generated extension content");
           const authored =
             source.readmes.find(
               (r) =>
@@ -609,7 +767,7 @@ export async function localizeExtension(
             ) ??
             source.readmes.find(
               (r) =>
-                seo.languages[r.filename] === locale &&
+                generated.languages[r.filename] === locale &&
                 substantive(r.content) &&
                 languageCompatible(r.content, locale),
             );
@@ -646,8 +804,10 @@ export async function localizeExtension(
           const row = {
             extensionId: source.id,
             locale,
-            title: seo.copy[locale].title,
-            description: seo.copy[locale].intro,
+            title: metadata[locale].title,
+            description: metadata[locale].description,
+            seoTitle: generated.copy[locale].title,
+            seoDescription: generated.copy[locale].intro,
             readme:
               readme === null
                 ? null

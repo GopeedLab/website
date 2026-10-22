@@ -150,6 +150,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "store.detail.installFailed":
       "Auto-install failed. Please copy the URL and install manually in Gopeed.",
     "store.detail.readme": "README",
+    "store.detail.summary": "Summary",
     "store.detail.noReadme": "No README available for this extension.",
     "store.detail.installs": "Installs",
     "store.detail.stars": "Stars",
@@ -310,6 +311,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "store.detail.installFailed":
       "自动安装失败，请复制扩展地址，在 Gopeed 中手动安装。",
     "store.detail.readme": "README",
+    "store.detail.summary": "概览",
     "store.detail.noReadme": "此扩展暂无 README。",
     "store.detail.installs": "安装次数",
     "store.detail.stars": "Stars",
@@ -470,6 +472,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "store.detail.installFailed":
       "自動安裝失敗，請複製擴充功能地址，在 Gopeed 中手動安裝。",
     "store.detail.readme": "README",
+    "store.detail.summary": "概覽",
     "store.detail.noReadme": "此擴充功能暫無 README。",
     "store.detail.installs": "安裝次數",
     "store.detail.stars": "Stars",
@@ -639,6 +642,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "store.detail.installFailed":
       "Автоматическая установка не удалась. Скопируйте URL и установите вручную в Gopeed.",
     "store.detail.readme": "README",
+    "store.detail.summary": "Краткое описание",
     "store.detail.noReadme": "README для этого расширения недоступен.",
     "store.detail.installs": "Установки",
     "store.detail.stars": "Звёзды",

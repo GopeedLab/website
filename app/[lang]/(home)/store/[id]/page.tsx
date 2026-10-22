@@ -35,21 +35,23 @@ export async function generateMetadata({
     return { title: getTranslation(locale, "store.detail.notFound") };
   }
 
-  const displayTitle = extension.title || extension.name;
+  const seoTitle = extension.seoTitle || extension.title || extension.name;
   const authorName = extension.author || extension.repoFullName.split("/")[0];
 
   return {
-    title: displayTitle,
+    title: seoTitle,
     description:
+      extension.seoDescription ||
       extension.description ||
-      `${displayTitle} by ${authorName} — Gopeed Extension`,
+      `${seoTitle} by ${authorName} — Gopeed Extension`,
     alternates: pageAlternates(locale, `/store/${encodeURIComponent(id)}`),
     ...pageSocialMetadata(
       locale,
       `/store/${encodeURIComponent(id)}`,
-      `${displayTitle} | Gopeed`,
-      extension.description ||
-        `${displayTitle} by ${authorName} — Gopeed Extension`,
+      `${seoTitle} | Gopeed`,
+      extension.seoDescription ||
+        extension.description ||
+        `${seoTitle} by ${authorName} — Gopeed Extension`,
       extension.icon || undefined,
     ),
   };
@@ -74,12 +76,14 @@ export default async function ExtensionDetailPage({
     notFound();
   }
 
+  const displayTitle = extension.title || extension.name;
   const tr = (key: string) => getTranslation(locale, key);
   const storeHref =
     locale === i18n.defaultLanguage ? "/store" : `/${locale}/store`;
 
   const translations = {
     back: tr("store.detail.back"),
+    summary: tr("store.detail.summary"),
     readme: tr("store.detail.readme"),
     noReadme: tr("store.detail.noReadme"),
     installs: tr("store.detail.installs"),
@@ -104,18 +108,18 @@ export default async function ExtensionDetailPage({
           breadcrumbJsonLd(locale, [
             { name: "Gopeed", path: "/" },
             { name: tr("store.title"), path: "/store" },
-            { name: extension.title, path: `/store/${encodeURIComponent(id)}` },
+            { name: displayTitle, path: `/store/${encodeURIComponent(id)}` },
           ]),
           {
             "@context": "https://schema.org",
             "@type": "WebPage",
-            name: extension.title,
-            description: extension.description,
+            name: extension.seoTitle || displayTitle,
+            description: extension.seoDescription || extension.description,
             inLanguage: locale,
             url: canonicalUrl(locale, `/store/${encodeURIComponent(id)}`),
             mainEntity: {
               "@type": "SoftwareApplication",
-              name: extension.name,
+              name: displayTitle,
               softwareVersion: extension.version,
               softwareRequirements: "Gopeed",
               applicationCategory: "UtilitiesApplication",
@@ -131,6 +135,8 @@ export default async function ExtensionDetailPage({
       <Navbar version={appData.version} stars={appData.stars} />
       <ExtensionDetailClient
         extension={toExtensionSummary(extension)}
+        seoTitle={extension.seoTitle}
+        seoDescription={extension.seoDescription}
         storeHref={storeHref}
         translations={translations}
         readmeNode={readmeNode}
