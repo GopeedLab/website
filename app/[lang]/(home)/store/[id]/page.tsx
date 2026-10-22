@@ -83,6 +83,7 @@ export default async function ExtensionDetailPage({
 
   const translations = {
     back: tr("store.detail.back"),
+    summary: tr("store.detail.summary"),
     readme: tr("store.detail.readme"),
     noReadme: tr("store.detail.noReadme"),
     installs: tr("store.detail.installs"),

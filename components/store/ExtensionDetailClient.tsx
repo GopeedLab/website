@@ -9,6 +9,7 @@ import type { ExtensionSummary } from "@/db/schema";
 
 export interface ExtensionDetailTranslations {
   back: string;
+  summary: string;
   readme: string;
   noReadme: string;
   installs: string;
@@ -428,60 +429,72 @@ export function ExtensionDetailClient({
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <div className="h-px w-full bg-linear-to-r from-transparent via-gray-200 dark:via-white/10 to-transparent mb-12" />
-
-          <div className="bg-white dark:bg-[#111111] rounded-[32px] border border-gray-100 dark:border-white/5 p-6 sm:p-10 lg:p-12 shadow-sm [&_pre]:px-4 [&_pre]:py-3">
-            {(seoTitle || seoDescription) && (
-              <section
-                className={
-                  readmeNode
-                    ? "mb-8 border-b border-gray-100 dark:border-white/10 pb-8 sm:mb-10 sm:pb-10"
-                    : ""
-                }
+          {(seoTitle || seoDescription) && (
+            <section
+              aria-labelledby="extension-summary"
+              className="mb-10 sm:mb-12"
+            >
+              <h2
+                id="extension-summary"
+                className="border-b border-gray-200 dark:border-white/10 pb-3 text-xs font-mono font-medium tracking-wide uppercase text-gray-500 dark:text-gray-400"
               >
+                {t.summary}
+              </h2>
+              <div className="mt-4 rounded-xl bg-gray-50 dark:bg-white/5 px-5 py-5 sm:px-6 sm:py-6">
                 {seoTitle && (
-                  <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100 leading-snug tracking-tight">
-                    {seoTitle}
-                  </h2>
+                  <p className="text-[15px] leading-relaxed text-gray-900 dark:text-gray-100">
+                    <strong className="font-semibold">{seoTitle}</strong>
+                  </p>
                 )}
                 {seoDescription && (
                   <p
-                    className={`${seoTitle ? "mt-4 " : ""}text-[15px] sm:text-[17px] text-gray-600 dark:text-gray-400 leading-relaxed max-w-3xl`}
+                    className={`${seoTitle ? "mt-3 " : ""}text-[14px] sm:text-[15px] text-gray-600 dark:text-gray-400 leading-7 max-w-3xl`}
                   >
                     {seoDescription}
                   </p>
                 )}
-              </section>
-            )}
-            {readmeNode ? (
-              readmeNode
-            ) : !seoTitle && !seoDescription ? (
-              <div className="flex flex-col items-center justify-center py-20 text-center">
-                <div className="w-16 h-16 mb-5 rounded-2xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 flex items-center justify-center">
-                  <svg
-                    aria-hidden="true"
-                    className="w-8 h-8 text-gray-300 dark:text-gray-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  {t.readme}
-                </h3>
-                <p className="text-[15px] text-gray-500 dark:text-gray-400 max-w-sm">
-                  {t.noReadme}
-                </p>
               </div>
-            ) : null}
-          </div>
+            </section>
+          )}
+
+          <section aria-labelledby="extension-readme">
+            <h2
+              id="extension-readme"
+              className="mb-6 border-b border-gray-200 dark:border-white/10 pb-3 text-xs font-mono font-medium tracking-wide uppercase text-gray-500 dark:text-gray-400"
+            >
+              {t.readme}
+            </h2>
+            <div className="[&_pre]:px-4 [&_pre]:py-3">
+              {readmeNode ? (
+                readmeNode
+              ) : (
+                <div className="flex flex-col items-center justify-center py-20 text-center">
+                  <div className="w-16 h-16 mb-5 rounded-2xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 flex items-center justify-center">
+                    <svg
+                      aria-hidden="true"
+                      className="w-8 h-8 text-gray-300 dark:text-gray-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    {t.readme}
+                  </h3>
+                  <p className="text-[15px] text-gray-500 dark:text-gray-400 max-w-sm">
+                    {t.noReadme}
+                  </p>
+                </div>
+              )}
+            </div>
+          </section>
         </motion.div>
       </div>
     </div>

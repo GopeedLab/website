@@ -28,11 +28,11 @@ export async function ReadmeRenderer({ content }: ReadmeRendererProps) {
       <Markdown
         components={{
           ...defaultMdxComponents,
-          // The extension page already supplies its main heading.
-          h1: defaultMdxComponents.h2,
-          h2: defaultMdxComponents.h3,
-          h3: defaultMdxComponents.h4,
-          h4: defaultMdxComponents.h5,
+          // Nest the author's document under the page's README section.
+          h1: defaultMdxComponents.h3,
+          h2: defaultMdxComponents.h4,
+          h3: defaultMdxComponents.h5,
+          h4: defaultMdxComponents.h6,
           h5: defaultMdxComponents.h6,
           img: ReadmeImage,
         }}
