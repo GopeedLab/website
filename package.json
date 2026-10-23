@@ -26,8 +26,7 @@
     "db:migrate": "wrangler d1 migrations apply --remote gopeed",
     "db:studio:dev": "cross-env LOCAL_DB_PATH=$(find .wrangler/state/v3/d1/miniflare-D1DatabaseObject -type f -name '*.sqlite' -print0 | xargs -0 ls -t | head -1) drizzle-kit studio",
     "sync:extensions": "node scripts/sync-extensions.mjs",
-    "test:store-cache": "esbuild lib/store/response-cache.test.ts --bundle --platform=node --format=cjs --outfile=.wrangler/tests/store-cache.cjs && node --test .wrangler/tests/store-cache.cjs",
-    "test:docs": "pnpm docs:generate && esbuild lib/docs.test.ts --bundle --packages=external --platform=node --format=esm --outfile=.wrangler/tests/docs.mjs && node --test .wrangler/tests/docs.mjs"
+    "test:store-cache": "esbuild lib/store/response-cache.test.ts --bundle --platform=node --format=cjs --outfile=.wrangler/tests/store-cache.cjs && node --test .wrangler/tests/store-cache.cjs"
   },
   "dependencies": {
     "@fumadocs/language": "0.2.16",
