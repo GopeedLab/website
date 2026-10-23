@@ -109,7 +109,9 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // Docs sidebar tabs
     "docs.tab.documentation": "Documentation",
+    "docs.tab.documentationDescription": "Guides and extension development",
     "docs.tab.apiReference": "API Reference",
+    "docs.tab.apiReferenceDescription": "HTTP endpoints and API playground",
 
     // Store
     "store.title": "Extension Store",
@@ -270,7 +272,9 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // Docs sidebar tabs
     "docs.tab.documentation": "文档",
+    "docs.tab.documentationDescription": "使用指南与扩展开发",
     "docs.tab.apiReference": "API 参考",
+    "docs.tab.apiReferenceDescription": "接口规范与在线调试",
 
     // Store
     "store.title": "扩展商店",
@@ -431,7 +435,9 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // Docs sidebar tabs
     "docs.tab.documentation": "文件",
+    "docs.tab.documentationDescription": "使用指南與擴充套件開發",
     "docs.tab.apiReference": "API 參考",
+    "docs.tab.apiReferenceDescription": "介面規範與線上測試",
 
     // Store
     "store.title": "擴充商店",
@@ -599,7 +605,9 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // Docs sidebar tabs
     "docs.tab.documentation": "Документация",
+    "docs.tab.documentationDescription": "Руководства и расширения",
     "docs.tab.apiReference": "Справочник API",
+    "docs.tab.apiReferenceDescription": "HTTP API и тестирование запросов",
 
     // Store
     "store.title": "Магазин расширений",

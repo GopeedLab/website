@@ -1,17 +1,9 @@
-import {
-  defineConfig,
-  defineDocs,
-  frontmatterSchema,
-  metaSchema,
-} from "fumadocs-mdx/config";
+import { metaSchema, pageSchema } from "fumadocs-core/source/schema";
+import { defineConfig, defineDocs } from "fumadocs-mdx/config";
 
-// Define docs collection - fumadocs handles i18n automatically via directory structure
-// content/docs/*.mdx - English (default)
-// content/docs/zh/*.mdx - Chinese
-export const docs = defineDocs({
-  dir: "content/docs",
+const collectionOptions = {
   docs: {
-    schema: frontmatterSchema,
+    schema: pageSchema,
     postprocess: {
       includeProcessedMarkdown: true,
     },
@@ -19,6 +11,12 @@ export const docs = defineDocs({
   meta: {
     schema: metaSchema,
   },
+};
+
+export const docs = defineDocs({ dir: "content/docs", ...collectionOptions });
+export const apiReference = defineDocs({
+  dir: "content/api-reference",
+  ...collectionOptions,
 });
 
 export default defineConfig({

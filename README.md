@@ -15,6 +15,33 @@ yarn dev
 
 Open http://localhost:3000 with your browser to see the result.
 
+## API reference and AI page actions
+
+Use Node.js 24+ and pnpm 9.15.9. `pnpm docs:generate` downloads the Gopeed
+OpenAPI schema and generates the reference under `content/api-reference/`.
+These directories are disposable build output: edit the upstream schema or
+`scripts/generate-openapi.mjs`, rather than generated MDX. Development, type
+checks and builds generate the reference automatically.
+
+The reference is an independent section at `/api-reference`, with its own content
+collection, layout and sidebar, and localized equivalents under `/zh`, `/zh-TW`
+and `/ru`. Old `/docs/openapi` URLs redirect to this section. Endpoint names and
+descriptions remain in English; navigation,
+page actions and the API playground use the selected UI language. The schema is
+also available at `/openapi.json`. Playground requests go directly from the
+browser to the selected Gopeed server.
+
+Every docs page offers native Copy Markdown and Open actions. Append `.md` to
+a document URL (use `/docs/index.md` for the docs home); existing `.mdx` URLs
+remain supported. `/llms.txt` and `/llms-full.txt` serve the English index and
+full text, with localized equivalents such as `/zh/llms.txt`. The shared index
+and full text include both guides and the independent API reference. Page actions
+use the selected language and canonical Markdown URLs. API Markdown
+contains a standalone schema fragment including referenced components, rather
+than an unrendered React component. No model credentials are needed for these
+page actions and text endpoints. These integrations do not include a hosted
+Ask AI chat or an MCP server.
+
 ## SEO URL and sitemap behavior
 
 The sitemap is generated at request time from the current D1 catalog. New

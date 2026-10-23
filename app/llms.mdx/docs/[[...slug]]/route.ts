@@ -1,23 +1,16 @@
-import { notFound } from "next/navigation";
-import { getLLMText, source } from "@/lib/source";
+import { markdownResponse } from "@/lib/llms";
+import { source } from "@/lib/source";
 
 export const revalidate = false;
 
 export async function GET(
   _req: Request,
-  { params }: RouteContext<"/llms.mdx/docs/[[...slug]]">,
+  { params }: { params: Promise<{ lang?: string; slug?: string[] }> },
 ) {
-  const { slug } = await params;
-  const page = source.getPage(slug);
-  if (!page) notFound();
-
-  return new Response(await getLLMText(page), {
-    headers: {
-      "Content-Type": "text/markdown",
-    },
-  });
+  const { slug, lang = "en" } = await params;
+  return markdownResponse(lang, slug);
 }
 
 export function generateStaticParams() {
-  return source.generateParams();
+  return source.generateParams().filter((page) => page.lang === "en");
 }

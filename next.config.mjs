@@ -44,13 +44,43 @@ const config = {
     // CSP headers (script-src 'none'; frame-src 'none'; sandbox;) are applied automatically.
     dangerouslyAllowSVG: true,
   },
-  async rewrites() {
+  async redirects() {
     return [
       {
-        source: "/docs/:path*.mdx",
-        destination: "/llms.mdx/docs/:path*",
+        source: "/docs/openapi.:ext(md|mdx)",
+        destination: "/api-reference/index.:ext",
+        permanent: true,
+      },
+      {
+        source: "/:lang(en|zh|zh-TW|ru)/docs/openapi.:ext(md|mdx)",
+        destination: "/:lang/api-reference/index.:ext",
+        permanent: true,
+      },
+      {
+        source: "/docs/openapi/:path*",
+        destination: "/api-reference/:path*",
+        permanent: true,
+      },
+      {
+        source: "/:lang(en|zh|zh-TW|ru)/docs/openapi/:path*",
+        destination: "/:lang/api-reference/:path*",
+        permanent: true,
       },
     ];
+  },
+  async rewrites() {
+    return ["docs", "api-reference"].flatMap((section) =>
+      ["md", "mdx"].flatMap((extension) => [
+        {
+          source: `/${section}/:path*.${extension}`,
+          destination: `/llms.mdx/en/${section}/:path*`,
+        },
+        {
+          source: `/:lang(en|zh|zh-TW|ru)/${section}/:path*.${extension}`,
+          destination: `/llms.mdx/:lang/${section}/:path*`,
+        },
+      ]),
+    );
   },
   async headers() {
     return [
@@ -72,6 +102,10 @@ const config = {
       },
       {
         source: "/docs/:path*.mdx",
+        headers: [{ key: "X-Robots-Tag", value: "noindex" }],
+      },
+      {
+        source: "/docs/:path*.md",
         headers: [{ key: "X-Robots-Tag", value: "noindex" }],
       },
     ];

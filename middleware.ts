@@ -81,11 +81,6 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url, { status: 301 });
   }
 
-  // Skip locale handling for the standalone OpenAPI reference route.
-  if (pathname === "/docs/openapi" || pathname.startsWith("/docs/openapi/")) {
-    return NextResponse.next();
-  }
-
   // Repair locale prefixes emitted by the old hreflang bug, preserving the
   // outer (requested) language: /ru/zh/docs -> /ru/docs. Only leading locale
   // segments are stripped; content slugs such as /docs/ru stay intact.
@@ -147,5 +142,7 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   // Matcher ignoring `/_next/`, `/api/`, and static files.
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|images|.*\\..*).*)"],
+  matcher: [
+    "/((?!api(?:/|$)|_next/static|_next/image|favicon.ico|images|.*\\..*).*)",
+  ],
 };

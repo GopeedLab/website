@@ -4,6 +4,7 @@
 # generated content
 .source
 /lib/openapi/swagger.json
+/content/api-reference/
 
 # test & build
 /coverage
