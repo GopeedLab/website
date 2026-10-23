@@ -1,4 +1,4 @@
-import { Markdown } from "fumadocs-core/content";
+import { Markdown } from "fumadocs-core/content/md";
 import { DocsBody } from "fumadocs-ui/layouts/docs/page";
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import type { ComponentProps } from "react";

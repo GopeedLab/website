@@ -3,14 +3,14 @@ import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { extensionLocalizations, extensions } from "@/db/schema";
 import { sitemapResponse } from "@/lib/sitemap";
-import { source } from "@/lib/source";
+import { getAllPages } from "@/lib/source";
 
 // Read the current catalog at request time, including extensions added after a
 // deployment. Never freeze a missing build-time D1 binding into the sitemap.
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  return sitemapResponse(source.getPages(), async () => {
+  return sitemapResponse(getAllPages(), async () => {
     const ctx = await getCloudflareContext({ async: true });
     // @ts-expect-error - CF env type
     const d1 = ctx.env.DB as D1Database | undefined;

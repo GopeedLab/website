@@ -1,95 +1,31 @@
-import {
-  DocsBody,
-  DocsDescription,
-  DocsPage,
-  DocsTitle,
-} from "fumadocs-ui/layouts/docs/page";
-import { createRelativeLink } from "fumadocs-ui/mdx";
-import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { ContentPage, contentMetadata } from "@/components/docs/ContentPage";
 import { i18n, type Locale } from "@/lib/i18n";
-import { getTranslation } from "@/lib/i18n/translations";
-import { breadcrumbJsonLd, jsonLdScriptContent } from "@/lib/jsonld";
-import { pageAlternates, pageSocialMetadata } from "@/lib/seo";
 import { source } from "@/lib/source";
-import { getMDXComponents } from "@/mdx-components";
 
 interface PageProps {
   params: Promise<{ lang: string; slug?: string[] }>;
 }
 
-export default async function Page(props: PageProps) {
-  const params = await props.params;
+async function loadPage(props: PageProps) {
+  const { lang, slug } = await props.params;
   const locale = (
-    i18n.languages.includes(params.lang as Locale)
-      ? params.lang
-      : i18n.defaultLanguage
+    i18n.languages.includes(lang as Locale) ? lang : i18n.defaultLanguage
   ) as Locale;
-  const page = source.getPage(params.slug, locale);
+  const page = source.getPage(slug, locale);
   if (!page) notFound();
-
-  const MDX = page.data.body;
-  const docsLabel = getTranslation(locale, "nav.docs");
-  const breadcrumbItems =
-    page.slugs.length === 0
-      ? [
-          { name: "Gopeed", path: "/" },
-          { name: docsLabel, path: "/docs" },
-        ]
-      : [
-          { name: "Gopeed", path: "/" },
-          { name: docsLabel, path: "/docs" },
-          { name: page.data.title, path: page.url },
-        ];
-
-  return (
-    <DocsPage
-      toc={page.data.toc}
-      full={page.data.full}
-      tableOfContent={{ style: "clerk" }}
-    >
-      <script type="application/ld+json">
-        {jsonLdScriptContent(breadcrumbJsonLd(locale, breadcrumbItems))}
-      </script>
-      <DocsTitle>{page.data.title}</DocsTitle>
-      <DocsDescription>{page.data.description}</DocsDescription>
-      <DocsBody>
-        <MDX
-          components={getMDXComponents({
-            a: createRelativeLink(source, page),
-          })}
-        />
-      </DocsBody>
-    </DocsPage>
-  );
+  return { page, locale };
 }
 
-export async function generateStaticParams() {
+export default async function Page(props: PageProps) {
+  return <ContentPage {...(await loadPage(props))} />;
+}
+
+export function generateStaticParams() {
   return source.generateParams();
 }
 
-export async function generateMetadata(props: PageProps): Promise<Metadata> {
-  const params = await props.params;
-  const locale = (
-    i18n.languages.includes(params.lang as Locale)
-      ? params.lang
-      : i18n.defaultLanguage
-  ) as Locale;
-  const page = source.getPage(params.slug, locale);
-  if (!page) notFound();
-
-  const description =
-    page.data.description || getTranslation(locale, "site.description");
-
-  return {
-    title: page.data.title,
-    description,
-    alternates: pageAlternates(locale, page.url),
-    ...pageSocialMetadata(
-      locale,
-      page.url,
-      `${page.data.title} | Gopeed`,
-      description,
-    ),
-  };
+export async function generateMetadata(props: PageProps) {
+  const { page, locale } = await loadPage(props);
+  return contentMetadata(page, locale);
 }

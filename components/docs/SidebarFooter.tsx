@@ -1,5 +1,6 @@
 "use client";
 
+import { ThemeSwitch } from "fumadocs-ui/layouts/shared/slots/theme-switch";
 import Image from "next/image";
 import { useLocale } from "@/lib/locale-context";
 
@@ -7,9 +8,9 @@ export function SidebarFooter() {
   const { t } = useLocale();
 
   return (
-    <div className="flex flex-col gap-4 py-4 border-t border-fd-border">
+    <div className="flex items-center justify-between gap-2">
       {/* Social Links */}
-      <div className="flex items-center justify-center gap-4">
+      <div className="flex items-center gap-1">
         {/* WeChat - Hover to show QR Code */}
         <div className="relative group">
           <button
@@ -84,6 +85,7 @@ export function SidebarFooter() {
           </svg>
         </a>
       </div>
+      <ThemeSwitch className="shrink-0" />
     </div>
   );
 }
