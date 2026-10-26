@@ -11,11 +11,11 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { motion } from "framer-motion";
-import { Github } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { type ReactNode, useEffect, useState } from "react";
+import { FaGithub as Github } from "react-icons/fa6";
 import type { Locale } from "@/lib/i18n";
 import { useLocale } from "@/lib/locale-context";
 import { setLocalePreference } from "@/lib/locale-preference";
@@ -141,9 +141,9 @@ export function Navbar({ version = "", stars = "" }: NavbarProps) {
     {
       type: "link",
       key: "api",
-      href: "/docs/openapi",
+      href: `${locale === "en" ? "" : `/${locale}`}/api-reference`,
       labelKey: "nav.api",
-      external: true,
+      external: false,
     },
   ];
 

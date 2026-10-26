@@ -1,4 +1,5 @@
 import "@/app/global.css";
+import { i18nProvider } from "fumadocs-ui/i18n";
 import { RootProvider } from "fumadocs-ui/provider/next";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
@@ -6,7 +7,7 @@ import { FirebaseAnalytics } from "@/components/FirebaseAnalytics";
 import { LocalePreferenceTracker } from "@/components/LocalePreferenceTracker";
 import { NavigationProgress } from "@/components/NavigationProgress";
 import { i18n, type Locale, locales } from "@/lib/i18n";
-import { localeNames } from "@/lib/i18n/config";
+import { fumadocsTranslations } from "@/lib/i18n/fumadocs";
 import { getTranslation } from "@/lib/i18n/translations";
 import {
   jsonLdScriptContent,
@@ -91,13 +92,7 @@ export default async function RootLayout({
             enableSystem: true,
             disableTransitionOnChange: true,
           }}
-          i18n={{
-            locale,
-            locales: locales.map((l) => ({
-              locale: l,
-              name: localeNames[l],
-            })),
-          }}
+          i18n={i18nProvider(fumadocsTranslations, locale)}
         >
           <LocaleProvider locale={locale}>
             <LocalePreferenceTracker />
