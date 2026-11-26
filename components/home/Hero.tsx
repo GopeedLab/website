@@ -9,6 +9,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useDownload } from "@/hooks/useDownload";
 import type { ReleaseAsset } from "@/lib/data";
+import { homeScreenshotBase } from "@/lib/home-screenshot";
 import { useLocale } from "@/lib/locale-context";
 import {
   detectPlatform,
@@ -41,7 +42,8 @@ interface HeroProps {
 }
 
 export function Hero({ version, releaseAssets }: HeroProps) {
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
+  const screenshotBase = homeScreenshotBase(locale);
   const { isDownloading, triggerDownload } = useDownload();
   const [platformInfo, setPlatformInfo] = useState<PlatformInfo>({
     platform: "unknown",
@@ -198,19 +200,23 @@ export function Hero({ version, releaseAssets }: HeroProps) {
 
             {/* Preview Image - Order 2 */}
             <div className="relative w-full lg:pl-6 xl:pl-8 lg:scale-[1.2] origin-center order-2">
-              <div className="relative w-full aspect-[4/3]">
-                {/* Combined Screenshot Preview */}
-                <div className="relative w-full h-full rounded-lg overflow-hidden">
-                  <Image
-                    unoptimized
-                    src="/images/screenshot.webp"
-                    alt={t("hero.previewAlt")}
-                    fill
-                    preload
-                    sizes="(min-width: 1024px) 50vw, 100vw"
-                    className="object-contain"
-                  />
-                </div>
+              <div className="relative w-full aspect-[8/5] overflow-hidden rounded-lg border border-black/10 shadow-xl dark:border-white/15">
+                <Image
+                  unoptimized
+                  src={`${screenshotBase}-light.webp`}
+                  alt={t("hero.previewAlt")}
+                  fill
+                  fetchPriority="high"
+                  className="dark:hidden"
+                />
+                <Image
+                  unoptimized
+                  src={`${screenshotBase}-dark.webp`}
+                  alt={t("hero.previewAlt")}
+                  fill
+                  fetchPriority="high"
+                  className="hidden dark:block"
+                />
               </div>
             </div>
 

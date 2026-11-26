@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { homeScreenshotBase } from "@/lib/home-screenshot";
 import { defaultLocale, type Locale, locales } from "@/lib/i18n";
 
 export const BASE_URL = "https://gopeed.com";
@@ -70,7 +71,7 @@ export function pageSocialMetadata(
   path: string,
   title: string,
   description: string,
-  image: string = `${BASE_URL}/images/screenshot.png`,
+  image: string = `${BASE_URL}${homeScreenshotBase(locale)}-light.png`,
 ): Pick<Metadata, "openGraph" | "twitter"> {
   const openGraphLocale: Record<Locale, string> = {
     en: "en_US",

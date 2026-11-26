@@ -1,3 +1,4 @@
+import { homeScreenshotBase } from "@/lib/home-screenshot";
 import type { Locale } from "@/lib/i18n";
 import { getTranslation } from "@/lib/i18n/translations";
 import { BASE_URL, canonicalUrl } from "@/lib/seo";
@@ -30,7 +31,7 @@ export function softwareApplicationJsonLd(locale: Locale, version?: string) {
       priceCurrency: "USD",
     },
     downloadUrl: `${canonicalUrl(locale, "/")}#downloads`,
-    screenshot: `${BASE_URL}/images/screenshot.png`,
+    screenshot: `${BASE_URL}${homeScreenshotBase(locale)}-light.png`,
     image: `${BASE_URL}/images/logo.png`,
     author: {
       "@type": "Organization",
@@ -41,6 +42,8 @@ export function softwareApplicationJsonLd(locale: Locale, version?: string) {
     featureList: [
       "Multi-threaded download engine",
       "HTTP/HTTPS protocol support",
+      "FTP/FTPS/FTPES file and folder downloads",
+      "HLS (M3U8) on-demand video downloads",
       "BitTorrent protocol support",
       "Magnet link support",
       "ed2k link support",
@@ -114,7 +117,7 @@ const faqEntries: Record<Locale, FaqEntry[]> = {
     {
       question: "What protocols are supported?",
       answer:
-        "Gopeed supports HTTP, HTTPS, BitTorrent, magnet links and ed2k links in the same download client.",
+        "Gopeed supports HTTP/HTTPS, FTP/FTPS/FTPES, on-demand HLS (M3U8), BitTorrent, magnet links, and ed2k links.",
     },
     {
       question: "Does it support intercepting browser downloads?",
@@ -146,7 +149,7 @@ const faqEntries: Record<Locale, FaqEntry[]> = {
     {
       question: "支持哪些下载协议？",
       answer:
-        "Gopeed 在同一个客户端中同时支持 HTTP、HTTPS、BitTorrent、磁力链接和 ed2k 链接。",
+        "Gopeed 支持 HTTP/HTTPS、FTP/FTPS/FTPES、HLS（M3U8）点播、BitTorrent 种子、磁力链接和 ed2k 链接。",
     },
     {
       question: "是否支持接管浏览器下载？",
@@ -177,7 +180,7 @@ const faqEntries: Record<Locale, FaqEntry[]> = {
     {
       question: "支援哪些下載協定？",
       answer:
-        "Gopeed 在同一個客戶端中同時支援 HTTP、HTTPS、BitTorrent、磁力連結和 ed2k 連結。",
+        "Gopeed 支援 HTTP/HTTPS、FTP/FTPS/FTPES、HLS（M3U8）隨選影片、BitTorrent 種子、磁力連結和 ed2k 連結。",
     },
     {
       question: "是否支援接管瀏覽器下載？",
@@ -209,7 +212,7 @@ const faqEntries: Record<Locale, FaqEntry[]> = {
     {
       question: "Какие протоколы поддерживаются?",
       answer:
-        "Gopeed поддерживает HTTP, HTTPS, BitTorrent, magnet-ссылки и ed2k-ссылки.",
+        "Gopeed поддерживает HTTP/HTTPS, FTP/FTPS/FTPES, видео по запросу через HLS (M3U8), BitTorrent, magnet-ссылки и ed2k-ссылки.",
     },
     {
       question: "Можно ли перехватывать загрузки из браузера?",
